@@ -12,7 +12,7 @@
 </head>
 <body class="background-body">
     <div class="header">
-        <div class="container">
+        <div class="container-fluid">
             <div class="row">
                 <div class="col-sm-6">
                     <h3><a href="~/"><img src="~/content/img/logo.png" /></a></h3>
@@ -33,23 +33,23 @@
     @if (SessionHelper.IsInRole("Alumno"))
     {
         <br />
-        <div class="container">
-            <div class="row">
-                <div class="col-xs-12">
-                    <div class="text-right">
-                        @for (int i = 0; i < 5; i++)
-                        {
-                            <i class="medalla fa fa-star fa-2x fa-fw"></i>    
-                        }                        
-                    </div>
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-xs-12">
+                <div class="text-right">
+                    @for (int i = 0; i < 5; i++)
+                    {
+                        <i class="medalla fa fa-star fa-2x fa-fw"></i>
+                    }
                 </div>
             </div>
         </div>
+    </div>
     }
     <br />
-    <div class="container body-content">
+    <div class="container-fluid body-content">
         <div class="row">
-            <div class="col-md-3">
+            <div class="col-md-2">
                 <div class="list-group">
                     <a class="list-group-item active">Juegos</a>
                     <a href="~/reto" class="list-group-item">Responder preguntas</a>
@@ -66,7 +66,7 @@
                     <a href="#" class="list-group-item">Actualizar registro de materiales</a>
                 </div>
             </div>
-            <div class="col-sm-9">
+            <div class="col-md-10">
                 <div class="panel panel-default">
                     <div class="panel-body">
                         @RenderBody()
