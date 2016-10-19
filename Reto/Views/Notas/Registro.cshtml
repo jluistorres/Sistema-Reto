@@ -1,0 +1,452 @@
+﻿@{
+    ViewBag.Title = "Registro de notas";
+}
+
+@section styles
+{
+    <style type="text/css">
+        .registro { font-size: 13px; background-color: #fff; }
+        .registro, .registro table { width: 100%; }
+        .registro, .registro table td:first-child { border-left: none; }
+        .registro, .registro table td:last-child { border-right: none; }
+        .registro td { border: 1px solid #ccc; text-align: center; position: relative; }
+        .registro h4, .registro h5 { text-align: center; }
+        .registro .alumno { text-align: left; padding: 5px; }
+        .registro .rotar { height: 200px; width: 20px; font-size: 0.8em; overflow: hidden; }
+        .registro .rotar div { display: inline-block; white-space: nowrap; transform: translate(0,100%) rotate(-90deg); transform-origin: 0 0; width: 20px; height: 180px; line-height: 20px; }
+        .registro .rotar div:before { content: ""; float: left; margin-top: 100%; }
+        .registro .rotar.rotar-reverse div { transform: translate(200%,0) rotate(90deg); }
+        .registro .rotar.rotar-reverse div:before { margin: 0; margin-bottom: 100%; }
+        .registro .nota-final { background-color: #f4f4f4; font-weight: bold; }
+        
+        .registro .nota.flag { color:#fff; }
+        .registro .nota.flag:after { position: absolute; top: 50%; left: 50%; margin-left:-7px; margin-top:-7px; content: "\f024"; font: normal normal normal 14px/1 FontAwesome; }
+        .registro .nota.rojo.flag:after { color: #ff0000; }
+        .registro .nota.anaranjado.flag:after { color: #ff6a00; }
+        .registro .nota.amarillo.flag:after { color: #ffd800; }
+        .registro .nota.verde.flag:after { color: #1fba18; }
+
+        .registro .promedio { font-weight: bold; background-color: #f6f6f6; }
+        .fs-2em { font-size: 2em; }
+    </style>
+}
+
+@section scripts
+{
+    <script src="~/Scripts/knockout-3.4.0.js"></script>
+    <script src="~/Scripts/knockout.mapping-latest.js"></script>
+    <script type="text/javascript">
+        ko.bindingHandlers.editableText = {
+            init: function (element, valueAccessor) {
+                $(element).on('focus', function () { $(this).removeClass('flag'); });
+                $(element).on('blur', function () {
+                    var observable = valueAccessor();
+                    var value = $(this).html();                    
+                    if (!isNaN(parseFloat(value))) {
+                        if (parseInt(value) > 3) value = 3;
+                        if (parseInt(value) < 0) value = 0;                        
+                    }
+                    observable(value);
+                    if (value) $(element).addClass('flag');
+                });
+
+                $(element).on('keypress', function (e) {
+                    if (e.keyCode == 13) {
+                        var index = $(this).index();
+                        $(this).parent().next().find('td').eq(index).focus();
+                    }
+
+                    //Solo puede digitar del 0 al 3
+                    if (!(e.keyCode >= 48 && e.keyCode <= 51)) return false;
+                    
+                    if (e.keyCode != 13) $(this).html(e.key);
+                    return false;
+                });
+            },
+            update: function (element, valueAccessor) {
+                var value = ko.utils.unwrapObservable(valueAccessor());
+                //if (value != '' && value != null && value !== undefined) {
+                //    if (value < 10 && value.toString().length < 2 && value.toString().indexOf('.') == -1) value = '0' + value;
+                //}
+
+                $(element).html(value);                
+            }
+        };
+    </script>
+    <script type="text/javascript">
+        function ViewModel() {
+            var self = this;
+
+            self.Filtro = {
+                Grado: ko.observable(),
+                Grados: ko.observableArray(),
+                Seccion: ko.observable(),
+                Secciones: ko.observableArray(),
+                IdCurso: ko.observable(),
+                Cursos: ko.observableArray()
+            }
+
+            //Evaluacion por trimestre            
+            //variables ko
+            self.evaluaciones = ko.observable(1);
+            self.docente = ko.observable();
+            self.criterios = ko.observableArray();
+            self.alumnos = ko.observableArray();
+
+            self.EstructurarTabla = function (datos) {
+                var alumnos = [], criterios = [], notas = [];
+
+                //Criterios
+                ko.utils.arrayForEach(datos, function (item) {
+                    var crit = ko.utils.arrayFirst(criterios, function (x) { return x.IdCriterio == item.IdCriterio });
+                    if (crit == null) criterios.push({ IdCriterio: item.IdCriterio, Nombre: item.Criterio });
+                });
+
+                criterios = criterios.sort(function (a, b) {
+                    if (a.IdCriterio > b.IdCriterio) return 1;
+                    else if (a.IdCriterio > b.IdCriterio) return -1;
+                    else return 0;
+                });
+
+                //Alumnos
+                ko.utils.arrayForEach(datos, function (item) {
+                    var alum = ko.utils.arrayFirst(alumnos, function (x) { return x.IdAlumno == item.IdAlumno });
+                    if (alum == null) {
+                        var obj = {
+                            IdMatricula: item.IdMatricula,
+                            IdDocenteCurso: item.IdDocenteCurso,
+                            IdAlumno: item.IdAlumno,
+                            Nombre: item.Alumno,
+                            Notas: [],
+                            PromedioFinal: ko.observable(0)
+                        };
+
+                        for (var i = 0; i < self.evaluaciones() ; i++) {
+                            var trimestre = {}, oTr = [];
+                            for (var j = 0; j < criterios.length; j++) {
+                                var r = ko.utils.arrayFirst(datos, function (n) {
+                                    return n.IdAlumno == item.IdAlumno &&
+                                           n.IdCriterio == criterios[j].IdCriterio &&
+                                           n.NroEvaluacion == i + 1
+                                }) || {};
+
+                                //obj.Notas.push({ IdCriterio: criterios[j].IdCriterio, Criterio: criterios[j].Nombre, NroEvaluacion: i +1, Nota: ko.observable(r.Nota) });
+                                oTr.push({ IdCriterio: criterios[j].IdCriterio, Criterio: criterios[j].Nombre, Nota: ko.observable(r.Nota) });
+                            }
+
+                            trimestre.Notas = oTr;
+                            trimestre.Promedio = ko.observable(0);
+                            obj.Notas.push(trimestre);
+                        }
+
+                        alumnos.push(obj);
+                    }
+                });
+
+                //console.log(ko.toJS(alumnos));
+
+                //variables ko
+                self.criterios(criterios);
+                self.alumnos(alumnos);
+            }
+
+            self.Promediar = ko.computed(function () {
+                var alumnos = self.alumnos();
+                var sum_total = 0;
+
+                alumnos.forEach(function (a) {
+                    var evaluaciones = a.Notas;
+                    sum_total = 0;
+
+                    evaluaciones.forEach(function (e) {
+                        var notas = e.Notas;
+                        var suma = 0;
+                        notas.forEach(function (n) {
+                            if (!isNaN(parseFloat(n.Nota()))) suma += parseInt(n.Nota());
+                        });
+
+                        var prom = Math.round((suma / notas.length));
+                        sum_total += prom;
+                        e.Promedio(prom);
+                    });
+
+                    var final = Math.round(sum_total / evaluaciones.length);
+                    a.PromedioFinal(final);
+                })
+            });
+
+            self.DatosDocente = ko.observableArray();
+
+            self.Filtrar_NroEvaluaciones = ko.computed(function () {
+                if (self.Filtro.IdCurso()) {
+                    var curso = ko.utils.arrayFirst(self.Filtro.Cursos(), function (x) { return x.IdCurso == self.Filtro.IdCurso() });
+                    if (curso != null) {
+                        self.evaluaciones(curso.NroEvaluaciones);
+                    }
+                }
+            });
+
+            self.Filtrar_Cursos = function () {
+                self.alumnos.removeAll();
+                var datos = self.DatosDocente();
+                var distinct = [];
+
+                ko.utils.arrayForEach(datos, function (x) {
+                    var obj = ko.utils.arrayFirst(distinct, function (c) { return c.IdCurso == x.IdCurso });
+                    if (obj == null) distinct.push({ IdCurso: x.IdCurso, Curso: x.Curso, NroEvaluaciones: x.NroEvaluaciones });
+                });
+
+                self.Filtro.Cursos(distinct);
+            }
+
+            self.Filtrar_Grados = function () {
+                self.alumnos.removeAll();
+                var datos = self.DatosDocente();
+                var distinct = [];
+                
+                ko.utils.arrayForEach(datos, function (x) {                    
+                    if (distinct.indexOf(x.Grado) == -1) distinct.push(x.Grado);
+                });
+                
+                self.Filtro.Grados(distinct);
+            }
+
+            self.Filtrar_Secciones = function () {
+                self.alumnos.removeAll();
+                var datos = self.DatosDocente();
+                var distinct = [];
+
+                ko.utils.arrayForEach(datos, function (x) {
+                    if (x.Grado == self.Filtro.Grado()) {
+                        if (distinct.indexOf(x.Seccion) == -1) distinct.push(x.Seccion);
+                    }                    
+                });
+
+                self.Filtro.Secciones(distinct);
+            }            
+
+            self.Grado_Texto = function (grado) {
+                switch (grado) {
+                    case 1: return 'PRIMER'; break;
+                    case 2: return 'SEGUNDO'; break;
+                    case 3: return 'TERCERO'; break;
+                    case 4: return 'CUARTO'; break;
+                    case 5: return 'QUINTO'; break;
+                    case 6: return 'SEXTO'; break;
+                    default: return grado;
+                }
+            }
+
+            self.init = function () {
+                var IdPersona = '@SessionHelper.Usuario.IdPersona';
+
+                $.getJSON('@Url.Action("CargarDatosDocente")', { IdPersona: IdPersona })
+                .done(function (result) {
+                    //console.log(result);
+                    self.DatosDocente(result);
+                    self.Filtrar_Cursos();
+                    if (result.length > 0) {
+                        self.docente(result[0].Docente);
+                    }
+                });
+            }
+
+            self.CargarRegistro = function () {
+                var params = {
+                    Grado: self.Filtro.Grado(),
+                    Seccion: self.Filtro.Seccion(),
+                    IdCurso: self.Filtro.IdCurso()
+                };
+
+                $.getJSON('@Url.Action("ListarRegistro")', params)
+                .done(function (result) {
+                    //console.log(result);
+                    self.EstructurarTabla(result);
+                    if (result.length == 0) {
+                        appMaster.MessageBox('Sin alumnos', 'No hay alumnos matriculados en el grado y sección seleccionados');
+                    }
+                });
+            }
+
+            self.VerificarNota = function (nota) {
+                if (!isNaN(parseInt(nota))) {
+                    switch (parseInt(nota)) {
+                        case 0: return 'flag rojo'; break;
+                        case 1: return 'flag anaranjado'; break;
+                        case 2: return 'flag amarillo'; break;
+                        case 3: return 'flag verde'; break;
+                    }                    
+                }
+            }
+
+            self.LimpiarRegistro = function () {
+                appMaster.Confirm({
+                    Title: 'Limpiar',
+                    Message: '¿Desea limpiar el registro de notas?',
+                    Yes: function () {
+                        self.alumnos().forEach(function (a) {
+                            a.Notas.forEach(function (e) {
+                                e.Notas.forEach(function (n) {
+                                    n.Nota(null);
+                                });
+                            });
+                        });
+                    }
+                });                
+            }
+
+            self.Guardar = function () {
+                appMaster.Confirm({
+                    Title: 'Registro de notas',
+                    Message: '¿Desea guardar los cambios en el registro de notas?',
+                    Yes: function () {
+                        var alumnos = ko.toJS(self.alumnos);
+                        var registro = [];
+                        //console.log(alumnos);
+
+                        alumnos.forEach(function (a) {
+                            var evaluaciones = a.Notas;
+                            evaluaciones.forEach(function (e, i) {
+                                var notas = e.Notas;
+                                notas.forEach(function (n) {
+                                    if (n.Nota) {
+                                        var obj = { IdMatricula: a.IdMatricula, IdDocenteCurso: a.IdDocenteCurso, IdCriterio: n.IdCriterio, NroEvaluacion: i + 1, Nota: n.Nota };
+                                        registro.push(obj);
+                                    }
+                                });
+                            });
+                        });
+
+                        //console.log(registro);
+
+                        var params = {
+                            Grado: self.Filtro.Grado(),
+                            Seccion: self.Filtro.Seccion(),
+                            IdCurso: self.Filtro.IdCurso()
+                        };
+
+                        $.ajax({
+                            type: 'POST',
+                            url: '@Url.Action("GuardarNotas")',
+                            data: JSON.stringify({ dc: params, notas: registro }),
+                            dataType: 'json',
+                            contentType: 'application/json',
+                            success: function (result) {
+                                appMaster.MessageBox('Listo', 'Datos guardados exitosamente');
+                            }
+                        });
+                    }
+                });
+            }
+        }
+
+        $(function () {
+            var modelo = new ViewModel();
+            ko.applyBindings(modelo);
+            modelo.init();
+        });
+    </script>
+}
+<h3>Registro de Notas </h3>
+<div class="well well-sm">
+    <div class="row">
+        <div class="col-sm-9">
+            <div class="row">
+                <div class="col-sm-6">
+                    <label class="control-label">Juego:</label>
+                    <select class="form-control" data-bind="options: Filtro.Cursos, optionsText: 'Curso', optionsValue: 'IdCurso', optionsCaption: '- Juego -', value: Filtro.IdCurso, event: {change: Filtrar_Grados}"></select>
+                </div>
+                <div class="col-sm-3">
+                    <label class="control-label">Grado:</label>
+                    <select class="form-control" data-bind="options: Filtro.Grados, optionsText: function(g){ return g + '°'}, optionsValue: $data, optionsCaption: '- Grado -', value: Filtro.Grado, event: {change: Filtrar_Secciones}"></select>
+                </div>
+                <div class="col-sm-3">
+                    <label class="control-label">Sección:</label>
+                    <select class="form-control" data-bind="options: Filtro.Secciones, optionsCaption: '- Sección -', value: Filtro.Seccion"></select>
+                </div>                
+            </div>
+        </div>
+        <div class="col-sm-3">
+            <label class="control-label">&nbsp;</label>
+            <button type="button" class="btn btn-default form-control" data-bind="click: $root.CargarRegistro, enable: Filtro.IdCurso() && Filtro.Grado() && Filtro.Seccion()">Mostrar registro</button>
+        </div>
+    </div>
+
+</div>
+
+<div data-bind="visible: alumnos().length > 0">
+    <div class="form-group">
+        <div class="input-group">
+            <div class="input-group-addon">Docente:</div>
+            <div class="form-control" data-bind="text: docente"></div>
+        </div>    
+    </div>
+    
+    <table class="registro">
+        <tbody>
+            <tr>
+                <td class="rotar rotar-reverse" rowspan="4"><div><h3>ECOLOGICA</h3></div></td>
+                <td rowspan="2"></td>
+            </tr>
+            <tr style="height:20px">
+                <!--ko foreach: new Array(evaluaciones())-->
+                <td data-bind="attr: {'colspan': $root.criterios().length + 1}"><h5 data-bind="text: 'EVALUACIÓN ' + ($index() + 1)"></h5></td>
+                <!--/ko-->
+                <td class="nota-final"></td>
+                <td>Valor</td>
+            </tr>
+            <tr>
+                <td>&nbsp;</td>
+                <!--ko foreach: new Array(evaluaciones())-->
+                <!--ko foreach: $root.criterios-->
+                <td class="rotar" rowspan="3"><div data-bind="text: $data.Nombre"></div></td>
+                <!--/ko-->
+                <td class="rotar promedio" rowspan="3"><div data-bind="text: 'Nota ' + ($index() + 1)"></div></td>
+                <!--/ko-->
+                <td class="rotar nota-final" rowspan="3"><div>NOTA FINAL</div></td>
+                <td class="rotar" rowspan="3"></td>
+
+            </tr>
+            <tr style="height:30px;">
+                <td><h4><span data-bind="text: $root.Grado_Texto($root.Filtro.Grado())"></span> GRADO</h4></td>
+            </tr>
+            <tr style="height:30px;">
+                <td style="width:30px;"><h4>N°</h4></td>
+                <td style="width:250px;"><h4>ALUMNO</h4></td>
+            </tr>
+            <tr>
+                <td></td>
+                <td>OBSERVACIONES</td>
+                <!--ko foreach: new Array(evaluaciones())-->
+                <!--ko foreach: $root.criterios-->
+                <td></td>
+                <!--/ko-->
+                <td class="promedio"></td>
+                <!--/ko-->
+                <td class="nota-final"></td>
+                <td></td>
+            </tr>
+            <!--ko foreach: alumnos-->
+            <tr>
+                <td data-bind="text: $index() + 1">1</td>
+                <td class="alumno" data-bind="text: $data.Nombre"></td>
+                <!--ko foreach: $data.Notas-->
+                <!--ko foreach: $data.Notas-->
+                <td class="nota" contenteditable="true" data-bind="editableText: $data.Nota, css: $root.VerificarNota($data.Nota())"></td>
+                <!--/ko-->
+                <td class="promedio" data-bind="editableText: $data.Promedio, css: $root.VerificarNota($data.Promedio())"></td>
+                <!--/ko-->
+                <td class="nota-final" data-bind="editableText: $data.PromedioFinal, css: $root.VerificarNota($data.PromedioFinal())"></td>
+                <td></td>
+            </tr>
+            <!--/ko-->
+        </tbody>
+    </table>
+
+    <hr />
+    <div class="well well-sm">
+        <button type="button" class="btn btn-primary" data-bind="click: Guardar">Guardar registro</button>
+        <button type="button" class="btn btn-default" data-bind="click: LimpiarRegistro">Limpiar</button>
+        <a href="~/" class="btn btn-default">Salir</a>
+    </div>
+</div>

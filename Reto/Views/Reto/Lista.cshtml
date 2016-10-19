@@ -1,0 +1,62 @@
+﻿@{
+    ViewBag.Title = "Index";
+}
+
+@section scripts
+{
+    <script src="~/Scripts/knockout-3.4.0.js"></script>    
+    <script>
+        var model = function () {
+            var self = this;
+            self.lstItem = ko.observableArray();
+            self.listar = function () {
+                $.ajax({
+                    type: 'POST',
+                    url: "@Url.Action("Listado")",
+                    // data: ko.toJSON({ id: idJuego }),
+                    dataType: 'json',
+                    contentType: 'application/json',
+                    success: function (datos) {
+                        console.log(datos);
+                        self.lstItem(datos);
+
+                    }
+                });
+            }
+        }
+
+        $(function () {
+            viewModel = new model();
+            ko.applyBindings(viewModel);
+            viewModel.listar();
+
+        });
+    </script>
+}
+<h1>Lista </h1>
+<hr />
+<div class="form-horizontal">
+    <div class="row">
+        <div class="col-md-12">
+            <table class="table table-bordered table-hover">
+                <thead>
+                    <tr>
+                        <th>N° Registro</th>
+                        <th>Nivel</th>
+                    </tr>
+                </thead>
+                <tbody data-bind="foreach:lstItem">
+                    <tr>
+                        <td class="col-md-1"><a class="btn btn-link btn-sm" data-bind="text: appMaster.AddZerosNumber($data.IdJuego, 5), attr: { href: '@Url.Action("registro")?id=' + IdJuego }"></a></td>
+                        <td class="col-md-11" data-bind="text: Nivel"></td>
+                    </tr>
+                </tbody>
+            </table>
+
+        </div>
+    </div>
+
+</div>
+
+
+

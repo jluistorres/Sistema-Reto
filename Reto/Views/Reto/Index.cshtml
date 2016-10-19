@@ -1,0 +1,258 @@
+﻿@{
+    ViewBag.Title = "Evaluación";
+}
+
+@section styles
+{
+    <link href="~/Content/css/juego.css" rel="stylesheet" />
+}
+
+@section scripts
+{
+    <script src="~/Scripts/knockout-3.4.0.js"></script>
+    <script src="~/Scripts/js/juego.core.js"></script>
+    <script type="text/javascript">
+        function ViewModel() {
+            var self = this;
+            self.niveles = [1, 2, 3];
+
+            var casillero;
+            var conteo_segundos;
+
+            self.EstadoJuego = ko.observable(0);
+            self.cronometro = ko.observable(0);
+            self.NroJuego = ko.observable();
+            //self.JuegoEnunciado = ko.observable();
+            self.JuegoSolucion = ko.observable();
+            self.nivelSeleccionado = ko.observable();
+            self.PosicionesResolver = ko.observable();
+
+            self.NuevoJuego = function () {
+                self.NroJuego(null);
+                if (conteo_segundos) clearInterval(conteo_segundos);
+                self.cronometro(0);
+
+                if (self.nivelSeleccionado()) {
+                    var t = self.nivelSeleccionado() + 1;
+                    //casillero = Reto.CrearArreglo(t + 1);
+                    //console.log(casillero);
+                    Reto.CrearHtmlCasillas(2 * t + 1);
+                    self.EstadoJuego(1);
+                }
+            }
+
+            self.CambiarNivel = ko.computed(function () {
+                self.NuevoJuego();
+            });
+
+            self.Empezar = function () {
+                //self.NroJuego(null);
+                //if (conteo_segundos) clearInterval(conteo_segundos);
+                //self.cronometro(0);
+                
+                $('.tabla').html('');
+                var nivel = self.nivelSeleccionado();
+
+                //return JSON.parse('[[2,null,1,"menor",3],[null,null,null,null,"mayor"],[3,null,2,"mayor",1],["mayor",null,null,null,null],[1,null,3,null,2]]');
+                $.getJSON('@Url.Action("juego")', { Nivel: nivel }, function (result) {
+                    self.NroJuego(result.IdJuego);
+                    casillero = JSON.parse(result.Enunciado);
+                    self.JuegoSolucion(JSON.parse(result.Solucion));
+                    //console.log(result);
+                    Reto.CrearHtmlCasillas(casillero.length);
+                    Reto.LlenarCasillas(casillero);
+
+                    self.EstadoJuego(2);
+                }).fail(function (xhr) {
+                    toastr.warning('No existen plantillas registradas del Nivel ' + nivel, 'Atención');
+                });
+            }
+
+            self.Responder = function () {
+                //Reto.LlenarCasillas(casillero);
+                //Reto.LlenarCasillasAzar(casillero);
+
+                var empezar_cronometro = function () {                    
+                    conteo_segundos = setInterval(function () {
+                        self.cronometro(self.cronometro() + 10);
+                    }, 100);
+                }
+
+                var cont = 0;
+                var intentos = setInterval(function () {
+
+                    Reto.PintarCasillasAzar(self.JuegoSolucion(), casillero);
+                    cont++;
+                    if (cont == 10) {
+                        clearInterval(intentos);
+
+                        $('.respuestas .rpta').removeData('value');                        
+                        //Pintamos las casillas que debe resolver
+                        var pos = Reto.PintarCasillasAzar(self.JuegoSolucion(), casillero);
+                        self.PosicionesResolver(pos);
+
+                        $('.respuestas .rpta').html('');
+
+                        self.EstadoJuego(3);
+
+                        //Hacemmos una pausa antes de empezar y mostramos el cronometro
+                        setTimeout(function () { empezar_cronometro(); }, 1000);
+                    }
+                }, 150);
+
+            }
+
+            self.EnviarRepuestas = function () {
+                clearInterval(conteo_segundos);
+
+                var errores = [];
+
+                $('.respuestas .rpta').each(function (index, el) {
+                    if ($(this).data('value') != $(this).text()) {                        
+                        errores.push(index);
+                    }
+                });
+                
+                self.EstadoJuego(4);
+
+                if (errores.length == 0) {
+                    //Formula: nota = (((nxn - d)+3)/t)*20
+                    var d = 0;
+                    for (var i = 0; i < casillero.length; i++) {
+                        var fila = casillero[i].fila;
+                        for (var j = 0; j < fila.length; j++) {
+                            if (i % 2 == 0 && j % 2 == 0 && fila[j].col) {
+                                d++;//Casillas llenas que se dan al usuario
+                            }
+                        }
+                    }
+
+                    var n = (casillero.length + 1) / 2;
+                    var t = Math.round(self.cronometro()) / 100;
+
+                    var nota = Math.round((((n * n - d) + 3) / t) * 20);
+
+                    var params = {
+                        //IdAlumno: 1,
+                        IdJuego: self.NroJuego(),
+                        Calificacion: nota,
+                        Respuesta: $('.respuestas .rpta').text(),
+                        TiempoSegundos: t
+                    };
+
+                    //console.log(params);
+
+                    $.ajax({
+                        type: 'POST',
+                        url: '@Url.Content("~/reto/GuardarScore")',
+                        data: JSON.stringify({ score: params }),
+                        dataType: 'json',
+                        contentType: 'application/json',
+                        success: function (result) {                            
+                            if (result) {
+                                appMaster.MessageBox('Logrado', '<div class="text-center"><img src="@Url.Content("~/content/img/logrado.jpg")" /></div>');
+                            } else {
+                                toastr.info('Debes ingresar con perfil de alumno para poder registrar tu score');
+                            }
+                        }
+                    });
+                } else {
+                    appMaster.MessageBox(errores.length + ' errores', '¡Pronto tendrás una nueva oportunidad! Los que aceptan el reto nunca se rinden!!');
+                }                
+            }
+
+            self.FormatearReloj = function (number) {
+                var min = 0;
+                var n = (number || 0) / 100;
+                //console.log(n);
+                if (n > 60) {
+                    min = Math.floor(n / 60);
+                    n = n % 60;
+                }
+
+                var cad = n.toString().split('.');
+                var decimales = (cad.length == 2) ? cad[1] : 0;
+                cad[0] = ('0' + cad[0]).slice(-2);
+                decimales = ('0' + decimales).slice(-2);
+                
+                return min + ':' + cad[0] + '.' + decimales;
+            }            
+
+            self.Limpiar = function () {
+                $('.tabla .q:not(.v):not(.h)').each(function (el, index) {
+                    var casilla = $(this).find('.casilla');
+                    casilla.removeClass('color error');
+                    if (casilla.attr('contenteditable')) {
+                        casilla.html('');
+                    }
+                });
+            }
+
+            self.Procesar = function () {
+                Reto.Procesar();
+            }
+        }
+
+        $(function () {
+            var modelo = new ViewModel();
+            ko.applyBindings(modelo);
+        });
+    </script>
+}
+
+<div class="text-center">
+    <table class="formulario">
+        <tbody>
+            <tr>
+                <td data-bind="visible: EstadoJuego() == 0">
+                    <div style="padding:15px" class="text-justify">
+                        <h1 class="text-center">Instrucciones</h1>
+                        <p>La sección evaluación tiene como objetivo, entrenar tu mente de forma disciplinada, además de recoger información de tu constancia y perseverancia, anota estadísticas y proyecta tu éxito en los diferentes juegos o Reto del sistema.</p>
+                        <p>Para iniciar la evaluación debes seguir estos pasos:</p>
+                        <ol>
+                            <li>Determina el nivel (de preferencia debes haber acabado un nivel inferior para pasar a otro superior)</li>
+                            <li>Elige un tipo de Reto (juego)</li>
+                        </ol>
+                    </div>                    
+                </td>
+                <td class="text-center" style="position:relative; display:none;" data-bind="visible: EstadoJuego() > 0">
+                    <div class="reto-info" data-bind="visible: NroJuego, click: Empezar">Reto N° <span data-bind="text: NroJuego"></span></div>
+                    <h1>EVALUACIÓN</h1>
+                    <h4>Mayor - Menor</h4>
+                    <table class="tabla"></table>
+                    <br />
+                    <div class="form-group">
+                        <button type="button" class="btn btn-success" data-bind="click: Empezar, visible: EstadoJuego() == 1">Empezar</button>
+                        <button type="button" class="btn btn-primary" data-bind="click: Responder, visible: EstadoJuego() == 2">Responder</button>
+                        <button type="button" class="btn btn-success" data-bind="click: EnviarRepuestas, visible: EstadoJuego() == 3">Enviar Repuestas</button>
+                    </div>
+                    <div class="respuestas" data-bind="visible: EstadoJuego() >= 3">
+                        <div class="rpta yellow" data-color="yellow" data-bind="attr: { 'contenteditable' : EstadoJuego() == 3 }"></div>
+                        <div class="rpta green" data-color="green" data-bind="attr: { 'contenteditable' : EstadoJuego() == 3 }"></div>
+                        <div class="rpta blue" data-color="blue" data-bind="attr: { 'contenteditable' : EstadoJuego() == 3 }"></div>
+                        <div class="rpta red" data-color="red" data-bind="attr: { 'contenteditable' : EstadoJuego() == 3 }"></div>
+                    </div>
+                </td>
+                <td style="vertical-align: bottom; padding: 20px; width: 150px; display: none;" data-bind="visible: EstadoJuego() > 0">
+                    <div class="cronometro"><span data-bind="text: FormatearReloj(cronometro())"></span></div>
+                </td>
+                <td class="options">
+                    <h2>Nivel</h2>
+                    <div class="btn-group" data-toggle="buttons">
+                        <!--ko foreach: niveles-->
+                        <button class="btn btn-default" data-bind="click: function(){ $root.nivelSeleccionado($data) }, css: {'active': $data == $root.nivelSeleccionado()}, text: $data"></button>
+                        <!--/ko-->
+                    </div>
+                    <hr />
+                    <div class="form-group">
+                        <button type="button" class="btn btn-default" data-bind="click: NuevoJuego, visible: NroJuego">Nuevo reto</button>
+                        <a href="~/" class="btn btn-default">Salir</a>
+                        @*<button type="button" class="btn btn-default" data-bind="click: Limpiar">Limpiar</button>
+                        <button type="button" class="btn btn-default" data-bind="click: Procesar">Verificar</button>*@
+                    </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+
+</div>

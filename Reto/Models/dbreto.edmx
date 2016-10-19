@@ -1,0 +1,1005 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<edmx:Edmx Version="3.0" xmlns:edmx="http://schemas.microsoft.com/ado/2009/11/edmx">
+  <!-- EF Runtime content -->
+  <edmx:Runtime>
+    <!-- SSDL content -->
+    <edmx:StorageModels>
+    <Schema Namespace="dbretoModel.Store" Provider="System.Data.SqlClient" ProviderManifestToken="2008" Alias="Self" xmlns:store="http://schemas.microsoft.com/ado/2007/12/edm/EntityStoreSchemaGenerator" xmlns="http://schemas.microsoft.com/ado/2009/11/edm/ssdl">
+        <EntityType Name="Alumno">
+          <Key>
+            <PropertyRef Name="IdAlumno" />
+          </Key>
+          <Property Name="IdAlumno" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="IdPersona" Type="int" />
+        </EntityType>
+        <EntityType Name="Alumno_Juego">
+          <Key>
+            <PropertyRef Name="IdAlumno" />
+            <PropertyRef Name="IdJuego" />
+          </Key>
+          <Property Name="IdAlumno" Type="int" Nullable="false" />
+          <Property Name="IdJuego" Type="int" Nullable="false" />
+          <Property Name="Calificacion" Type="float" />
+          <Property Name="Respuesta" Type="varchar(max)" />
+          <Property Name="TiempoSegundos" Type="float" />
+        </EntityType>
+        <EntityType Name="CriteriosEvaluacion">
+          <Key>
+            <PropertyRef Name="IdCriterio" />
+          </Key>
+          <Property Name="IdCriterio" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="IdCurso" Type="int" />
+          <Property Name="Nombre" Type="varchar" MaxLength="100" />
+        </EntityType>
+        <EntityType Name="Curso">
+          <Key>
+            <PropertyRef Name="IdCurso" />
+          </Key>
+          <Property Name="IdCurso" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="Nombre" Type="varchar" MaxLength="100" />
+        </EntityType>
+        <EntityType Name="Docente">
+          <Key>
+            <PropertyRef Name="IdDocente" />
+          </Key>
+          <Property Name="IdDocente" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="IdPersona" Type="int" />
+        </EntityType>
+        <EntityType Name="DocenteCurso">
+          <Key>
+            <PropertyRef Name="IdDocenteCurso" />
+          </Key>
+          <Property Name="IdDocenteCurso" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="AnyoAcademico" Type="int" />
+          <Property Name="IdDocente" Type="int" Nullable="false" />
+          <Property Name="IdCurso" Type="int" Nullable="false" />
+          <Property Name="IdNivelEscolar" Type="int" />
+          <Property Name="Grado" Type="int" />
+          <Property Name="Seccion" Type="char" MaxLength="1" />
+          <Property Name="NroEvaluaciones" Type="int" />
+        </EntityType>
+        <EntityType Name="Juego">
+          <Key>
+            <PropertyRef Name="IdJuego" />
+          </Key>
+          <Property Name="IdJuego" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="Reto" Type="int" />
+          <Property Name="Nivel" Type="varchar" MaxLength="50" />
+          <Property Name="Solucion" Type="varchar(max)" />
+          <Property Name="Enunciado" Type="varchar(max)" />
+        </EntityType>
+        <EntityType Name="Matricula">
+          <Key>
+            <PropertyRef Name="IdMatricula" />
+          </Key>
+          <Property Name="IdMatricula" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="IdAlumno" Type="int" />
+          <Property Name="Grado" Type="int" />
+          <Property Name="Seccion" Type="char" MaxLength="1" />
+          <Property Name="IdNivelEscolar" Type="int" />
+        </EntityType>
+        <EntityType Name="NivelEscolar">
+          <Key>
+            <PropertyRef Name="IdNivelEscolar" />
+          </Key>
+          <Property Name="IdNivelEscolar" Type="int" Nullable="false" />
+          <Property Name="Detalle" Type="varchar" MaxLength="50" />
+        </EntityType>
+        <EntityType Name="Notas">
+          <Key>
+            <PropertyRef Name="IdMatricula" />
+            <PropertyRef Name="IdDocenteCurso" />
+          </Key>
+          <Property Name="IdMatricula" Type="int" Nullable="false" />
+          <Property Name="IdDocenteCurso" Type="int" Nullable="false" />
+          <Property Name="Promedio" Type="float" />
+        </EntityType>
+        <EntityType Name="NotasCriterio">
+          <Key>
+            <PropertyRef Name="IdMatricula" />
+            <PropertyRef Name="IdDocenteCurso" />
+            <PropertyRef Name="IdCriterio" />
+            <PropertyRef Name="NroEvaluacion" />
+          </Key>
+          <Property Name="IdMatricula" Type="int" Nullable="false" />
+          <Property Name="IdDocenteCurso" Type="int" Nullable="false" />
+          <Property Name="IdCriterio" Type="int" Nullable="false" />
+          <Property Name="NroEvaluacion" Type="int" Nullable="false" />
+          <Property Name="Nota" Type="float" />
+        </EntityType>
+        <EntityType Name="Persona">
+          <Key>
+            <PropertyRef Name="IdPersona" />
+          </Key>
+          <Property Name="IdPersona" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="Nombres" Type="varchar" MaxLength="100" />
+          <Property Name="ApePaterno" Type="varchar" MaxLength="100" />
+          <Property Name="ApeMaterno" Type="varchar" MaxLength="100" />
+        </EntityType>
+        <EntityType Name="Usuario">
+          <Key>
+            <PropertyRef Name="IdUsuario" />
+          </Key>
+          <Property Name="IdUsuario" Type="varchar" MaxLength="50" Nullable="false" />
+          <Property Name="IdPersona" Type="int" />
+          <Property Name="Clave" Type="varchar" MaxLength="200" />
+          <Property Name="Rol" Type="varchar" MaxLength="50" />
+          <Property Name="FlagActivo" Type="bit" />
+        </EntityType>
+        <Association Name="FK_Alumno_Juego_Alumno">
+          <End Role="Alumno" Type="Self.Alumno" Multiplicity="1" />
+          <End Role="Alumno_Juego" Type="Self.Alumno_Juego" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Alumno">
+              <PropertyRef Name="IdAlumno" />
+            </Principal>
+            <Dependent Role="Alumno_Juego">
+              <PropertyRef Name="IdAlumno" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_Alumno_Juego_Juego">
+          <End Role="Juego" Type="Self.Juego" Multiplicity="1" />
+          <End Role="Alumno_Juego" Type="Self.Alumno_Juego" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Juego">
+              <PropertyRef Name="IdJuego" />
+            </Principal>
+            <Dependent Role="Alumno_Juego">
+              <PropertyRef Name="IdJuego" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_Alumno_Persona">
+          <End Role="Persona" Type="Self.Persona" Multiplicity="0..1" />
+          <End Role="Alumno" Type="Self.Alumno" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Persona">
+              <PropertyRef Name="IdPersona" />
+            </Principal>
+            <Dependent Role="Alumno">
+              <PropertyRef Name="IdPersona" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_CriteriosEvaluacion_Curso">
+          <End Role="Curso" Type="Self.Curso" Multiplicity="0..1" />
+          <End Role="CriteriosEvaluacion" Type="Self.CriteriosEvaluacion" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Curso">
+              <PropertyRef Name="IdCurso" />
+            </Principal>
+            <Dependent Role="CriteriosEvaluacion">
+              <PropertyRef Name="IdCurso" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_Docente_Persona">
+          <End Role="Persona" Type="Self.Persona" Multiplicity="0..1" />
+          <End Role="Docente" Type="Self.Docente" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Persona">
+              <PropertyRef Name="IdPersona" />
+            </Principal>
+            <Dependent Role="Docente">
+              <PropertyRef Name="IdPersona" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_DocenteCurso_Curso">
+          <End Role="Curso" Type="Self.Curso" Multiplicity="1" />
+          <End Role="DocenteCurso" Type="Self.DocenteCurso" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Curso">
+              <PropertyRef Name="IdCurso" />
+            </Principal>
+            <Dependent Role="DocenteCurso">
+              <PropertyRef Name="IdCurso" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_DocenteCurso_Docente">
+          <End Role="Docente" Type="Self.Docente" Multiplicity="1" />
+          <End Role="DocenteCurso" Type="Self.DocenteCurso" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Docente">
+              <PropertyRef Name="IdDocente" />
+            </Principal>
+            <Dependent Role="DocenteCurso">
+              <PropertyRef Name="IdDocente" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_Matricula_Alumno">
+          <End Role="Alumno" Type="Self.Alumno" Multiplicity="0..1" />
+          <End Role="Matricula" Type="Self.Matricula" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Alumno">
+              <PropertyRef Name="IdAlumno" />
+            </Principal>
+            <Dependent Role="Matricula">
+              <PropertyRef Name="IdAlumno" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_Matricula_NivelEscolar">
+          <End Role="NivelEscolar" Type="Self.NivelEscolar" Multiplicity="0..1" />
+          <End Role="Matricula" Type="Self.Matricula" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="NivelEscolar">
+              <PropertyRef Name="IdNivelEscolar" />
+            </Principal>
+            <Dependent Role="Matricula">
+              <PropertyRef Name="IdNivelEscolar" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_Notas_DocenteCurso">
+          <End Role="DocenteCurso" Type="Self.DocenteCurso" Multiplicity="1" />
+          <End Role="Notas" Type="Self.Notas" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="DocenteCurso">
+              <PropertyRef Name="IdDocenteCurso" />
+            </Principal>
+            <Dependent Role="Notas">
+              <PropertyRef Name="IdDocenteCurso" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_Notas_Matricula">
+          <End Role="Matricula" Type="Self.Matricula" Multiplicity="1" />
+          <End Role="Notas" Type="Self.Notas" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Matricula">
+              <PropertyRef Name="IdMatricula" />
+            </Principal>
+            <Dependent Role="Notas">
+              <PropertyRef Name="IdMatricula" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_NotasCriterio_CriteriosEvaluacion">
+          <End Role="CriteriosEvaluacion" Type="Self.CriteriosEvaluacion" Multiplicity="1" />
+          <End Role="NotasCriterio" Type="Self.NotasCriterio" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="CriteriosEvaluacion">
+              <PropertyRef Name="IdCriterio" />
+            </Principal>
+            <Dependent Role="NotasCriterio">
+              <PropertyRef Name="IdCriterio" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_Usuario_Persona">
+          <End Role="Persona" Type="Self.Persona" Multiplicity="0..1" />
+          <End Role="Usuario" Type="Self.Usuario" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Persona">
+              <PropertyRef Name="IdPersona" />
+            </Principal>
+            <Dependent Role="Usuario">
+              <PropertyRef Name="IdPersona" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Function Name="usp_CreateIdReto" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
+          <Parameter Name="Nivel" Type="varchar" Mode="In" />
+        </Function>
+        <Function Name="usp_CuboselectByNivel" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
+          <Parameter Name="IdCubo" Type="int" Mode="In" />
+          <Parameter Name="IdNivel" Type="int" Mode="In" />
+        </Function>
+        <Function Name="usp_DocenteCursoSelect" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
+          <Parameter Name="IdPersona" Type="int" Mode="In" />
+        </Function>
+        <Function Name="usp_NotasCriterioEliminar" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
+          <Parameter Name="Grado" Type="int" Mode="In" />
+          <Parameter Name="Seccion" Type="char" Mode="In" />
+          <Parameter Name="IdCurso" Type="int" Mode="In" />
+        </Function>
+        <Function Name="usp_RegistroNotasSelect" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
+          <Parameter Name="Grado" Type="int" Mode="In" />
+          <Parameter Name="Seccion" Type="char" Mode="In" />
+          <Parameter Name="IdCurso" Type="int" Mode="In" />
+        </Function>
+        <Function Name="usp_UsuarioLogin" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
+          <Parameter Name="IdUsuario" Type="varchar" Mode="In" />
+          <Parameter Name="Clave" Type="varchar" Mode="In" />
+        </Function>
+        <EntityContainer Name="dbretoModelStoreContainer">
+          <EntitySet Name="Alumno" EntityType="Self.Alumno" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="Alumno_Juego" EntityType="Self.Alumno_Juego" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="CriteriosEvaluacion" EntityType="Self.CriteriosEvaluacion" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="Curso" EntityType="Self.Curso" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="Docente" EntityType="Self.Docente" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="DocenteCurso" EntityType="Self.DocenteCurso" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="Juego" EntityType="Self.Juego" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="Matricula" EntityType="Self.Matricula" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="NivelEscolar" EntityType="Self.NivelEscolar" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="Notas" EntityType="Self.Notas" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="NotasCriterio" EntityType="Self.NotasCriterio" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="Persona" EntityType="Self.Persona" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="Usuario" EntityType="Self.Usuario" Schema="dbo" store:Type="Tables" />
+          <AssociationSet Name="FK_Alumno_Juego_Alumno" Association="Self.FK_Alumno_Juego_Alumno">
+            <End Role="Alumno" EntitySet="Alumno" />
+            <End Role="Alumno_Juego" EntitySet="Alumno_Juego" />
+          </AssociationSet>
+          <AssociationSet Name="FK_Alumno_Juego_Juego" Association="Self.FK_Alumno_Juego_Juego">
+            <End Role="Juego" EntitySet="Juego" />
+            <End Role="Alumno_Juego" EntitySet="Alumno_Juego" />
+          </AssociationSet>
+          <AssociationSet Name="FK_Alumno_Persona" Association="Self.FK_Alumno_Persona">
+            <End Role="Persona" EntitySet="Persona" />
+            <End Role="Alumno" EntitySet="Alumno" />
+          </AssociationSet>
+          <AssociationSet Name="FK_CriteriosEvaluacion_Curso" Association="Self.FK_CriteriosEvaluacion_Curso">
+            <End Role="Curso" EntitySet="Curso" />
+            <End Role="CriteriosEvaluacion" EntitySet="CriteriosEvaluacion" />
+          </AssociationSet>
+          <AssociationSet Name="FK_Docente_Persona" Association="Self.FK_Docente_Persona">
+            <End Role="Persona" EntitySet="Persona" />
+            <End Role="Docente" EntitySet="Docente" />
+          </AssociationSet>
+          <AssociationSet Name="FK_DocenteCurso_Curso" Association="Self.FK_DocenteCurso_Curso">
+            <End Role="Curso" EntitySet="Curso" />
+            <End Role="DocenteCurso" EntitySet="DocenteCurso" />
+          </AssociationSet>
+          <AssociationSet Name="FK_DocenteCurso_Docente" Association="Self.FK_DocenteCurso_Docente">
+            <End Role="Docente" EntitySet="Docente" />
+            <End Role="DocenteCurso" EntitySet="DocenteCurso" />
+          </AssociationSet>
+          <AssociationSet Name="FK_Matricula_Alumno" Association="Self.FK_Matricula_Alumno">
+            <End Role="Alumno" EntitySet="Alumno" />
+            <End Role="Matricula" EntitySet="Matricula" />
+          </AssociationSet>
+          <AssociationSet Name="FK_Matricula_NivelEscolar" Association="Self.FK_Matricula_NivelEscolar">
+            <End Role="NivelEscolar" EntitySet="NivelEscolar" />
+            <End Role="Matricula" EntitySet="Matricula" />
+          </AssociationSet>
+          <AssociationSet Name="FK_Notas_DocenteCurso" Association="Self.FK_Notas_DocenteCurso">
+            <End Role="DocenteCurso" EntitySet="DocenteCurso" />
+            <End Role="Notas" EntitySet="Notas" />
+          </AssociationSet>
+          <AssociationSet Name="FK_Notas_Matricula" Association="Self.FK_Notas_Matricula">
+            <End Role="Matricula" EntitySet="Matricula" />
+            <End Role="Notas" EntitySet="Notas" />
+          </AssociationSet>
+          <AssociationSet Name="FK_NotasCriterio_CriteriosEvaluacion" Association="Self.FK_NotasCriterio_CriteriosEvaluacion">
+            <End Role="CriteriosEvaluacion" EntitySet="CriteriosEvaluacion" />
+            <End Role="NotasCriterio" EntitySet="NotasCriterio" />
+          </AssociationSet>
+          <AssociationSet Name="FK_Usuario_Persona" Association="Self.FK_Usuario_Persona">
+            <End Role="Persona" EntitySet="Persona" />
+            <End Role="Usuario" EntitySet="Usuario" />
+          </AssociationSet>
+        </EntityContainer>
+      </Schema></edmx:StorageModels>
+    <!-- CSDL content -->
+    <edmx:ConceptualModels>
+      <Schema Namespace="dbretoModel" Alias="Self" annotation:UseStrongSpatialTypes="false" xmlns:annotation="http://schemas.microsoft.com/ado/2009/02/edm/annotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm">
+        <EntityContainer Name="dbretoEntities" annotation:LazyLoadingEnabled="true">
+          <FunctionImport Name="usp_RegistroNotasSelect" ReturnType="Collection(dbretoModel.usp_RegistroNotasSelect_Result)">
+            <Parameter Name="Grado" Mode="In" Type="Int32" />
+            <Parameter Name="Seccion" Mode="In" Type="String" />
+            <Parameter Name="IdCurso" Mode="In" Type="Int32" />
+          </FunctionImport>
+          <FunctionImport Name="usp_NotasCriterioEliminar">
+            <Parameter Name="Grado" Mode="In" Type="Int32" />
+            <Parameter Name="Seccion" Mode="In" Type="String" />
+            <Parameter Name="IdCurso" Mode="In" Type="Int32" />
+          </FunctionImport>
+          <EntitySet Name="Alumno" EntityType="dbretoModel.Alumno" />
+          <EntitySet Name="Alumno_Juego" EntityType="dbretoModel.Alumno_Juego" />
+          <EntitySet Name="CriteriosEvaluacion" EntityType="dbretoModel.CriteriosEvaluacion" />
+          <EntitySet Name="Curso" EntityType="dbretoModel.Curso" />
+          <EntitySet Name="Docente" EntityType="dbretoModel.Docente" />
+          <EntitySet Name="DocenteCurso" EntityType="dbretoModel.DocenteCurso" />
+          <EntitySet Name="Juego" EntityType="dbretoModel.Juego" />
+          <EntitySet Name="Matricula" EntityType="dbretoModel.Matricula" />
+          <EntitySet Name="NivelEscolar" EntityType="dbretoModel.NivelEscolar" />
+          <EntitySet Name="Notas" EntityType="dbretoModel.Notas" />
+          <EntitySet Name="NotasCriterio" EntityType="dbretoModel.NotasCriterio" />
+          <EntitySet Name="Persona" EntityType="dbretoModel.Persona" />
+          <EntitySet Name="Usuario" EntityType="dbretoModel.Usuario" />
+          <AssociationSet Name="FK_Alumno_Juego_Alumno" Association="dbretoModel.FK_Alumno_Juego_Alumno">
+            <End Role="Alumno" EntitySet="Alumno" />
+            <End Role="Alumno_Juego" EntitySet="Alumno_Juego" />
+          </AssociationSet>
+          <AssociationSet Name="FK_Alumno_Persona" Association="dbretoModel.FK_Alumno_Persona">
+            <End Role="Persona" EntitySet="Persona" />
+            <End Role="Alumno" EntitySet="Alumno" />
+          </AssociationSet>
+          <AssociationSet Name="FK_Matricula_Alumno" Association="dbretoModel.FK_Matricula_Alumno">
+            <End Role="Alumno" EntitySet="Alumno" />
+            <End Role="Matricula" EntitySet="Matricula" />
+          </AssociationSet>
+          <AssociationSet Name="FK_Alumno_Juego_Juego" Association="dbretoModel.FK_Alumno_Juego_Juego">
+            <End Role="Juego" EntitySet="Juego" />
+            <End Role="Alumno_Juego" EntitySet="Alumno_Juego" />
+          </AssociationSet>
+          <AssociationSet Name="FK_CriteriosEvaluacion_Curso" Association="dbretoModel.FK_CriteriosEvaluacion_Curso">
+            <End Role="Curso" EntitySet="Curso" />
+            <End Role="CriteriosEvaluacion" EntitySet="CriteriosEvaluacion" />
+          </AssociationSet>
+          <AssociationSet Name="FK_NotasCriterio_CriteriosEvaluacion" Association="dbretoModel.FK_NotasCriterio_CriteriosEvaluacion">
+            <End Role="CriteriosEvaluacion" EntitySet="CriteriosEvaluacion" />
+            <End Role="NotasCriterio" EntitySet="NotasCriterio" />
+          </AssociationSet>
+          <AssociationSet Name="FK_DocenteCurso_Curso" Association="dbretoModel.FK_DocenteCurso_Curso">
+            <End Role="Curso" EntitySet="Curso" />
+            <End Role="DocenteCurso" EntitySet="DocenteCurso" />
+          </AssociationSet>
+          <AssociationSet Name="FK_Docente_Persona" Association="dbretoModel.FK_Docente_Persona">
+            <End Role="Persona" EntitySet="Persona" />
+            <End Role="Docente" EntitySet="Docente" />
+          </AssociationSet>
+          <AssociationSet Name="FK_DocenteCurso_Docente" Association="dbretoModel.FK_DocenteCurso_Docente">
+            <End Role="Docente" EntitySet="Docente" />
+            <End Role="DocenteCurso" EntitySet="DocenteCurso" />
+          </AssociationSet>
+          <AssociationSet Name="FK_Notas_DocenteCurso" Association="dbretoModel.FK_Notas_DocenteCurso">
+            <End Role="DocenteCurso" EntitySet="DocenteCurso" />
+            <End Role="Notas" EntitySet="Notas" />
+          </AssociationSet>
+          <AssociationSet Name="FK_Matricula_NivelEscolar" Association="dbretoModel.FK_Matricula_NivelEscolar">
+            <End Role="NivelEscolar" EntitySet="NivelEscolar" />
+            <End Role="Matricula" EntitySet="Matricula" />
+          </AssociationSet>
+          <AssociationSet Name="FK_Notas_Matricula" Association="dbretoModel.FK_Notas_Matricula">
+            <End Role="Matricula" EntitySet="Matricula" />
+            <End Role="Notas" EntitySet="Notas" />
+          </AssociationSet>
+          <AssociationSet Name="FK_Usuario_Persona" Association="dbretoModel.FK_Usuario_Persona">
+            <End Role="Persona" EntitySet="Persona" />
+            <End Role="Usuario" EntitySet="Usuario" />
+          </AssociationSet>
+          <FunctionImport Name="usp_UsuarioLogin" ReturnType="Collection(dbretoModel.usp_UsuarioLogin_Result)">
+            <Parameter Name="IdUsuario" Mode="In" Type="String" />
+            <Parameter Name="Clave" Mode="In" Type="String" />
+          </FunctionImport>
+          <FunctionImport Name="usp_DocenteCursoSelect" ReturnType="Collection(dbretoModel.usp_DocenteCursoSelect_Result)">
+          <Parameter Name="IdPersona" Mode="In" Type="Int32" />
+          </FunctionImport>
+          <FunctionImport Name="usp_CreateIdReto" ReturnType="Collection(Int32)">
+            <Parameter Name="Nivel" Mode="In" Type="String" />
+          </FunctionImport>
+          <FunctionImport Name="usp_CuboselectByNivel">
+            <Parameter Name="IdCubo" Mode="In" Type="Int32" />
+            <Parameter Name="IdNivel" Mode="In" Type="Int32" />
+          </FunctionImport>
+          </EntityContainer>
+        <ComplexType Name="usp_RegistroNotasSelect_Result">
+          <Property Type="Int32" Name="IdMatricula" Nullable="false" />
+          <Property Type="Int32" Name="IdAlumno" Nullable="true" />
+          <Property Type="String" Name="Alumno" Nullable="true" MaxLength="303" />
+          <Property Type="Int32" Name="IdCurso" Nullable="true" />
+          <Property Type="String" Name="Curso" Nullable="true" MaxLength="100" />
+          <Property Type="Int32" Name="IdCriterio" Nullable="true" />
+          <Property Type="String" Name="Criterio" Nullable="true" MaxLength="100" />
+          <Property Type="Int32" Name="NroEvaluacion" Nullable="true" />
+          <Property Type="Double" Name="Nota" Nullable="true" />
+          <Property Type="Int32" Name="IdDocenteCurso" Nullable="true" />
+        </ComplexType>
+        <EntityType Name="Alumno">
+          <Key>
+            <PropertyRef Name="IdAlumno" />
+          </Key>
+          <Property Name="IdAlumno" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="IdPersona" Type="Int32" />
+          <NavigationProperty Name="Alumno_Juego" Relationship="dbretoModel.FK_Alumno_Juego_Alumno" FromRole="Alumno" ToRole="Alumno_Juego" />
+          <NavigationProperty Name="Persona" Relationship="dbretoModel.FK_Alumno_Persona" FromRole="Alumno" ToRole="Persona" />
+          <NavigationProperty Name="Matricula" Relationship="dbretoModel.FK_Matricula_Alumno" FromRole="Alumno" ToRole="Matricula" />
+        </EntityType>
+        <EntityType Name="Alumno_Juego">
+          <Key>
+            <PropertyRef Name="IdAlumno" />
+            <PropertyRef Name="IdJuego" />
+          </Key>
+          <Property Name="IdAlumno" Type="Int32" Nullable="false" />
+          <Property Name="IdJuego" Type="Int32" Nullable="false" />
+          <Property Name="Calificacion" Type="Double" />
+          <Property Name="Respuesta" Type="String" MaxLength="Max" FixedLength="false" Unicode="false" />
+          <Property Name="TiempoSegundos" Type="Double" />
+          <NavigationProperty Name="Alumno" Relationship="dbretoModel.FK_Alumno_Juego_Alumno" FromRole="Alumno_Juego" ToRole="Alumno" />
+          <NavigationProperty Name="Juego" Relationship="dbretoModel.FK_Alumno_Juego_Juego" FromRole="Alumno_Juego" ToRole="Juego" />
+        </EntityType>
+        <EntityType Name="CriteriosEvaluacion">
+          <Key>
+            <PropertyRef Name="IdCriterio" />
+          </Key>
+          <Property Name="IdCriterio" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="IdCurso" Type="Int32" />
+          <Property Name="Nombre" Type="String" MaxLength="100" FixedLength="false" Unicode="false" />
+          <NavigationProperty Name="Curso" Relationship="dbretoModel.FK_CriteriosEvaluacion_Curso" FromRole="CriteriosEvaluacion" ToRole="Curso" />
+          <NavigationProperty Name="NotasCriterio" Relationship="dbretoModel.FK_NotasCriterio_CriteriosEvaluacion" FromRole="CriteriosEvaluacion" ToRole="NotasCriterio" />
+        </EntityType>
+        <EntityType Name="Curso">
+          <Key>
+            <PropertyRef Name="IdCurso" />
+          </Key>
+          <Property Name="IdCurso" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="Nombre" Type="String" MaxLength="100" FixedLength="false" Unicode="false" />
+          <NavigationProperty Name="CriteriosEvaluacion" Relationship="dbretoModel.FK_CriteriosEvaluacion_Curso" FromRole="Curso" ToRole="CriteriosEvaluacion" />
+          <NavigationProperty Name="DocenteCurso" Relationship="dbretoModel.FK_DocenteCurso_Curso" FromRole="Curso" ToRole="DocenteCurso" />
+        </EntityType>
+        <EntityType Name="Docente">
+          <Key>
+            <PropertyRef Name="IdDocente" />
+          </Key>
+          <Property Name="IdDocente" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="IdPersona" Type="Int32" />
+          <NavigationProperty Name="Persona" Relationship="dbretoModel.FK_Docente_Persona" FromRole="Docente" ToRole="Persona" />
+          <NavigationProperty Name="DocenteCurso" Relationship="dbretoModel.FK_DocenteCurso_Docente" FromRole="Docente" ToRole="DocenteCurso" />
+        </EntityType>
+        <EntityType Name="DocenteCurso">
+          <Key>
+            <PropertyRef Name="IdDocenteCurso" />
+          </Key>
+          <Property Name="IdDocenteCurso" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="AnyoAcademico" Type="Int32" />
+          <Property Name="IdDocente" Type="Int32" Nullable="false" />
+          <Property Name="IdCurso" Type="Int32" Nullable="false" />
+          <Property Name="IdNivelEscolar" Type="Int32" />
+          <Property Name="Grado" Type="Int32" />
+          <Property Name="Seccion" Type="String" MaxLength="1" FixedLength="true" Unicode="false" />
+          <Property Name="NroEvaluaciones" Type="Int32" />
+          <NavigationProperty Name="Curso" Relationship="dbretoModel.FK_DocenteCurso_Curso" FromRole="DocenteCurso" ToRole="Curso" />
+          <NavigationProperty Name="Docente" Relationship="dbretoModel.FK_DocenteCurso_Docente" FromRole="DocenteCurso" ToRole="Docente" />
+          <NavigationProperty Name="Notas" Relationship="dbretoModel.FK_Notas_DocenteCurso" FromRole="DocenteCurso" ToRole="Notas" />
+        </EntityType>
+        <EntityType Name="Juego">
+          <Key>
+            <PropertyRef Name="IdJuego" />
+          </Key>
+          <Property Name="IdJuego" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="Reto" Type="Int32" />
+          <Property Name="Nivel" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Name="Solucion" Type="String" MaxLength="Max" FixedLength="false" Unicode="false" />
+          <Property Name="Enunciado" Type="String" MaxLength="Max" FixedLength="false" Unicode="false" />
+          <NavigationProperty Name="Alumno_Juego" Relationship="dbretoModel.FK_Alumno_Juego_Juego" FromRole="Juego" ToRole="Alumno_Juego" />
+        </EntityType>
+        <EntityType Name="Matricula">
+          <Key>
+            <PropertyRef Name="IdMatricula" />
+          </Key>
+          <Property Name="IdMatricula" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="IdAlumno" Type="Int32" />
+          <Property Name="Grado" Type="Int32" />
+          <Property Name="Seccion" Type="String" MaxLength="1" FixedLength="true" Unicode="false" />
+          <Property Name="IdNivelEscolar" Type="Int32" />
+          <NavigationProperty Name="Alumno" Relationship="dbretoModel.FK_Matricula_Alumno" FromRole="Matricula" ToRole="Alumno" />
+          <NavigationProperty Name="NivelEscolar" Relationship="dbretoModel.FK_Matricula_NivelEscolar" FromRole="Matricula" ToRole="NivelEscolar" />
+          <NavigationProperty Name="Notas" Relationship="dbretoModel.FK_Notas_Matricula" FromRole="Matricula" ToRole="Notas" />
+        </EntityType>
+        <EntityType Name="NivelEscolar">
+          <Key>
+            <PropertyRef Name="IdNivelEscolar" />
+          </Key>
+          <Property Name="IdNivelEscolar" Type="Int32" Nullable="false" />
+          <Property Name="Detalle" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+          <NavigationProperty Name="Matricula" Relationship="dbretoModel.FK_Matricula_NivelEscolar" FromRole="NivelEscolar" ToRole="Matricula" />
+        </EntityType>
+        <EntityType Name="Notas">
+          <Key>
+            <PropertyRef Name="IdMatricula" />
+            <PropertyRef Name="IdDocenteCurso" />
+          </Key>
+          <Property Name="IdMatricula" Type="Int32" Nullable="false" />
+          <Property Name="IdDocenteCurso" Type="Int32" Nullable="false" />
+          <Property Name="Promedio" Type="Double" />
+          <NavigationProperty Name="DocenteCurso" Relationship="dbretoModel.FK_Notas_DocenteCurso" FromRole="Notas" ToRole="DocenteCurso" />
+          <NavigationProperty Name="Matricula" Relationship="dbretoModel.FK_Notas_Matricula" FromRole="Notas" ToRole="Matricula" />
+        </EntityType>
+        <EntityType Name="NotasCriterio">
+          <Key>
+            <PropertyRef Name="IdMatricula" />
+            <PropertyRef Name="IdDocenteCurso" />
+            <PropertyRef Name="IdCriterio" />
+            <PropertyRef Name="NroEvaluacion" />
+          </Key>
+          <Property Name="IdMatricula" Type="Int32" Nullable="false" />
+          <Property Name="IdDocenteCurso" Type="Int32" Nullable="false" />
+          <Property Name="IdCriterio" Type="Int32" Nullable="false" />
+          <Property Name="NroEvaluacion" Type="Int32" Nullable="false" />
+          <Property Name="Nota" Type="Double" />
+          <NavigationProperty Name="CriteriosEvaluacion" Relationship="dbretoModel.FK_NotasCriterio_CriteriosEvaluacion" FromRole="NotasCriterio" ToRole="CriteriosEvaluacion" />
+        </EntityType>
+        <EntityType Name="Persona">
+          <Key>
+            <PropertyRef Name="IdPersona" />
+          </Key>
+          <Property Name="IdPersona" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="Nombres" Type="String" MaxLength="100" FixedLength="false" Unicode="false" />
+          <Property Name="ApePaterno" Type="String" MaxLength="100" FixedLength="false" Unicode="false" />
+          <Property Name="ApeMaterno" Type="String" MaxLength="100" FixedLength="false" Unicode="false" />
+          <NavigationProperty Name="Alumno" Relationship="dbretoModel.FK_Alumno_Persona" FromRole="Persona" ToRole="Alumno" />
+          <NavigationProperty Name="Docente" Relationship="dbretoModel.FK_Docente_Persona" FromRole="Persona" ToRole="Docente" />
+          <NavigationProperty Name="Usuario" Relationship="dbretoModel.FK_Usuario_Persona" FromRole="Persona" ToRole="Usuario" />
+        </EntityType>
+        <EntityType Name="Usuario">
+          <Key>
+            <PropertyRef Name="IdUsuario" />
+          </Key>
+          <Property Name="IdUsuario" Type="String" Nullable="false" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Name="IdPersona" Type="Int32" />
+          <Property Name="Clave" Type="String" MaxLength="200" FixedLength="false" Unicode="false" />
+          <Property Name="Rol" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Name="FlagActivo" Type="Boolean" />
+          <NavigationProperty Name="Persona" Relationship="dbretoModel.FK_Usuario_Persona" FromRole="Usuario" ToRole="Persona" />
+        </EntityType>
+        <Association Name="FK_Alumno_Juego_Alumno">
+          <End Type="dbretoModel.Alumno" Role="Alumno" Multiplicity="1" />
+          <End Type="dbretoModel.Alumno_Juego" Role="Alumno_Juego" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Alumno">
+              <PropertyRef Name="IdAlumno" />
+            </Principal>
+            <Dependent Role="Alumno_Juego">
+              <PropertyRef Name="IdAlumno" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_Alumno_Persona">
+          <End Type="dbretoModel.Persona" Role="Persona" Multiplicity="0..1" />
+          <End Type="dbretoModel.Alumno" Role="Alumno" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Persona">
+              <PropertyRef Name="IdPersona" />
+            </Principal>
+            <Dependent Role="Alumno">
+              <PropertyRef Name="IdPersona" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_Matricula_Alumno">
+          <End Type="dbretoModel.Alumno" Role="Alumno" Multiplicity="0..1" />
+          <End Type="dbretoModel.Matricula" Role="Matricula" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Alumno">
+              <PropertyRef Name="IdAlumno" />
+            </Principal>
+            <Dependent Role="Matricula">
+              <PropertyRef Name="IdAlumno" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_Alumno_Juego_Juego">
+          <End Type="dbretoModel.Juego" Role="Juego" Multiplicity="1" />
+          <End Type="dbretoModel.Alumno_Juego" Role="Alumno_Juego" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Juego">
+              <PropertyRef Name="IdJuego" />
+            </Principal>
+            <Dependent Role="Alumno_Juego">
+              <PropertyRef Name="IdJuego" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_CriteriosEvaluacion_Curso">
+          <End Type="dbretoModel.Curso" Role="Curso" Multiplicity="0..1" />
+          <End Type="dbretoModel.CriteriosEvaluacion" Role="CriteriosEvaluacion" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Curso">
+              <PropertyRef Name="IdCurso" />
+            </Principal>
+            <Dependent Role="CriteriosEvaluacion">
+              <PropertyRef Name="IdCurso" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_NotasCriterio_CriteriosEvaluacion">
+          <End Type="dbretoModel.CriteriosEvaluacion" Role="CriteriosEvaluacion" Multiplicity="1" />
+          <End Type="dbretoModel.NotasCriterio" Role="NotasCriterio" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="CriteriosEvaluacion">
+              <PropertyRef Name="IdCriterio" />
+            </Principal>
+            <Dependent Role="NotasCriterio">
+              <PropertyRef Name="IdCriterio" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_DocenteCurso_Curso">
+          <End Type="dbretoModel.Curso" Role="Curso" Multiplicity="1" />
+          <End Type="dbretoModel.DocenteCurso" Role="DocenteCurso" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Curso">
+              <PropertyRef Name="IdCurso" />
+            </Principal>
+            <Dependent Role="DocenteCurso">
+              <PropertyRef Name="IdCurso" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_Docente_Persona">
+          <End Type="dbretoModel.Persona" Role="Persona" Multiplicity="0..1" />
+          <End Type="dbretoModel.Docente" Role="Docente" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Persona">
+              <PropertyRef Name="IdPersona" />
+            </Principal>
+            <Dependent Role="Docente">
+              <PropertyRef Name="IdPersona" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_DocenteCurso_Docente">
+          <End Type="dbretoModel.Docente" Role="Docente" Multiplicity="1" />
+          <End Type="dbretoModel.DocenteCurso" Role="DocenteCurso" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Docente">
+              <PropertyRef Name="IdDocente" />
+            </Principal>
+            <Dependent Role="DocenteCurso">
+              <PropertyRef Name="IdDocente" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_Notas_DocenteCurso">
+          <End Type="dbretoModel.DocenteCurso" Role="DocenteCurso" Multiplicity="1" />
+          <End Type="dbretoModel.Notas" Role="Notas" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="DocenteCurso">
+              <PropertyRef Name="IdDocenteCurso" />
+            </Principal>
+            <Dependent Role="Notas">
+              <PropertyRef Name="IdDocenteCurso" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_Matricula_NivelEscolar">
+          <End Type="dbretoModel.NivelEscolar" Role="NivelEscolar" Multiplicity="0..1" />
+          <End Type="dbretoModel.Matricula" Role="Matricula" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="NivelEscolar">
+              <PropertyRef Name="IdNivelEscolar" />
+            </Principal>
+            <Dependent Role="Matricula">
+              <PropertyRef Name="IdNivelEscolar" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_Notas_Matricula">
+          <End Type="dbretoModel.Matricula" Role="Matricula" Multiplicity="1" />
+          <End Type="dbretoModel.Notas" Role="Notas" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Matricula">
+              <PropertyRef Name="IdMatricula" />
+            </Principal>
+            <Dependent Role="Notas">
+              <PropertyRef Name="IdMatricula" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_Usuario_Persona">
+          <End Type="dbretoModel.Persona" Role="Persona" Multiplicity="0..1" />
+          <End Type="dbretoModel.Usuario" Role="Usuario" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Persona">
+              <PropertyRef Name="IdPersona" />
+            </Principal>
+            <Dependent Role="Usuario">
+              <PropertyRef Name="IdPersona" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <ComplexType Name="usp_UsuarioLogin_Result">
+          <Property Type="String" Name="IdUsuario" Nullable="false" MaxLength="50" />
+          <Property Type="Int32" Name="IdPersona" Nullable="false" />
+          <Property Type="String" Name="Nombre" Nullable="true" MaxLength="302" />
+          <Property Type="String" Name="Rol" Nullable="true" MaxLength="50" />
+        </ComplexType>
+        <ComplexType Name="usp_DocenteCursoSelect_Result">
+          <Property Type="Int32" Name="IdDocente" Nullable="false" />
+          <Property Type="String" Name="Docente" Nullable="true" MaxLength="302" />
+          <Property Type="Int32" Name="IdNivelEscolar" Nullable="true" />
+          <Property Type="String" Name="Nivel" Nullable="true" MaxLength="50" />
+          <Property Type="Int32" Name="IdCurso" Nullable="false" />
+          <Property Type="String" Name="Curso" Nullable="true" MaxLength="100" />
+          <Property Type="Int32" Name="Grado" Nullable="true" />
+          <Property Type="String" Name="Seccion" Nullable="true" MaxLength="1" />
+          <Property Type="Int32" Name="NroEvaluaciones" Nullable="true" />
+        </ComplexType>
+        </Schema>
+    </edmx:ConceptualModels>
+    <!-- C-S mapping content -->
+    <edmx:Mappings>
+      <Mapping Space="C-S" xmlns="http://schemas.microsoft.com/ado/2009/11/mapping/cs">
+        <EntityContainerMapping StorageEntityContainer="dbretoModelStoreContainer" CdmEntityContainer="dbretoEntities">
+          <FunctionImportMapping FunctionImportName="usp_RegistroNotasSelect" FunctionName="dbretoModel.Store.usp_RegistroNotasSelect">
+            <ResultMapping>
+              <ComplexTypeMapping TypeName="dbretoModel.usp_RegistroNotasSelect_Result">
+                <ScalarProperty Name="IdMatricula" ColumnName="IdMatricula" />
+                <ScalarProperty Name="IdAlumno" ColumnName="IdAlumno" />
+                <ScalarProperty Name="Alumno" ColumnName="Alumno" />
+                <ScalarProperty Name="IdCurso" ColumnName="IdCurso" />
+                <ScalarProperty Name="Curso" ColumnName="Curso" />
+                <ScalarProperty Name="IdCriterio" ColumnName="IdCriterio" />
+                <ScalarProperty Name="Criterio" ColumnName="Criterio" />
+                <ScalarProperty Name="NroEvaluacion" ColumnName="NroEvaluacion" />
+                <ScalarProperty Name="Nota" ColumnName="Nota" />
+                <ScalarProperty Name="IdDocenteCurso" ColumnName="IdDocenteCurso" />
+              </ComplexTypeMapping>
+            </ResultMapping>
+          </FunctionImportMapping>
+          <FunctionImportMapping FunctionImportName="usp_NotasCriterioEliminar" FunctionName="dbretoModel.Store.usp_NotasCriterioEliminar" />
+          <EntitySetMapping Name="Alumno">
+            <EntityTypeMapping TypeName="dbretoModel.Alumno">
+              <MappingFragment StoreEntitySet="Alumno">
+                <ScalarProperty Name="IdPersona" ColumnName="IdPersona" />
+                <ScalarProperty Name="IdAlumno" ColumnName="IdAlumno" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="Alumno_Juego">
+            <EntityTypeMapping TypeName="dbretoModel.Alumno_Juego">
+              <MappingFragment StoreEntitySet="Alumno_Juego">
+                <ScalarProperty Name="TiempoSegundos" ColumnName="TiempoSegundos" />
+                <ScalarProperty Name="Respuesta" ColumnName="Respuesta" />
+                <ScalarProperty Name="Calificacion" ColumnName="Calificacion" />
+                <ScalarProperty Name="IdJuego" ColumnName="IdJuego" />
+                <ScalarProperty Name="IdAlumno" ColumnName="IdAlumno" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="CriteriosEvaluacion">
+            <EntityTypeMapping TypeName="dbretoModel.CriteriosEvaluacion">
+              <MappingFragment StoreEntitySet="CriteriosEvaluacion">
+                <ScalarProperty Name="Nombre" ColumnName="Nombre" />
+                <ScalarProperty Name="IdCurso" ColumnName="IdCurso" />
+                <ScalarProperty Name="IdCriterio" ColumnName="IdCriterio" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="Curso">
+            <EntityTypeMapping TypeName="dbretoModel.Curso">
+              <MappingFragment StoreEntitySet="Curso">
+                <ScalarProperty Name="Nombre" ColumnName="Nombre" />
+                <ScalarProperty Name="IdCurso" ColumnName="IdCurso" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="Docente">
+            <EntityTypeMapping TypeName="dbretoModel.Docente">
+              <MappingFragment StoreEntitySet="Docente">
+                <ScalarProperty Name="IdPersona" ColumnName="IdPersona" />
+                <ScalarProperty Name="IdDocente" ColumnName="IdDocente" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="DocenteCurso">
+            <EntityTypeMapping TypeName="dbretoModel.DocenteCurso">
+              <MappingFragment StoreEntitySet="DocenteCurso">
+                <ScalarProperty Name="NroEvaluaciones" ColumnName="NroEvaluaciones" />
+                <ScalarProperty Name="Seccion" ColumnName="Seccion" />
+                <ScalarProperty Name="Grado" ColumnName="Grado" />
+                <ScalarProperty Name="IdNivelEscolar" ColumnName="IdNivelEscolar" />
+                <ScalarProperty Name="IdCurso" ColumnName="IdCurso" />
+                <ScalarProperty Name="IdDocente" ColumnName="IdDocente" />
+                <ScalarProperty Name="AnyoAcademico" ColumnName="AnyoAcademico" />
+                <ScalarProperty Name="IdDocenteCurso" ColumnName="IdDocenteCurso" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="Juego">
+            <EntityTypeMapping TypeName="dbretoModel.Juego">
+              <MappingFragment StoreEntitySet="Juego">
+                <ScalarProperty Name="Enunciado" ColumnName="Enunciado" />
+                <ScalarProperty Name="Solucion" ColumnName="Solucion" />
+                <ScalarProperty Name="Nivel" ColumnName="Nivel" />
+                <ScalarProperty Name="Reto" ColumnName="Reto" />
+                <ScalarProperty Name="IdJuego" ColumnName="IdJuego" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="Matricula">
+            <EntityTypeMapping TypeName="dbretoModel.Matricula">
+              <MappingFragment StoreEntitySet="Matricula">
+                <ScalarProperty Name="IdNivelEscolar" ColumnName="IdNivelEscolar" />
+                <ScalarProperty Name="Seccion" ColumnName="Seccion" />
+                <ScalarProperty Name="Grado" ColumnName="Grado" />
+                <ScalarProperty Name="IdAlumno" ColumnName="IdAlumno" />
+                <ScalarProperty Name="IdMatricula" ColumnName="IdMatricula" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="NivelEscolar">
+            <EntityTypeMapping TypeName="dbretoModel.NivelEscolar">
+              <MappingFragment StoreEntitySet="NivelEscolar">
+                <ScalarProperty Name="Detalle" ColumnName="Detalle" />
+                <ScalarProperty Name="IdNivelEscolar" ColumnName="IdNivelEscolar" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="Notas">
+            <EntityTypeMapping TypeName="dbretoModel.Notas">
+              <MappingFragment StoreEntitySet="Notas">
+                <ScalarProperty Name="Promedio" ColumnName="Promedio" />
+                <ScalarProperty Name="IdDocenteCurso" ColumnName="IdDocenteCurso" />
+                <ScalarProperty Name="IdMatricula" ColumnName="IdMatricula" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="NotasCriterio">
+            <EntityTypeMapping TypeName="dbretoModel.NotasCriterio">
+              <MappingFragment StoreEntitySet="NotasCriterio">
+                <ScalarProperty Name="Nota" ColumnName="Nota" />
+                <ScalarProperty Name="NroEvaluacion" ColumnName="NroEvaluacion" />
+                <ScalarProperty Name="IdCriterio" ColumnName="IdCriterio" />
+                <ScalarProperty Name="IdDocenteCurso" ColumnName="IdDocenteCurso" />
+                <ScalarProperty Name="IdMatricula" ColumnName="IdMatricula" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="Persona">
+            <EntityTypeMapping TypeName="dbretoModel.Persona">
+              <MappingFragment StoreEntitySet="Persona">
+                <ScalarProperty Name="ApeMaterno" ColumnName="ApeMaterno" />
+                <ScalarProperty Name="ApePaterno" ColumnName="ApePaterno" />
+                <ScalarProperty Name="Nombres" ColumnName="Nombres" />
+                <ScalarProperty Name="IdPersona" ColumnName="IdPersona" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="Usuario">
+            <EntityTypeMapping TypeName="dbretoModel.Usuario">
+              <MappingFragment StoreEntitySet="Usuario">
+                <ScalarProperty Name="FlagActivo" ColumnName="FlagActivo" />
+                <ScalarProperty Name="Rol" ColumnName="Rol" />
+                <ScalarProperty Name="Clave" ColumnName="Clave" />
+                <ScalarProperty Name="IdPersona" ColumnName="IdPersona" />
+                <ScalarProperty Name="IdUsuario" ColumnName="IdUsuario" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <FunctionImportMapping FunctionImportName="usp_UsuarioLogin" FunctionName="dbretoModel.Store.usp_UsuarioLogin">
+            <ResultMapping>
+              <ComplexTypeMapping TypeName="dbretoModel.usp_UsuarioLogin_Result">
+                <ScalarProperty Name="IdUsuario" ColumnName="IdUsuario" />
+                <ScalarProperty Name="IdPersona" ColumnName="IdPersona" />
+                <ScalarProperty Name="Nombre" ColumnName="Nombre" />
+                <ScalarProperty Name="Rol" ColumnName="Rol" />
+              </ComplexTypeMapping>
+            </ResultMapping>
+          </FunctionImportMapping>
+          <FunctionImportMapping FunctionImportName="usp_DocenteCursoSelect" FunctionName="dbretoModel.Store.usp_DocenteCursoSelect">
+            <ResultMapping>
+              <ComplexTypeMapping TypeName="dbretoModel.usp_DocenteCursoSelect_Result">
+                <ScalarProperty Name="IdDocente" ColumnName="IdDocente" />
+                <ScalarProperty Name="Docente" ColumnName="Docente" />
+                <ScalarProperty Name="IdNivelEscolar" ColumnName="IdNivelEscolar" />
+                <ScalarProperty Name="Nivel" ColumnName="Nivel" />
+                <ScalarProperty Name="IdCurso" ColumnName="IdCurso" />
+                <ScalarProperty Name="Curso" ColumnName="Curso" />
+                <ScalarProperty Name="Grado" ColumnName="Grado" />
+                <ScalarProperty Name="Seccion" ColumnName="Seccion" />
+                <ScalarProperty Name="NroEvaluaciones" ColumnName="NroEvaluaciones" />
+              </ComplexTypeMapping>
+            </ResultMapping>
+          </FunctionImportMapping>
+          <FunctionImportMapping FunctionImportName="usp_CreateIdReto" FunctionName="dbretoModel.Store.usp_CreateIdReto" />
+          <FunctionImportMapping FunctionImportName="usp_CuboselectByNivel" FunctionName="dbretoModel.Store.usp_CuboselectByNivel" />
+          </EntityContainerMapping>
+      </Mapping>
+    </edmx:Mappings>
+  </edmx:Runtime>
+  <!-- EF Designer content (DO NOT EDIT MANUALLY BELOW HERE) -->
+  <Designer xmlns="http://schemas.microsoft.com/ado/2009/11/edmx">
+    <Connection>
+      <DesignerInfoPropertySet>
+        <DesignerProperty Name="MetadataArtifactProcessing" Value="EmbedInOutputAssembly" />
+      </DesignerInfoPropertySet>
+    </Connection>
+    <Options>
+      <DesignerInfoPropertySet>
+        <DesignerProperty Name="ValidateOnBuild" Value="true" />
+        <DesignerProperty Name="EnablePluralization" Value="false" />
+        <DesignerProperty Name="IncludeForeignKeysInModel" Value="true" />
+        <DesignerProperty Name="UseLegacyProvider" Value="false" />
+        <DesignerProperty Name="CodeGenerationStrategy" Value="Ninguno" />
+      </DesignerInfoPropertySet>
+    </Options>
+    <!-- Diagram content (shape and connector positions) -->
+    <Diagrams></Diagrams>
+  </Designer>
+</edmx:Edmx>

@@ -1,0 +1,26 @@
+﻿.tabla { border-collapse: collapse; margin: 0 auto; }
+.tabla .q, .tabla .casilla { width: 50px; height: 50px; }
+.tabla .q { margin: 5px; text-align: center; vertical-align: middle; }
+.tabla .q.h { width: 25px; }
+.tabla .q.v { height: 25px; }
+.tabla .casilla { font-size: 20px; font-weight: bold; border: 2px solid #aaa; line-height: 50px; }
+.tabla .q.h, .tabla .q.v { font: normal normal normal 14px/1 FontAwesome; font-size: 2em; }
+.tabla .q.h.menor:before { content: "\f104"; }
+.tabla .q.h.mayor:before { content: "\f105"; }
+.tabla .q.v.menor:before { content: "\f106"; }
+.tabla .q.v.mayor:before { content: "\f107"; }
+.tabla .casilla.error { background-color: #ffcca7; border-color: #dc6109; }
+
+.reto-info { position: absolute; top: 0; left: 0; padding: 5px; background-color: #3E65A0; color: #fff; cursor:pointer; user-select:none; -ms-user-select:none; -webkit-user-select:none; }
+
+.respuestas { text-align:center; margin-bottom:10px; }
+.respuestas .rpta { width: 40px; height: 40px; border: 2px solid #ccc; margin:0 5px; font-size: 1.8em; display:inline-block; }
+.yellow { background-color: #f7f83f; }
+.green { background-color: #82d760; }
+.blue { background-color: #66a7ee; }
+.red { background-color: #ff2b2b; }
+
+.formulario { border: 1px solid #3E65A0; width: 100%; }
+.formulario .options { background-color: #3E65A0; color: #fff; vertical-align: top; width: 30%; }
+
+.cronometro { border-radius: 50%; width: 140px; height: 140px; line-height: 125px; font-size: 2em; margin: 0 auto; background-color: #333; color: #FF0000; border: 8px solid #CC3300; }

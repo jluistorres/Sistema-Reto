@@ -1,0 +1,86 @@
+﻿@{
+    Layout = null;
+}
+
+<!DOCTYPE html>
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <!-- start: Meta -->
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>Sistema Reto - Login</title>
+    <!-- end: Meta -->
+    <!-- start: Mobile Specific -->
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <!-- end: Mobile Specific -->
+    <!-- start: Favicon -->
+    @*<link rel="shortcut icon" href="~/Content/img/favicon.png" />*@
+    <!-- end: Favicon -->
+    <link href="~/Content/fonts/font-awesome-4.6.3/css/font-awesome.min.css" rel="stylesheet" />
+    <link href="~/Content/css/bootstrap.min.css" rel="stylesheet" />
+    <link href="~/Content/css/site.css" rel="stylesheet" />
+    <!-- start: JavaScript-->
+    <script src="~/Scripts/jquery-1.10.2.min.js"></script>
+    <script src="~/Scripts/bootstrap.min.js"></script>
+    <script type="text/javascript">
+        var appMaster = {};
+        appMaster.baseUrl = '@Url.Content("~")';
+        appMaster.currentUrl = '@(Url.Action("Index") + "/")';
+    </script>
+    <script src="~/Scripts/js/app.js"></script>
+    <!-- end: JavaScript-->
+    <link href="http://fonts.googleapis.com/css?family=Open+Sans:300italic,400italic,600italic,700italic,800italic,400,300,600,700,800&subset=latin,cyrillic-ext,latin-ext" rel="stylesheet" type="text/css" />
+</head>
+<body class="background-body">
+    <div class="container-fluid">
+        <div class="login-box">
+            <div class="logo">
+                <img src="~/Content/img/logo.png" />
+            </div>
+            @using (Html.BeginForm("Login", "Account", new { @returnUrl = ViewBag.ReturnUrl }, FormMethod.Post, new { @id = "form", @class = "form-horizontal" }))
+            {
+                <div class="form-group form-group-sm">
+                    <div class="col-xs-12">
+                        <div class="input-group" title="Username">
+                            <span class="input-group-addon"><i class="fa fa-user"></i></span>
+                            <input type="text" id="username" name="username" class="form-control" placeholder="Usuario" title="Se requiere un usuario" required autofocus />
+                        </div>
+                    </div>
+                </div>
+                <div class="form-group form-group-sm">
+                    <div class="col-xs-12">
+                        <div class="input-group" title="Password">
+                            <span class="input-group-addon"><i class="fa fa-lock"></i></span>
+                            <input type="password" id="password" name="password" class="form-control" placeholder="Contraseña" title="Se requiere una contraseña" required />
+                        </div>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <div class="col-xs-12">
+                        <div class="button-login">
+                            <button type="submit" class="btn btn-warning form-control">
+                                <i class="fa fa-angle-right fa-2x pull-left" style="margin-top:-5px"></i> Ingresar
+                            </button>
+                        </div>
+                        <p><a>Olvidé mi contraseña</a></p>
+                    </div>
+                </div>
+                <div>
+                    <div>
+                        <label class="checkbox-inline" for="remember">
+                            <input type="checkbox" id="remember" />Recordar contraseña
+                        </label>
+                    </div>
+                </div>
+            }
+            <div class="copyright">&copy; 2016. Todos los derechos reservados.</div>
+        </div>
+    </div>
+    @if (ViewBag.Mensaje != null)
+    {
+        <script type="text/javascript">
+            appMaster.MessageBox('Acceso denegado', '@Html.Raw(ViewBag.Mensaje)');
+        </script>
+    }
+</body>
+</html>

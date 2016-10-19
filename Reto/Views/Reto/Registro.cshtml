@@ -1,0 +1,398 @@
+﻿@model IEnumerable<Reto.Entidades.Juego>
+
+@{
+    ViewBag.Title = "Registro";
+}
+@section styles
+{
+    <link href="~/Content/css/juego.css" rel="stylesheet" />
+    <style>
+        .pointer { cursor: pointer; }
+        .border { border: 1px solid #ccc; }
+        .casilla { border-radius: 0px; border: 2px solid #ccc; }
+
+        .container-fluid { padding-right: 15px; padding-left: 15px; margin-right: auto; margin-left: auto; }
+        input[type=button], input[type=text], select, .panel { border-radius: 0px; }
+        .pdt15 { padding-top: 15px !important; }
+        .pd15 { padding: 15px !important; }
+        .dropdown a { text-decoration: none !important; color: #000000; }
+        .nav .open > a, .nav .open > a:hover, .nav .open > a:focus { background-color: transparent; }
+        .form-control { border-radius: 0px; }
+        .dropdown-menu > li > a:hover, .dropdown-menu > li > a:focus { color: #000; text-decoration: none; background-color: #F5F5F5; }
+        .tb-resultado input { margin-bottom:5px; }
+    </style>
+
+}
+@section scripts
+{
+    <script src="~/Scripts/knockout-3.4.0.js"></script>
+    <script src="~/Scripts/js/juego.core.js"></script>
+    <script>
+        var model = function () {
+            var self = this;
+            self.reto = new Juego();
+            var casillero = [];
+            var n = 0;
+            var nitem = 0;
+            self.ncubo = ko.observable();
+            self.lstConf = ko.observableArray();
+            self.lstItem = ko.observableArray();
+            self.lstRespuesta = ko.observableArray();
+            self.cuboAutomatico = function () {
+                self.lstConf.removeAll();
+                var n = parseInt(self.ncubo()) + 2;
+
+                casillero = Reto.CrearArreglo(n);
+                console.log('objeto', casillero);
+                var nitem = (n + (n - 1));
+                // console.log(nitem);
+                for (var j = 0; j < nitem ; j++) {
+                    var lst = []
+                    for (var i = 0; i < nitem ; i++) {
+                        var row = { col: ko.observable(casillero[j].fila[i].col) };
+                        lst.push(row)
+                    }
+                    self.lstConf.push({ fila: lst });
+                }
+
+                //  self.lstConf(casillero);
+                self.Empezar();
+
+                // console.log(ko.toJS(self.lstConf()));
+            }
+            self.cuboManual = function () {
+                self.lstConf.removeAll();
+                n = parseInt(self.ncubo()) + 2;
+                nitem = (n + (n - 1));
+
+                for (var j = 0; j < nitem ; j++) {
+                    var lst = []
+                    for (var i = 0; i < nitem ; i++) {
+                        var row = { col: ko.observable(null) };
+                        lst.push(row)
+                    }
+                    self.lstConf.push({ fila: lst });
+                }
+
+                // self.lstConf(casillero);
+                // console.log(ko.toJS(self.lstConf()));
+            }
+            self.responder = function () {
+                var mala = 0;
+                for (var j = 0; j < 5 ; j++) {
+                    var lst = []
+                    for (var i = 0; i < 5 ; i++) {
+                        if (self.lstItem()[j].fila()[i].col != self.lstRespuesta()[j].fila()[i].col) {
+                            mala += 1;
+
+                        }
+
+                    }
+                }
+
+            }
+
+            self.textViewNivel = function (opc) {
+                switch (opc) {
+                    case 'Nivel 1':
+
+                        return 1;
+                    case 'Nivel 2':
+
+                        return 2;
+                    case 'Nivel 3':
+
+                        return 3;
+
+                }
+            }
+            self.textView = function (text, pos, eval) {
+
+                switch (ko.toJS(text)) {
+                    case 'mayor':
+                        return pos == 'c' ? 'fa fa-chevron-right' : 'fa fa-chevron-down';
+                    case 'menor':
+                        return pos == 'c' ? 'fa fa-chevron-left' : 'fa fa-chevron-up';
+                    default: return eval == 0 ? '' : 'fa fa-question-circle-o';
+                }
+
+            }
+            self.textViewIdReto = function () {
+                if (!self.reto.IdJuego()) {
+                    $.ajax({
+                        type: 'POST',
+                        url: "CreateId",
+                        data: ko.toJSON({ Nivel: 'Nivel ' + self.ncubo() }),
+                        dataType: 'json',
+                        contentType: 'application/json',
+                        success: function (datos) {
+                            console.log(datos);
+                            self.reto.Reto(datos + 1);
+
+                        }
+                    });
+                }
+                
+            }
+            self.opcion = function (item) {
+                // console.log(item.col());
+                if (item.col() == null) {
+                    item.col('mayor');
+                } else if (item.col() == 'mayor') {
+                    item.col('menor');
+                } else { item.col(null) };
+
+                //self.cubo();
+            }
+            self.update = ko.computed(function () {
+                self.lstConf.bind();
+            });
+            self.save = function () {
+                if (self.lstConf() == undefined || self.lstConf().length == 0) { alert('debe generar la matriz'); return false; }
+                if (self.lstItem() == undefined || self.lstItem().length == 0) { alert('debe generar la matriz'); return false; }
+                self.reto.Nivel("Nivel " + self.ncubo());
+                self.reto.Enunciado(ko.toJSON(self.lstItem()).toString()),
+                self.reto.Solucion(ko.toJSON(self.lstConf()).toString())
+                //console.log('lista', ko.toJSON(self.reto));
+                $.ajax({
+                    type: 'POST',
+                    url: "crear",
+                    data: ko.toJSON({ be: self.reto }),
+                    dataType: 'json',
+                    contentType: 'application/json',
+                    success: function (result) {
+                        self.reto.IdJuego(result);
+                        toastr.info('Se ha guardado la plantilla del juego', 'Guardado');
+                    }
+                });
+
+            }
+            self.view = function (idJuego) {
+                $.ajax({
+                    type: 'POST',
+                    url: "ListarPorId",
+                    data: ko.toJSON({ id: idJuego }),
+                    dataType: 'json',
+                    contentType: 'application/json',
+                    success: function (datos) {
+                        self.reto.IdJuego(datos.IdJuego);
+                        self.reto.Reto(datos.Reto);
+                        self.ncubo(self.textViewNivel(datos.Nivel));
+                        n = parseInt(self.ncubo()) + 2;
+                        nitem = n + (n - 1);
+                        // console.log(datos, nitem);
+                        casillero = JSON.parse(datos.Solucion);
+                        for (var j = 0; j < nitem ; j++) {
+                            var lst = []
+                            for (var i = 0; i < nitem ; i++) {
+                                var row = { col: ko.observable(casillero[j].fila[i].col) };
+                                lst.push(row)
+                            }
+                            self.lstConf.push({ fila: lst });
+                        }
+                        self.lstItem(JSON.parse(datos.Enunciado));
+                        //  self.lstConf();
+
+                    }
+                });
+            }
+            self.valor = function (indice) {
+
+                return indice() % 2 == 0 ? true : false;
+            }
+            self.nlado = ko.observable();
+            self.Empezar = function () {
+                var temp = ko.toJS(self.lstConf());
+                var azar = Reto.ObtenerPosVal(temp, 3);
+                console.log(azar, nitem);
+                n = parseInt(self.ncubo()) + 2;
+                nitem = (n + (n - 1));
+                // casillero = self.lstConf();
+                for (var j = 0; j < nitem ; j++) {
+                    for (var i = 0; i < nitem ; i++) {
+                        if (!isNaN(temp[j].fila[i].col)) temp[j].fila[i].col = null
+                        // casillero[j].fila[i].col = ''
+                    }
+                }
+                for (var k = 0; k < azar.length; k++) {
+                    // console.log('num', self.lstConf()[azar[k].y].fila[azar[k].x].col());
+                    temp[azar[k].y].fila[azar[k].x].col = self.lstConf()[azar[k].y].fila[azar[k].x].col();
+                }
+                self.lstItem(temp);
+                //Reto.LlenarCasillasAzar(ko.toJS(casillero));
+            }
+            // self.lstItem(lista);
+            // console.log("lista", self.lstItem()[0].fila);
+
+        }
+        function Juego() {
+            var self = this;
+            self.IdJuego = ko.observable();
+            self.Reto = ko.observable();
+            self.Nivel = ko.observable();
+            self.Solucion = ko.observable();
+            self.Enunciado = ko.observable();
+        }
+        $(function () {
+
+            viewModel = new model();
+            ko.applyBindings(viewModel);
+
+            var src = String(window.location.href).split('=')[1];
+            
+            if (src != undefined) {
+
+                viewModel.view(src);
+            } else {
+                viewModel.textViewIdReto();
+            }
+
+        });
+    </script>
+
+}
+
+<div class="navbar bar-menu pdt15" role="navigation">
+    <div class="container-fluid">
+        <div class="nav navbar-nav navbar-left">
+            <h3>Registro el ejercicio Mayor-Menor  &nbsp; <span data-bind="visible: reto.IdJuego, text: 'N° ' + appMaster.AddZerosNumber(reto.IdJuego(), 6) ">N° 000000</span></h3>
+        </div>
+        <div class="nav navbar-nav navbar-right pd15">
+            <div class="btn-group">
+                <input id="btnGuardar" type="button" class="btn btn-default " value="Guardar" data-bind="click: save">
+                <div class="dropdown btn border">
+                    <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Más opciones <span class="caret"></span></a>
+                    <ul class="dropdown-menu">
+                        <li><a href="@Url.Action("Registro")">Nuevo</a></li>
+                        <li role="separator" class="divider"></li>
+                        <li><a href="#" data-bind="click:cuboAutomatico">Generar Automatico</a></li>
+                        <li role="separator" class="divider"></li>
+                        <li><a href="#" data-bind="click:cuboManual">Generar Manual</a></li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="panel panel-default ">
+    <div class="panel-body">
+        <div class="form-horizontal">
+            <div class="row">
+                <div class="col-md-6">
+                    <div class="form-group ">
+                        <label class="control-label col-md-4 col-xs-4">Reto Número: </label>
+                        <div class="col-md-8">
+                            <input type="text" class="form-control" data-bind="value: reto.Reto" />
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="form-group ">
+                        <label class="control-label col-md-4 col-xs-4">Nivel: </label>
+                        <div class="col-md-8 col-xs-12">
+                            <select class="form-control" data-bind="value:ncubo,valueUpdate:'afterkeydown',event:{change:textViewIdReto}">
+                                <option value="1">Nivel 1</option>
+                                <option value="2">Nivel 2</option>
+                                <option value="3">Nivel 3</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <hr />
+            <div class="row">
+                <div class="col-md-12">
+                    <div class="form-group ">
+                        <label class="control-label col-md-2 col-xs-4">Solución: </label>
+                        <div class="col-md-8">
+                            <table class="col-md-12  ">
+
+                                <tbody data-bind="foreach:lstConf">
+                                    <tr>
+                                        <!--ko if: viewModel.valor($index) -->
+                                        <!--ko foreach:fila-->
+
+                                        <td class="col-md-1 text-center pointer ">
+                                            <!--ko if: viewModel.valor($index) -->
+                                            <input type="text" data-bind="value:col " class="form-control text-center casilla " />
+                                            <!--/ko-->
+                                            <!--ko if:!viewModel.valor($index) -->
+                                            <span data-bind="text:col,valueUpdate:'afterkeydown'" hidden></span>
+                                            <i title="Hacer clic para cambiar la opción" data-bind="attr:{class: viewModel.textView(col,'c')},click:viewModel.opcion"> </i>
+                                            <!--/ko-->
+                                        </td>
+                                        <!--/ko-->
+                                        <!--/ko-->
+                                        <!--ko if: !viewModel.valor($index) -->
+                                        <!--ko foreach:fila-->
+                                        <td class="col-md-1 text-center pointer">
+                                            <!--ko if:viewModel.valor($index) -->
+                                            <span data-bind="text:col,valueUpdate:'afterkeydown'" hidden></span>
+                                            <i title="Hacer clic para cambiar la opción" data-bind="attr:{class:viewModel.textView(col)},click:viewModel.opcion"></i>
+                                            <!--/ko-->
+                                        </td>
+                                        <!--/ko-->
+                                        <!--/ko-->
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <hr />
+            <div class="row">
+                <div class="col-md-2">
+                    <div class="form-group ">
+                        <label class="control-label col-md-12 ">Evaluación: </label>
+                    </div>
+                </div>
+                <div class="col-md-8">
+                    <div class="form-group ">
+                        <div class="col-md-12">
+                            <table class="tb-resultado col-md-12 ">
+                                <tbody data-bind="foreach:lstItem">
+                                    <tr>
+                                        <!--ko if: viewModel.valor($index) -->
+                                        <!--ko foreach:fila-->
+
+                                        <td class="col-md-1 text-center ">
+                                            <!--ko if: viewModel.valor($index) -->
+                                            <input type="text" data-bind="value:col " class=" form-control text-center casilla" />
+                                            <!--/ko-->
+                                            <!--ko if:!viewModel.valor($index) -->
+                                            <i data-bind="attr:{class: viewModel.textView(col,'c',0)}"> </i>
+                                            <!--/ko-->
+                                        </td>
+                                        <!--/ko-->
+                                        <!--/ko-->
+                                        <!--ko if: !viewModel.valor($index) -->
+                                        <!--ko foreach:fila-->
+                                        <td class="col-md-1 text-center ">
+                                            <!--ko if:viewModel.valor($index) -->
+                                            <i data-bind="attr:{class:viewModel.textView(col,'f',0)}"> </i>
+                                            <!--/ko-->
+                                        </td>
+                                        <!--/ko-->
+                                        <!--/ko-->
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-2">
+                    <div class="form-group ">
+                        <div class="col-md-12"><span class="form-control btn btn-default " data-bind="click:Empezar">Actualizar</span> </div>
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-md-12">
+                    <table class="tabla"></table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
