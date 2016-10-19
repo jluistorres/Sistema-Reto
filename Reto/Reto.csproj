@@ -128,6 +128,12 @@
     <Content Include="Scripts\knockout.mapping-latest.js" />
     <Content Include="Scripts\toastr\toastr.min.css" />
     <Content Include="Scripts\toastr\toastr.min.js" />
+    <Content Include="Views\Error\Index.cshtml">
+      <SubType>Code</SubType>
+    </Content>
+    <Content Include="Views\Error\NotFound.cshtml">
+      <SubType>Code</SubType>
+    </Content>
     <Content Include="Web.config">
       <SubType>Designer</SubType>
     </Content>
