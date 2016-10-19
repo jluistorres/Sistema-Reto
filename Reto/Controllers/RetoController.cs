@@ -27,6 +27,14 @@ namespace Reto.Controllers
             return View();
         }
 
+        /// <summary>
+        /// Metodo realizado para probar errores con elmah
+        /// </summary>
+        public void forzarerror()
+        {
+            int numero = Convert.ToInt32("number");
+        }
+
         public JsonResult Juego(string Nivel)
         {
             obrJuego = new brJuego();
