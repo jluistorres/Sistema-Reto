@@ -3,7 +3,8 @@
 }
 
 @section styles
-{
+{    
+    <link href="~/Content/fonts/custom/fonts.css" rel="stylesheet" />
     <link href="~/Content/css/juego.css" rel="stylesheet" />
 }
 
@@ -46,9 +47,9 @@
             });
 
             self.Empezar = function () {
-                //self.NroJuego(null);
-                //if (conteo_segundos) clearInterval(conteo_segundos);
-                //self.cronometro(0);
+                self.NroJuego(null);
+                if (conteo_segundos) clearInterval(conteo_segundos);
+                self.cronometro(0);
                 
                 $('.tabla').html('');
                 var nivel = self.nivelSeleccionado();
@@ -68,9 +69,14 @@
                 });
             }
 
+            self.BloquearResponder = ko.observable(false);
+
             self.Responder = function () {
                 //Reto.LlenarCasillas(casillero);
                 //Reto.LlenarCasillasAzar(casillero);
+
+                if (self.BloquearResponder()) return;
+                self.BloquearResponder(true);
 
                 var empezar_cronometro = function () {                    
                     conteo_segundos = setInterval(function () {
@@ -93,6 +99,7 @@
 
                         $('.respuestas .rpta').html('');
 
+                        self.BloquearResponder(false);
                         self.EstadoJuego(3);
 
                         //Hacemmos una pausa antes de empezar y mostramos el cronometro
@@ -157,7 +164,10 @@
                         }
                     });
                 } else {
-                    appMaster.MessageBox(errores.length + ' errores', '¡Pronto tendrás una nueva oportunidad! Los que aceptan el reto nunca se rinden!!');
+                    var message = '<table><td style="padding-right:10px;">{0}</td><td>{1}</td></table>';
+                    message = message.replace('{0}', '<i class="fa fa-warning fa-3x"></i>');
+                    message = message.replace('{1}', '¡Pronto tendrás una nueva oportunidad! Los que aceptan el reto nunca se rinden!!');
+                    appMaster.MessageBox(errores.length + ' errores', message);
                 }                
             }
 
@@ -201,6 +211,21 @@
 }
 
 <div class="text-center">
+    <div class="well well-sm">
+        <div class="btn-group" data-toggle="buttons">
+            <button class="btn btn-default-outline">Nivel</button>
+            <!--ko foreach: niveles-->
+            <button class="btn btn-info" data-bind="click: function(){ $root.nivelSeleccionado($data) }, css: {'active': $data == $root.nivelSeleccionado()}, text: $data"></button>
+            <!--/ko-->
+        </div>
+        <span class="visible-xs"><br /></span>
+        <!--ko if: NroJuego-->
+        <button type="button" class="btn btn-default" data-bind="click: NuevoJuego, visible: NroJuego"><i class="fa fa-table fa-fw"></i> Nuevo reto</button>
+        @*<button type="button" class="btn btn-default" data-bind="click: Limpiar" title="Limpiar"><i class="fa fa-retweet fa-lg"></i></button>
+        <button type="button" class="btn btn-default" data-bind="click: Procesar" title="Verificar"><i class="fa fa-check fa-lg"></i></button>*@
+        <!--/ko-->
+        <a href="~/" class="btn btn-danger" title="Salir"><i class="fa fa-sign-out fa-lg"></i></a>        
+    </div>    
     <table class="formulario">
         <tbody>
             <tr>
@@ -223,8 +248,8 @@
                     <br />
                     <div class="form-group">
                         <button type="button" class="btn btn-success" data-bind="click: Empezar, visible: EstadoJuego() == 1">Empezar</button>
-                        <button type="button" class="btn btn-primary" data-bind="click: Responder, visible: EstadoJuego() == 2">Responder</button>
-                        <button type="button" class="btn btn-success" data-bind="click: EnviarRepuestas, visible: EstadoJuego() == 3">Enviar Repuestas</button>
+                        <button type="button" class="btn btn-primary" data-bind="click: Responder, visible: EstadoJuego() == 2, disable: BloquearResponder">Responder</button>
+                        <button type="button" class="btn btn-success" data-bind="click: EnviarRepuestas, visible: EstadoJuego() >= 3, disable: EstadoJuego() == 4">Enviar Repuestas</button>
                     </div>
                     <div class="respuestas" data-bind="visible: EstadoJuego() >= 3">
                         <div class="rpta yellow" data-color="yellow" data-bind="attr: { 'contenteditable' : EstadoJuego() == 3 }"></div>
@@ -233,24 +258,9 @@
                         <div class="rpta red" data-color="red" data-bind="attr: { 'contenteditable' : EstadoJuego() == 3 }"></div>
                     </div>
                 </td>
-                <td style="vertical-align: bottom; padding: 20px; width: 150px; display: none;" data-bind="visible: EstadoJuego() > 0">
+                <td style="vertical-align: top; width: 150px; padding:2px; display: none;" data-bind="visible: EstadoJuego() > 0">
                     <div class="cronometro"><span data-bind="text: FormatearReloj(cronometro())"></span></div>
-                </td>
-                <td class="options">
-                    <h2>Nivel</h2>
-                    <div class="btn-group" data-toggle="buttons">
-                        <!--ko foreach: niveles-->
-                        <button class="btn btn-default" data-bind="click: function(){ $root.nivelSeleccionado($data) }, css: {'active': $data == $root.nivelSeleccionado()}, text: $data"></button>
-                        <!--/ko-->
-                    </div>
-                    <hr />
-                    <div class="form-group">
-                        <button type="button" class="btn btn-default" data-bind="click: NuevoJuego, visible: NroJuego">Nuevo reto</button>
-                        <a href="~/" class="btn btn-default">Salir</a>
-                        @*<button type="button" class="btn btn-default" data-bind="click: Limpiar">Limpiar</button>
-                        <button type="button" class="btn btn-default" data-bind="click: Procesar">Verificar</button>*@
-                    </div>
-                </td>
+                </td>               
             </tr>
         </tbody>
     </table>

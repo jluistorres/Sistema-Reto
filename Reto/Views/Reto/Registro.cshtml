@@ -148,8 +148,7 @@
                 self.lstConf.bind();
             });
             self.save = function () {
-                if (self.lstConf() == undefined || self.lstConf().length == 0) { alert('debe generar la matriz'); return false; }
-                if (self.lstItem() == undefined || self.lstItem().length == 0) { alert('debe generar la matriz'); return false; }
+                if (self.lstConf() == undefined || self.lstConf().length == 0) { appMaster.MessageBox('Alerta', 'Debe generar la matriz'); return; }                
                 self.reto.Nivel("Nivel " + self.ncubo());
                 self.reto.Enunciado(ko.toJSON(self.lstItem()).toString()),
                 self.reto.Solucion(ko.toJSON(self.lstConf()).toString())

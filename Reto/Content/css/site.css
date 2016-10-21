@@ -40,6 +40,7 @@ body { font-family: 'Ubuntu', sans-serif, 'Open Sans', Arial; font-size: 13px; }
 .text-info { font-family: "Fredoka One",cursive; font-size: 30px; }
 .navbar h3 { margin: 0; }
 hr { margin:8px 0; border-color:#ddd; }
+h1, h2, h3, h4 { font-family: 'Fredoka One', 'Ubuntu', sans-serif; }
 
 .header { background-color: #fff; padding: 5px 0; box-shadow: 0 5px 11px 0 #ccc; opacity: 0.9; }
 
@@ -74,6 +75,10 @@ hr { margin:8px 0; border-color:#ddd; }
 @media (min-width: 768px) {
     .hidden-md-up { display: none !important; }
     .navbar.bar-menu .container-fluid { padding-left: 0; }
+}
+
+@media screen and (max-width:768px) {    
+    .modal.modal-custom .modal-dialog { width: inherit !important; }
 }
 
 @media (max-width: 991px) {

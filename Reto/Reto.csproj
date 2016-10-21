@@ -100,6 +100,7 @@
     <Content Include="Content\css\juego.css" />
     <Content Include="Content\css\site.css" />
     <Content Include="Content\css\theme-orange.css" />
+    <Content Include="Content\fonts\custom\fonts.css" />
     <Content Include="Content\fonts\font-awesome-4.6.3\css\font-awesome.css" />
     <Content Include="Content\fonts\font-awesome-4.6.3\css\font-awesome.min.css" />
     <Content Include="Content\fonts\font-awesome-4.6.3\fonts\fontawesome-webfont.svg" />
@@ -119,6 +120,7 @@
     <Content Include="Content\fonts\font-awesome-4.6.3\fonts\fontawesome-webfont.woff" />
     <Content Include="Content\fonts\font-awesome-4.6.3\fonts\fontawesome-webfont.woff2" />
     <Content Include="Content\fonts\font-awesome-4.6.3\fonts\FontAwesome.otf" />
+    <Content Include="Content\fonts\custom\digital-7.regular.ttf" />
     <None Include="Scripts\jquery-1.10.2.intellisense.js" />
     <Content Include="Scripts\jquery.jscrollpane.min.js" />
     <Content Include="Scripts\jquery.mousewheel.min.js" />

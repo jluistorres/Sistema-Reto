@@ -381,7 +381,7 @@
                 <div class="form-group">
                     <div class="input-group">
                         <div class="input-group-addon">Docente:</div>
-                        <div class="form-control" data-bind="text: docente"></div>
+                        <div class="form-control text-uppercase" data-bind="text: docente"></div>
                     </div>
                 </div>
             </div>
@@ -396,64 +396,66 @@
             </div>
         </div>
     </div>
-    <table class="registro">
-        <tbody>
-            <tr>
-                <td class="rotar rotar-reverse" rowspan="4"><div><h3>ECOLOGICA</h3></div></td>
-                <td rowspan="2"></td>
-            </tr>
-            <tr style="height:20px">
-                <!--ko foreach: new Array(evaluaciones())-->
-                <td data-bind="attr: {'colspan': $root.criterios().length + 1}"><h5 data-bind="text: 'EVALUACIÓN ' + ($index() + 1)"></h5></td>
-                <!--/ko-->
-                <td class="nota-final"></td>
-                <td>Valor</td>
-            </tr>
-            <tr>
-                <td>&nbsp;</td>
-                <!--ko foreach: new Array(evaluaciones())-->
-                <!--ko foreach: $root.criterios-->
-                <td class="rotar" rowspan="3"><div data-bind="text: $data.Nombre"></div></td>
-                <!--/ko-->
-                <td class="rotar promedio" rowspan="3"><div data-bind="text: 'Nota ' + ($index() + 1)"></div></td>
-                <!--/ko-->
-                <td class="rotar nota-final" rowspan="3"><div>NOTA FINAL</div></td>
-                <td class="rotar" rowspan="3"></td>
+    <div>
+        <table class="registro">
+            <tbody>
+                <tr>
+                    <td class="rotar rotar-reverse" rowspan="4"><div><h3>ECOLOGICA</h3></div></td>
+                    <td rowspan="2"></td>
+                </tr>
+                <tr style="height:20px">
+                    <!--ko foreach: new Array(evaluaciones())-->
+                    <td data-bind="attr: {'colspan': $root.criterios().length + 1}"><h5 data-bind="text: 'EVALUACIÓN ' + ($index() + 1)"></h5></td>
+                    <!--/ko-->
+                    <td class="nota-final"></td>
+                    <td>Valor</td>
+                </tr>
+                <tr>
+                    <td>&nbsp;</td>
+                    <!--ko foreach: new Array(evaluaciones())-->
+                    <!--ko foreach: $root.criterios-->
+                    <td class="rotar" rowspan="3"><div data-bind="text: $data.Nombre"></div></td>
+                    <!--/ko-->
+                    <td class="rotar promedio" rowspan="3"><div data-bind="text: 'Nota ' + ($index() + 1)"></div></td>
+                    <!--/ko-->
+                    <td class="rotar nota-final" rowspan="3"><div>NOTA FINAL</div></td>
+                    <td class="rotar" rowspan="3"></td>
 
-            </tr>
-            <tr style="height:30px;">
-                <td><h4><span data-bind="text: $root.Grado_Texto($root.Filtro.Grado())"></span> GRADO</h4></td>
-            </tr>
-            <tr style="height:30px;">
-                <td style="width:30px;"><h4>N°</h4></td>
-                <td style="width:250px;"><h4>ALUMNO</h4></td>
-            </tr>
-            <tr>
-                <td></td>
-                <td>OBSERVACIONES</td>
-                <!--ko foreach: new Array(evaluaciones())-->
-                <!--ko foreach: $root.criterios-->
-                <td></td>
+                </tr>
+                <tr style="height:30px;">
+                    <td><h4><span data-bind="text: $root.Grado_Texto($root.Filtro.Grado())"></span> GRADO</h4></td>
+                </tr>
+                <tr style="height:30px;">
+                    <td style="width:30px;"><h4>N°</h4></td>
+                    <td style="width:250px;"><h4>ALUMNO</h4></td>
+                </tr>
+                <tr>
+                    <td></td>
+                    <td>OBSERVACIONES</td>
+                    <!--ko foreach: new Array(evaluaciones())-->
+                    <!--ko foreach: $root.criterios-->
+                    <td></td>
+                    <!--/ko-->
+                    <td class="promedio"></td>
+                    <!--/ko-->
+                    <td class="nota-final"></td>
+                    <td></td>
+                </tr>
+                <!--ko foreach: alumnos-->
+                <tr>
+                    <td data-bind="text: $index() + 1">1</td>
+                    <td class="alumno" data-bind="text: $data.Nombre"></td>
+                    <!--ko foreach: $data.Notas-->
+                    <!--ko foreach: $data.Notas-->
+                    <td class="nota" contenteditable="true" data-bind="editableText: $data.Nota, css: $root.VerificarNota($data.Nota())"></td>
+                    <!--/ko-->
+                    <td class="promedio" data-bind="editableText: $data.Promedio, css: $root.VerificarNota($data.Promedio())"></td>
+                    <!--/ko-->
+                    <td class="nota-final" data-bind="editableText: $data.PromedioFinal, css: $root.VerificarNota($data.PromedioFinal())"></td>
+                    <td></td>
+                </tr>
                 <!--/ko-->
-                <td class="promedio"></td>
-                <!--/ko-->
-                <td class="nota-final"></td>
-                <td></td>
-            </tr>
-            <!--ko foreach: alumnos-->
-            <tr>
-                <td data-bind="text: $index() + 1">1</td>
-                <td class="alumno" data-bind="text: $data.Nombre"></td>
-                <!--ko foreach: $data.Notas-->
-                <!--ko foreach: $data.Notas-->
-                <td class="nota" contenteditable="true" data-bind="editableText: $data.Nota, css: $root.VerificarNota($data.Nota())"></td>
-                <!--/ko-->
-                <td class="promedio" data-bind="editableText: $data.Promedio, css: $root.VerificarNota($data.Promedio())"></td>
-                <!--/ko-->
-                <td class="nota-final" data-bind="editableText: $data.PromedioFinal, css: $root.VerificarNota($data.PromedioFinal())"></td>
-                <td></td>
-            </tr>
-            <!--/ko-->
-        </tbody>
-    </table>
+            </tbody>
+        </table>
+    </div>
 </div>

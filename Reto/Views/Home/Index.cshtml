@@ -4,13 +4,42 @@
 @section styles
 {
     <style type="text/css">
-        .banner { width: 100%; }
+        .ranking { margin: 15px 0; }
+        .ranking .user { background: #ECEFF4; width: 160px; float: left; padding: 50px 15px; text-align: center; cursor: pointer; border: 1px solid #e1e1e1; margin: 0 10px 10px 0; transition: transform 200ms, filter 500ms ease-in-out; }
+        .ranking .user:hover { transform: scale(1.2); box-shadow: 3px 3px 0px rgba(0,0,0,0.2); }
+        .ranking .user .nombre { font-weight: bold; margin: 5px 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+        .ranking .user .foto img { width: 70px; height: 70px; border-radius: 50%; }
+        .ranking .user .puntos { font-size: 0.85em; }
     </style>
 }
 
-<h2>Bienvenido</h2>
+<h1>Bienvenido</h1>
 <div>
     <a href="~/home/forzarerror">Forzar error - Elmah (Prueba)</a>
     <span style="margin:0 10px">|</span>
     <a href="~/elmah.axd">Ver errores con Elmah</a>
+</div>
+<hr />
+<h3>Ranking de alumnos</h3>
+<small><b>Reto:</b> Mayor - Menor</small>
+<div class="ranking clearfix">
+    @for (int i = 0; i < 5; i++)
+    {
+        <div class="user">
+            <div class="foto">
+                <img src="~/Content/img/avatar.png" />
+            </div>
+            <div class="info">
+                <div class="nombre">Nombre del alumno</div>
+                <div class="detalle">1° A</div>
+                <div class="nivel">
+                    <i class="fa fa-star-o fa-fw"></i>
+                    <i class="fa fa-star-o fa-fw"></i>
+                    <i class="fa fa-star-o fa-fw"></i>
+                    <i class="fa fa-star-o fa-fw"></i>
+                </div>
+                <div class="puntos">Puntos: <span>17.25</span></div>
+            </div>
+        </div>
+    }
 </div>

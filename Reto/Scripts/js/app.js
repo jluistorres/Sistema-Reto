@@ -208,7 +208,10 @@ $(function () {
                 });
 
     $('body').on('keypress', 'input:text', function (e) {
-        if (e.keyCode == 13) return false;
+        if (e.keyCode == 13) {
+            if ($(this).attr('name') == 'search') $(this).closest('form').submit();
+            return false;
+        }
     });
 
     $(document).on('hidden.bs.modal', '.modal', function () {
