@@ -43,6 +43,7 @@
     <Compile Include="brJuego.cs" />
     <Compile Include="brNotas.cs" />
     <Compile Include="brUsuario.cs" />
+    <Compile Include="brUtil.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>

@@ -4,15 +4,19 @@
 @section styles
 {
     <style type="text/css">
-        .ranking { margin: 15px 0; }
-        .ranking .user { background: #ECEFF4; width: 160px; float: left; padding: 50px 15px; text-align: center; cursor: pointer; border: 1px solid #e1e1e1; margin: 0 10px 10px 0; transition: transform 200ms, filter 500ms ease-in-out; }
-        .ranking .user:hover { transform: scale(1.2); box-shadow: 3px 3px 0px rgba(0,0,0,0.2); }
+        .ranking { margin: 15px 0; /*text-align:center;*/ }
+        .ranking .user { position: relative; background: #ECEFF4; border: 1px solid #FFCC29; width: 180px; margin: 0 10px 10px 0; display:inline-block; padding: 50px 15px; text-align: center; cursor: pointer; transition: transform 200ms, filter 500ms ease-in-out; }
+        .ranking:hover .user { filter: grayscale(100%); -webkit-filter: grayscale(100%); }
+        .ranking .user:hover { transform: scale(1.15); box-shadow: 3px 3px 0px rgba(0,0,0,0.2); z-index: 200; filter: grayscale(0); -webkit-filter: grayscale(0); }        
         .ranking .user .nombre { font-weight: bold; margin: 5px 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
         .ranking .user .foto img { width: 70px; height: 70px; border-radius: 50%; }
         .ranking .user .puntos { font-size: 0.85em; }
+        .ranking .user .puesto { position:absolute; top: 5px; right:5px; }
+        .ranking .user .puesto .numero { position: absolute; top: 50%; left: 0; margin-top: -10px; text-align: center; width: 100%; color: #fff; font-family: 'Fredoka One', 'Ubuntu', sans-serif; }
+        .ranking .user .user-content { position:relative; z-index:10; }
+        .ranking .user .bg-user { position: absolute; background: #FFCC29; top: 0; left: 0; right: 0; height: 100px; z-index: 0; }
     </style>
 }
-
 <h1>Bienvenido</h1>
 <div>
     <a href="~/home/forzarerror">Forzar error - Elmah (Prueba)</a>
@@ -26,20 +30,30 @@
     @for (int i = 0; i < 5; i++)
     {
         <div class="user">
-            <div class="foto">
-                <img src="~/Content/img/avatar.png" />
+            <div class="bg-user"></div>
+            <div class="puesto">
+                <i class="fa fa-certificate fa-3x"></i>
+                <span class="numero">@(i + 1)</span>
             </div>
-            <div class="info">
-                <div class="nombre">Nombre del alumno</div>
-                <div class="detalle">1° A</div>
-                <div class="nivel">
-                    <i class="fa fa-star-o fa-fw"></i>
-                    <i class="fa fa-star-o fa-fw"></i>
-                    <i class="fa fa-star-o fa-fw"></i>
-                    <i class="fa fa-star-o fa-fw"></i>
+            <div class="user-content">                
+                <div class="foto">
+                    <img src="~/Content/img/avatar.png" />
                 </div>
-                <div class="puntos">Puntos: <span>17.25</span></div>
-            </div>
+                <div class="info">
+                    <div class="nombre">Nombre del alumno</div>
+                    <div class="detalle">1° A</div>
+                    <div class="nivel">
+                        @{
+                            int nivel = brUtil.RandomNumber(1, 5);
+                        }
+                        @for (int j = 0; j < nivel; j++)
+                        {
+                            <i class="fa fa-star-o fa-fw"></i>
+                        }
+                    </div>
+                    <div class="puntos">Puntos: <span>@(nivel * 4)</span></div>
+                </div>                
+            </div>                      
         </div>
     }
 </div>
