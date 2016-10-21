@@ -112,7 +112,7 @@ appMaster.Confirm = function (options) {
         content: options.Message,
         buttons: buttons,
         CssClass: 'modal-sm',
-        animation: 'scale'
+        //animation: 'scale'
     });
 
     //Colocamos el foco sobre el boton de Aceptar
