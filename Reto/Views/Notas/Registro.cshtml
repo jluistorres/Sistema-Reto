@@ -18,9 +18,9 @@
         .registro .rotar.rotar-reverse div { transform: translate(200%,0) rotate(90deg); }
         .registro .rotar.rotar-reverse div:before { margin: 0; margin-bottom: 100%; }
         .registro .nota-final { background-color: #f4f4f4; font-weight: bold; }
-        
-        .registro .nota.flag { color:#fff; }
-        .registro .nota.flag:after { position: absolute; top: 50%; left: 50%; margin-left:-7px; margin-top:-7px; content: "\f024"; font: normal normal normal 14px/1 FontAwesome; }
+
+        .registro .nota.flag { color: #fff; }
+        .registro .nota.flag:after { position: absolute; top: 50%; left: 50%; margin-left: -7px; margin-top: -7px; content: "\f024"; font: normal normal normal 14px/1 FontAwesome; }
         .registro .nota.rojo.flag:after { color: #ff0000; }
         .registro .nota.anaranjado.flag:after { color: #ff6a00; }
         .registro .nota.amarillo.flag:after { color: #ffd800; }
@@ -41,10 +41,10 @@
                 $(element).on('focus', function () { $(this).removeClass('flag'); });
                 $(element).on('blur', function () {
                     var observable = valueAccessor();
-                    var value = $(this).html();                    
+                    var value = $(this).html();
                     if (!isNaN(parseFloat(value))) {
                         if (parseInt(value) > 3) value = 3;
-                        if (parseInt(value) < 0) value = 0;                        
+                        if (parseInt(value) < 0) value = 0;
                     }
                     observable(value);
                     if (value) $(element).addClass('flag');
@@ -58,7 +58,7 @@
 
                     //Solo puede digitar del 0 al 3
                     if (!(e.keyCode >= 48 && e.keyCode <= 51)) return false;
-                    
+
                     if (e.keyCode != 13) $(this).html(e.key);
                     return false;
                 });
@@ -69,7 +69,7 @@
                 //    if (value < 10 && value.toString().length < 2 && value.toString().indexOf('.') == -1) value = '0' + value;
                 //}
 
-                $(element).html(value);                
+                $(element).html(value);
             }
         };
     </script>
@@ -86,7 +86,7 @@
                 Cursos: ko.observableArray()
             }
 
-            //Evaluacion por trimestre            
+            //Evaluacion por trimestre
             //variables ko
             self.evaluaciones = ko.observable(1);
             self.docente = ko.observable();
@@ -203,11 +203,11 @@
                 self.alumnos.removeAll();
                 var datos = self.DatosDocente();
                 var distinct = [];
-                
-                ko.utils.arrayForEach(datos, function (x) {                    
+
+                ko.utils.arrayForEach(datos, function (x) {
                     if (distinct.indexOf(x.Grado) == -1) distinct.push(x.Grado);
                 });
-                
+
                 self.Filtro.Grados(distinct);
             }
 
@@ -219,11 +219,11 @@
                 ko.utils.arrayForEach(datos, function (x) {
                     if (x.Grado == self.Filtro.Grado()) {
                         if (distinct.indexOf(x.Seccion) == -1) distinct.push(x.Seccion);
-                    }                    
+                    }
                 });
 
                 self.Filtro.Secciones(distinct);
-            }            
+            }
 
             self.Grado_Texto = function (grado) {
                 switch (grado) {
@@ -275,7 +275,7 @@
                         case 1: return 'flag anaranjado'; break;
                         case 2: return 'flag amarillo'; break;
                         case 3: return 'flag verde'; break;
-                    }                    
+                    }
                 }
             }
 
@@ -292,7 +292,7 @@
                             });
                         });
                     }
-                });                
+                });
             }
 
             self.Guardar = function () {
@@ -363,25 +363,39 @@
                 <div class="col-sm-3">
                     <label class="control-label">Sección:</label>
                     <select class="form-control" data-bind="options: Filtro.Secciones, optionsCaption: '- Sección -', value: Filtro.Seccion"></select>
-                </div>                
+                </div>
             </div>
         </div>
         <div class="col-sm-3">
             <label class="control-label">&nbsp;</label>
-            <button type="button" class="btn btn-default form-control" data-bind="click: $root.CargarRegistro, enable: Filtro.IdCurso() && Filtro.Grado() && Filtro.Seccion()">Mostrar registro</button>
+            <button type="button" class="btn btn-default btn-block" data-bind="click: $root.CargarRegistro, enable: Filtro.IdCurso() && Filtro.Grado() && Filtro.Seccion()">Mostrar registro</button>
         </div>
     </div>
 
 </div>
 
 <div data-bind="visible: alumnos().length > 0">
-    <div class="form-group">
-        <div class="input-group">
-            <div class="input-group-addon">Docente:</div>
-            <div class="form-control" data-bind="text: docente"></div>
-        </div>    
+    <div class="well well-sm" style="padding-bottom:0">
+        <div class="row">
+            <div class="col-sm-9">
+                <div class="form-group">
+                    <div class="input-group">
+                        <div class="input-group-addon">Docente:</div>
+                        <div class="form-control" data-bind="text: docente"></div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-sm-3">
+                <div class="form-group">
+                    <div class="btn-group btn-group-justified">
+                        <a class="btn btn-primary" data-bind="click: Guardar" title="Guardar registro"><i class="fa fa-save fa-lg"></i></a>
+                        <a class="btn btn-default" data-bind="click: LimpiarRegistro" title="Limpiar"><i class="fa fa-trash-o fa-lg"></i></a>
+                        <a href="~/" class="btn btn-default" title="Salir"><i class="fa fa-sign-out fa-lg"></i></a>
+                    </div>
+                </div>
+            </div>
+        </div>
     </div>
-    
     <table class="registro">
         <tbody>
             <tr>
@@ -442,11 +456,4 @@
             <!--/ko-->
         </tbody>
     </table>
-
-    <hr />
-    <div class="well well-sm">
-        <button type="button" class="btn btn-primary" data-bind="click: Guardar">Guardar registro</button>
-        <button type="button" class="btn btn-default" data-bind="click: LimpiarRegistro">Limpiar</button>
-        <a href="~/" class="btn btn-default">Salir</a>
-    </div>
 </div>

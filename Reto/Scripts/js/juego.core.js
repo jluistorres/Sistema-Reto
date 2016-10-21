@@ -383,13 +383,13 @@
     },
     PintarCasillasAzar: function (solucion, mostrar) {
         var colores = ['yellow', 'green', 'blue', 'red'];
-        $('.tabla tr td').removeClass('color ' + colores.join(' '));        
+        $('.tabla tr td .casilla').removeClass('color ' + colores.join(' '));        
         
         var posAzar = Reto.ObtenerPosVaciasAzar(mostrar, 4);
 
-        for (var i = 0; i < posAzar.length; i++) {
-            var casilla = $('.tabla tr:eq(' + posAzar[i].y + ') td:eq(' + posAzar[i].x + ')');
+        for (var i = 0; i < posAzar.length; i++) {            
             $('.respuestas .rpta:eq(' + i + ')').attr('data-value', solucion[posAzar[i].y].fila[posAzar[i].x].col);
+            var casilla = $('.tabla tr:eq(' + posAzar[i].y + ') td:eq(' + posAzar[i].x + ') .casilla');
             casilla.addClass('color ' + colores[i]);
         }
 

@@ -203,23 +203,25 @@
             self.nlado = ko.observable();
             self.Empezar = function () {
                 var temp = ko.toJS(self.lstConf());
-                var azar = Reto.ObtenerPosVal(temp, 3);
-                console.log(azar, nitem);
-                n = parseInt(self.ncubo()) + 2;
-                nitem = (n + (n - 1));
-                // casillero = self.lstConf();
-                for (var j = 0; j < nitem ; j++) {
-                    for (var i = 0; i < nitem ; i++) {
-                        if (!isNaN(temp[j].fila[i].col)) temp[j].fila[i].col = null
-                        // casillero[j].fila[i].col = ''
+                if (temp.length > 0) {
+                    var azar = Reto.ObtenerPosVal(temp, 3);
+                    console.log(azar, nitem);
+                    n = parseInt(self.ncubo()) + 2;
+                    nitem = (n + (n - 1));
+                    // casillero = self.lstConf();
+                    for (var j = 0; j < nitem ; j++) {
+                        for (var i = 0; i < nitem ; i++) {
+                            if (!isNaN(temp[j].fila[i].col)) temp[j].fila[i].col = null
+                            // casillero[j].fila[i].col = ''
+                        }
                     }
-                }
-                for (var k = 0; k < azar.length; k++) {
-                    // console.log('num', self.lstConf()[azar[k].y].fila[azar[k].x].col());
-                    temp[azar[k].y].fila[azar[k].x].col = self.lstConf()[azar[k].y].fila[azar[k].x].col();
-                }
-                self.lstItem(temp);
-                //Reto.LlenarCasillasAzar(ko.toJS(casillero));
+                    for (var k = 0; k < azar.length; k++) {
+                        // console.log('num', self.lstConf()[azar[k].y].fila[azar[k].x].col());
+                        temp[azar[k].y].fila[azar[k].x].col = self.lstConf()[azar[k].y].fila[azar[k].x].col();
+                    }
+                    self.lstItem(temp);
+                    //Reto.LlenarCasillasAzar(ko.toJS(casillero));
+                }                
             }
             // self.lstItem(lista);
             // console.log("lista", self.lstItem()[0].fila);
@@ -252,16 +254,16 @@
 
 }
 
-<div class="navbar bar-menu pdt15" role="navigation">
+<div class="navbar bar-menu" role="navigation">
     <div class="container-fluid">
         <div class="nav navbar-nav navbar-left">
             <h3>Registro el ejercicio Mayor-Menor  &nbsp; <span data-bind="visible: reto.IdJuego, text: 'N° ' + appMaster.AddZerosNumber(reto.IdJuego(), 6) ">N° 000000</span></h3>
         </div>
-        <div class="nav navbar-nav navbar-right pd15">
+        <div class="nav navbar-nav navbar-right">
             <div class="btn-group">
-                <input id="btnGuardar" type="button" class="btn btn-default " value="Guardar" data-bind="click: save">
-                <div class="dropdown btn border">
-                    <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Más opciones <span class="caret"></span></a>
+                <button type="button" class="btn btn-default" data-bind="click: save">Guardar</button>
+                <div class="btn-group">
+                    <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown">Más opciones <span class="caret"></span></button>
                     <ul class="dropdown-menu">
                         <li><a href="@Url.Action("Registro")">Nuevo</a></li>
                         <li role="separator" class="divider"></li>
@@ -274,7 +276,6 @@
         </div>
     </div>
 </div>
-
 <div class="panel panel-default ">
     <div class="panel-body">
         <div class="form-horizontal">
@@ -384,7 +385,7 @@
                 </div>
                 <div class="col-md-2">
                     <div class="form-group ">
-                        <div class="col-md-12"><span class="form-control btn btn-default " data-bind="click:Empezar">Actualizar</span> </div>
+                        <div class="col-md-12"><span class="btn btn-default btn-block" data-bind="click:Empezar, visible: lstConf().length > 0">Llenar automático</span> </div>
                     </div>
                 </div>
             </div>

@@ -4,79 +4,131 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>@ViewBag.Title - Sistema Reto</title>
+    <link href='http://fonts.googleapis.com/css?family=Fredoka+One:300,300italic,400,400italic,700,700italic%7CUbuntu:300,300italic,400,400italic,700,700italic%7CLato:300,300italic,400,400italic,700,700italic&#038;subset=latin,latin-ext' rel="stylesheet" />
     <link href="~/Content/fonts/font-awesome-4.6.3/css/font-awesome.min.css" rel="stylesheet" />
     <link href="~/Content/css/bootstrap.min.css" rel="stylesheet" type="text/css" />
-    <link href="~/Content/css/Site.css" rel="stylesheet" type="text/css" />
+    <link href="~/Content/css/base.default.css" rel="stylesheet" />
+    <link href="~/Content/css/theme-orange.css" rel="stylesheet" />
+    <link href="~/Content/css/base.responsive.css" rel="stylesheet" />
+    <link href="~/Content/css/basic-form-elements.css" rel="stylesheet" />
+    <link href="~/Content/css/buttons.css" rel="stylesheet" />
+    <link href="~/Content/css/dropdowns.css" rel="stylesheet" />
+    <link href="~/Content/css/jquery.jscrollpane.css" rel="stylesheet" />
+    <link href="~/Content/css/jscrollpane.css" rel="stylesheet" />
+    <link href="~/Content/css/site.css" rel="stylesheet" type="text/css" />
     <link href="~/Scripts/toastr/toastr.min.css" rel="stylesheet" />
     @RenderSection("styles", required: false)
 </head>
-<body class="background-body">
-    <div class="header">
-        <div class="container-fluid">
-            <div class="row">
-                <div class="col-sm-6">
-                    <h3><a href="~/"><img src="~/content/img/logo.png" /></a></h3>
-                </div>
-                <div class="col-sm-6 text-right">
-                    <h3 class="text-info">
-                        <a href="~/">Mente Brillante</a>
-                    </h3>
-                    <p>
-                        <i class="fa fa-user"></i> @SessionHelper.Usuario.Nombre
-                        <span style="margin:0 10px">|</span>
-                        <a href="~/Account/Login"><small>Cerrar sesión</small></a>
-                    </p>
-                </div>
+<body class="mode-material colorful-enabled mode-squared theme-orange">    
+    <nav class="left-menu">
+        <div class="logo-container">
+            <a href="~/" class="logo">
+                <img src="~/content/img/logo.png" alt="Logo" />
+                @*<img class="logo-inverse" src="~/content/img/logo.png" alt="Logo" />*@
+            </a>
+        </div>
+        <div class="left-menu-inner scroll-pane">
+            <ul class="left-menu-list left-menu-list-root list-unstyled">
+                <li>
+                    <a class="left-menu-link" href="~/">
+                        <i class="fa fa-home fa-fw"><!-- --></i> Inicio
+                    </a>
+                </li>
+                <li class="left-menu-list-separator"><!-- --></li>
+                <li class="left-menu-list-submenu">
+                    <a class="left-menu-link" href="javascript: void(0);">
+                        <i class="fa fa-cubes fa-fw"><!-- --></i> Juegos
+                    </a>
+                    <ul class="left-menu-list list-unstyled">
+                        <li>
+                            <a class="left-menu-link" href="~/reto">Responder preguntas</a>
+                        </li>
+                        <li>
+                            <a class="left-menu-link" href="~/reto/lista">Consultar juegos</a>
+                        </li>
+                    </ul>
+                </li>
+                <li class="left-menu-list-separator"><!-- --></li>
+                <li>
+                    <a class="left-menu-link" href="~/notas/registro">
+                        <i class="fa fa-edit fa-fw"><!-- --></i> Registrar notas
+                    </a>
+                </li>                
+                <li>
+                    <a class="left-menu-link" href="#">
+                        <i class="fa fa-bar-chart fa-fw"><!-- --></i> Estadísticas
+                    </a>
+                </li>
+                <li>
+                    <a class="left-menu-link" href="#">
+                        <i class="fa fa-book fa-fw"><!-- --></i> Situación Académica
+                    </a>
+                </li>
+            </ul>
+        </div>
+    </nav>
+    <nav class="top-menu">
+        <div class="menu-icon-container hidden-md-up">
+            <div class="animate-menu-button left-menu-toggle">
+                <div><!-- --></div>
             </div>
         </div>
-    </div>
-    @if (SessionHelper.IsInRole("Alumno"))
-    {
-        <br />
-    <div class="container-fluid">
-        <div class="row">
-            <div class="col-xs-12">
-                <div class="text-right">
-                    @for (int i = 0; i < 5; i++)
+        <div class="menu">
+            <div class="menu-user-block">
+                <div class="dropdown dropdown-avatar">
+                    <a href="javascript: void(0);" class="dropdown-toggle" data-toggle="dropdown" aria-expanded="false">
+                        <span class="avatar">
+                            <img src="~/content/img/avatar.png" alt="Alternative text to the image">
+                        </span>
+                    </a>
+                    <ul class="dropdown-menu dropdown-menu-right" aria-labelledby="" role="menu">
+                        <a class="dropdown-item" href="javascript:void(0)"><i class="dropdown-icon fa fa-user"></i> @SessionHelper.Usuario.Nombre</a>
+                        <div class="dropdown-divider"></div>
+                        <a class="dropdown-item" href="~/account/login"><i class="dropdown-icon fa fa-sign-out"></i> Cerrar sesión</a>
+                    </ul>
+                </div>
+            </div>
+            <div class="menu-info-block">
+                @*<div class="left">
+                    <div class="header-buttons">
+                        <div class="dropdown">
+                            <a href="javascript: void(0);" class="dropdown-toggle dropdown-inline-button" data-toggle="dropdown" aria-expanded="false">
+                                <i class="fa fa-folder-open fa-fw"></i>
+                                <span class="hidden-lg-down">Mente Brillante</span>
+                                <span class="caret"></span>
+                            </a>
+                        </div>
+                    </div>
+                </div>*@
+                <div class="left">
+                    @if (SessionHelper.IsInRole("Alumno"))
                     {
-                        <i class="medalla fa fa-star fa-2x fa-fw"></i>
+                        <div style="margin-top:10px">                            
+                            @for (int i = 0; i < 5; i++)
+                            {
+                                <i class="medalla fa fa-star-o fa-lg fa-fw"></i>
+                            }
+                        </div>                        
                     }
                 </div>
-            </div>
-        </div>
-    </div>
-    }
-    <br />
-    <div class="container-fluid body-content">
-        <div class="row">
-            <div class="col-md-2">
-                <div class="list-group">
-                    <a class="list-group-item active">Juegos</a>
-                    <a href="~/reto" class="list-group-item">Responder preguntas</a>
-                    <a href="~/reto/lista" class="list-group-item">Consultar juegos</a>
-                </div>
-                <div class="list-group">
-                    <a class="list-group-item active">Notas</a>
-                    <a href="~/notas/registro" class="list-group-item">Registrar notas</a>
-                </div>
-                <div class="list-group">
-                    <a href="#" class="list-group-item">Consultar estadísticas</a>
-                    <a href="#" class="list-group-item">Consultar situación académica</a>
-                    <a href="#" class="list-group-item">Obtener información alumno</a>
-                    <a href="#" class="list-group-item">Actualizar registro de materiales</a>
-                </div>
-            </div>
-            <div class="col-md-10">
-                <div class="panel panel-default">
-                    <div class="panel-body">
-                        @RenderBody()
+                <div class="right hidden-md-down margin-left-20">
+                    <div class="search-block">
+                        <div class="form-input-icon form-input-icon-right">
+                            <i class="icmn-search"></i>
+                            <input type="text" class="form-control form-control-sm form-control-rounded" placeholder="Buscar...">
+                            <button type="submit" class="search-block-submit "></button>
+                        </div>
                     </div>
                 </div>
-
-                <br /><br />
             </div>
         </div>
-    </div>
+    </nav>
+    <section class="page-content">               
+        @RenderBody()
+    </section>
+
+    <div class="main-backdrop"><!-- --></div>
+
     <div class="loading">
         <div class="loading-content">
             <div><i class="fa fa-spinner fa-spin fa-3x"></i></div>
@@ -86,6 +138,11 @@
 
     <script src="~/Scripts/jquery-1.10.2.min.js"></script>
     <script src="~/Scripts/bootstrap.min.js"></script>
+
+    <script src="~/Scripts/jquery.mousewheel.min.js"></script>
+    <script src="~/Scripts/jquery.jscrollpane.min.js"></script>
+    <script src="~/Scripts/js/common.js"></script>
+
     <script src="~/Scripts/toastr/toastr.min.js"></script>
     <script type="text/javascript">toastr.options = { "progressBar": false, "positionClass": "toast-bottom-right", "closeButton": true, "showMethod": "slideDown" }</script>
     <script type="text/javascript">

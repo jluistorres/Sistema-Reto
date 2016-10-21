@@ -15,6 +15,7 @@ namespace Reto.Controllers
 
         public ActionResult NotFound()
         {
+            Response.StatusCode = 404;
             return View();
         }
 

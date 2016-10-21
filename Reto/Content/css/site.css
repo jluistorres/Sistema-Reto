@@ -12,7 +12,7 @@ input:-webkit-autofill, textarea:-webkit-autofill, select:-webkit-autofill { -we
 input[type='text'], input[type='password'], select, textarea { border: 1px solid #ccc; }
 input:focus, select:focus, textarea:focus, .form-control:focus { border-color: #ccc; }
 input[type='text'], input[type='password'], select, textarea, .form-control, input:focus, select:focus, textarea:focus, .well { box-shadow: none !important; }
-input[type='text'], input[type='password'], select, textarea, .panel, .input-group-addon, .form-control, .btn, .well, .alert, .progress { border-radius: 0 !important; }
+/*input[type='text'], input[type='password'], select, textarea, .panel, .input-group-addon, .form-control, .btn, .well, .alert, .progress { border-radius: 0 !important; }*/
 div:focus, span:focus, button:focus, input:focus, select:focus, textarea:focus, .btn:focus, .btn:active:focus, .btn.active:focus { outline: none !important; }
 input[type="number"].textfield::-webkit-outer-spin-button, input[type="number"].textfield::-webkit-inner-spin-button { -webkit-appearance: none; margin: 0; }
 input[type="number"].textfield { -moz-appearance: textfield; }
@@ -35,6 +35,11 @@ fieldset.fs-border legend { width: auto; font-size: 10pt; padding: 0 5px; color:
 .clearfix { display: block; }
 
 /*End reseet*/
+
+body { font-family: 'Ubuntu', sans-serif, 'Open Sans', Arial; font-size: 13px; }
+.text-info { font-family: "Fredoka One",cursive; font-size: 30px; }
+.navbar h3 { margin: 0; }
+hr { margin:8px 0; border-color:#ddd; }
 
 .header { background-color: #fff; padding: 5px 0; box-shadow: 0 5px 11px 0 #ccc; opacity: 0.9; }
 
@@ -64,4 +69,13 @@ fieldset.fs-border legend { width: auto; font-size: 10pt; padding: 0 5px; color:
 .loading .loading-content { position: absolute; top: 50%; left: 50%; margin-top: -32px; margin-left: -32px; text-align: center; color: #076db2; }
 .loading .loading-content .loading-text { margin-top: 5px; }
 
-.medalla { color:#ffc700; }
+.medalla { color: #ffc700; }
+
+@media (min-width: 768px) {
+    .hidden-md-up { display: none !important; }
+    .navbar.bar-menu .container-fluid { padding-left: 0; }
+}
+
+@media (max-width: 991px) {
+    .hidden-md-down { display: none !important; }
+}
