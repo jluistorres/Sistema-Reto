@@ -50,10 +50,16 @@
                     if (value) $(element).addClass('flag');
                 });
 
-                $(element).on('keypress', function (e) {
-                    if (e.keyCode == 13) {
+                $(element).on('keydown', function (e) {                    
+                    if ((e.keyCode >= 37 && e.keyCode <= 40) || (e.keyCode == 13)) {
                         var index = $(this).index();
-                        $(this).parent().next().find('td').eq(index).focus();
+
+                        switch (true) {
+                            case e.keyCode == 37: $(this).prev().focus(); break;//left
+                            case e.keyCode == 38: $(this).parent().prev().find('td').eq(index).focus(); break;//up
+                            case e.keyCode == 39: $(this).next().focus(); break;//right
+                            case e.keyCode == 40 || e.keyCode == 13: $(this).parent().next().find('td').eq(index).focus(); break;//bottom
+                        }
                     }
 
                     //Solo puede digitar del 0 al 3

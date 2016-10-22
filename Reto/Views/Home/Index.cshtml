@@ -5,9 +5,9 @@
 {
     <style type="text/css">
         .ranking { margin: 15px 0; /*text-align:center;*/ }
-        .ranking .user { position: relative; background: #ECEFF4; border: 1px solid #FFCC29; width: 180px; margin: 0 10px 10px 0; display:inline-block; padding: 50px 15px; text-align: center; cursor: pointer; transition: transform 200ms, filter 500ms ease-in-out; }
-        .ranking:hover .user { filter: grayscale(100%); -webkit-filter: grayscale(100%); }
-        .ranking .user:hover { transform: scale(1.15); box-shadow: 3px 3px 0px rgba(0,0,0,0.2); z-index: 200; filter: grayscale(0); -webkit-filter: grayscale(0); }        
+        .ranking .user { position: relative; background: #ECEFF4; border: 1px solid #FFCC29; width: 180px; margin: 0 10px 10px 0; display: inline-block; padding: 50px 15px; text-align: center; cursor: pointer; transition: transform 200ms, filter 500ms ease-in-out; filter: grayscale(0); -webkit-filter: grayscale(0); }
+        .ranking .user.disable { filter: grayscale(100%); -webkit-filter: grayscale(100%); }        
+        .ranking .user:hover { transform: scale(1.15); box-shadow: 3px 3px 0px rgba(0,0,0,0.2); z-index: 200; }        
         .ranking .user .nombre { font-weight: bold; margin: 5px 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
         .ranking .user .foto img { width: 70px; height: 70px; border-radius: 50%; }
         .ranking .user .puntos { font-size: 0.85em; }
@@ -16,6 +16,18 @@
         .ranking .user .user-content { position:relative; z-index:10; }
         .ranking .user .bg-user { position: absolute; background: #FFCC29; top: 0; left: 0; right: 0; height: 100px; z-index: 0; }
     </style>
+}
+@section scripts
+{
+    <script type="text/javascript">
+        $(function () {
+            $('.ranking .user').hover(function () {
+                $('.ranking .user').not($(this)).addClass('disable');
+            }, function () {
+                $('.ranking .user').removeClass('disable');
+            });
+        });
+    </script>
 }
 <h1>Bienvenido</h1>
 <div>
