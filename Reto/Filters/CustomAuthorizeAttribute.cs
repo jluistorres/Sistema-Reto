@@ -30,16 +30,13 @@ namespace Reto
 
             if (!authorize)
             {
+                // Forbidden
+                filterContext.HttpContext.Response.StatusCode = 403;
+
                 if (filterContext.HttpContext.Request.IsAjaxRequest())
-                {
-                    // Forbidden
-                    filterContext.HttpContext.Response.StatusCode = 403;
+                {                                        
                     filterContext.HttpContext.Response.End();
-                }
-                else
-                {
-                    filterContext.Result = new RedirectResult("~/Error/Restringido");
-                }
+                }                
             }
         }
     }

@@ -21,6 +21,7 @@ namespace Reto.Controllers
 
         public ActionResult Restringido()
         {
+            //Response.StatusCode = 403;
             return View();
         }
 	}

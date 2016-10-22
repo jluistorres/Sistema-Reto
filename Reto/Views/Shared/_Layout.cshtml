@@ -19,7 +19,7 @@
     <link href="~/Scripts/toastr/toastr.min.css" rel="stylesheet" />
     @RenderSection("styles", required: false)
 </head>
-<body class="mode-material colorful-enabled mode-squared theme-orange">    
+<body class="mode-material colorful-enabled mode-squared theme-orange">
     <nav class="left-menu">
         <div class="logo-container">
             <a href="~/" class="logo">
@@ -34,34 +34,61 @@
                         <i class="fa fa-home fa-fw"><!-- --></i> Inicio
                     </a>
                 </li>
-                <li class="left-menu-list-separator"><!-- --></li>
+                <li class="left-menu-list-separator"><!-- --></li>                
                 <li class="left-menu-list-submenu">
                     <a class="left-menu-link" href="javascript: void(0);">
-                        <i class="fa fa-cubes fa-fw"><!-- --></i> Juegos
+                        <i class="fa fa-table fa-fw"><!-- --></i> Sprint
                     </a>
                     <ul class="left-menu-list list-unstyled">
                         <li>
-                            <a class="left-menu-link" href="~/reto">Responder preguntas</a>
+                            <a class="left-menu-link" href="~/reto?tipo=1">Evaluación</a>
+                        </li>
+                        @*<li>
+                            <a class="left-menu-link" href="~/reto?tipo=2">Entrenamiento</a>
                         </li>
                         <li>
-                            <a class="left-menu-link" href="~/reto/lista">Consultar juegos</a>
+                            <a class="left-menu-link" href="~/reto?tipo=3">Reto familiar</a>
+                        </li>*@
+                        <li>
+                            <a class="left-menu-link" href="~/reto/lista">Administrar plantillas</a>
+                        </li>
+                    </ul>
+                </li>
+                <li class="left-menu-list-submenu">
+                    <a class="left-menu-link" href="javascript: void(0);">
+                        <i class="fa fa-bar-chart fa-fw"><!-- --></i> Estadísticas y resultados
+                    </a>
+                    <ul class="left-menu-list list-unstyled">
+                        <li>
+                            <a class="left-menu-link" href="~/notas/registro">Notas</a>
+                        </li>
+                        @*<li>
+                            <a class="left-menu-link" href="#">Situación Académica</a>
+                        </li>*@
+                    </ul>
+                </li>
+                <li class="left-menu-list-submenu">
+                    <a class="left-menu-link" href="javascript: void(0);">
+                        <i class="fa fa-graduation-cap fa-fw"><!-- --></i> Información
+                    </a>
+                    <ul class="left-menu-list list-unstyled">
+                        <li>
+                            <a class="left-menu-link" href="#">Del estudiante</a>
+                        </li>
+                        <li>
+                            <a class="left-menu-link" href="#">Del padre o apoderado</a>
                         </li>
                     </ul>
                 </li>
                 <li class="left-menu-list-separator"><!-- --></li>
                 <li>
-                    <a class="left-menu-link" href="~/notas/registro">
-                        <i class="fa fa-edit fa-fw"><!-- --></i> Registrar notas
-                    </a>
-                </li>                
-                <li>
                     <a class="left-menu-link" href="#">
-                        <i class="fa fa-bar-chart fa-fw"><!-- --></i> Estadísticas
+                        <i class="fa fa-calendar fa-fw"><!-- --></i> Agenda
                     </a>
                 </li>
                 <li>
                     <a class="left-menu-link" href="#">
-                        <i class="fa fa-book fa-fw"><!-- --></i> Situación Académica
+                        <i class="fa fa-cloud-download fa-fw"><!-- --></i> Descargas
                     </a>
                 </li>
             </ul>
@@ -90,25 +117,25 @@
             </div>
             <div class="menu-info-block">
                 @*<div class="left">
-                    <div class="header-buttons">
-                        <div class="dropdown">
-                            <a href="javascript: void(0);" class="dropdown-toggle dropdown-inline-button" data-toggle="dropdown" aria-expanded="false">
-                                <i class="fa fa-folder-open fa-fw"></i>
-                                <span class="hidden-lg-down">Mente Brillante</span>
-                                <span class="caret"></span>
-                            </a>
+                        <div class="header-buttons">
+                            <div class="dropdown">
+                                <a href="javascript: void(0);" class="dropdown-toggle dropdown-inline-button" data-toggle="dropdown" aria-expanded="false">
+                                    <i class="fa fa-folder-open fa-fw"></i>
+                                    <span class="hidden-lg-down">Mente Brillante</span>
+                                    <span class="caret"></span>
+                                </a>
+                            </div>
                         </div>
-                    </div>
-                </div>*@
+                    </div>*@
                 <div class="left">
                     @if (SessionHelper.IsInRole("Alumno"))
                     {
-                        <div style="margin-top:10px">                            
-                            @for (int i = 0; i < 5; i++)
+                        <div style="margin-top:10px">
+                            @for (int i = 0; i < 7; i++)
                             {
                                 <i class="medalla fa fa-star-o fa-lg fa-fw"></i>
                             }
-                        </div>                        
+                        </div>
                     }
                 </div>
                 <div class="right hidden-md-down margin-left-20">
@@ -123,7 +150,7 @@
             </div>
         </div>
     </nav>
-    <section class="page-content">               
+    <section class="page-content">
         @RenderBody()
     </section>
 
