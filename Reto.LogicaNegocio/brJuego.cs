@@ -37,7 +37,7 @@ namespace Reto.LogicaNegocio
             return odaJuego.CreateId(Nivel);
         }
 
-        public Juego ExtraerJuegoAzar(string Nivel)
+        public Juego ExtraerJuegoAzar(int Nivel)
         {
             return odaJuego.ExtraerJuegoAzar(Nivel);
         }

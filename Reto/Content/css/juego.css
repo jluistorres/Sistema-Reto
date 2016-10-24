@@ -1,9 +1,9 @@
 ﻿.tabla { border-collapse: collapse; margin: 0 auto; }
-.tabla .q, .tabla .casilla { width: 60px; height: 60px; }
+.tabla .q, .tabla .casilla { width: 50px; height: 50px; }
 .tabla .q { margin: 6px; text-align: center; vertical-align: middle; }
 .tabla .q.h { width: 25px; }
 .tabla .q.v { height: 25px; }
-.tabla .casilla { font-size: 30px; font-weight: bold; background-color:#fff; line-height: 60px; }
+.tabla .casilla { font-size: 30px; font-weight: bold; background-color:#fff; line-height: 50px; }
 .tabla .q.h, .tabla .q.v { font: normal normal normal 14px/1 FontAwesome; font-size: 2em; }
 .tabla .q.h.menor:before { content: "\f104"; }
 .tabla .q.h.mayor:before { content: "\f105"; }

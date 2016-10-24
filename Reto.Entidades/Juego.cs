@@ -23,7 +23,7 @@ namespace Reto.Entidades
         [Key]
         public int IdJuego { get; set; }
         public Nullable<int> Reto { get; set; }
-        public string Nivel { get; set; }
+        public Nullable<int> Nivel { get; set; }
         public string Solucion { get; set; }
         public string Enunciado { get; set; }
     

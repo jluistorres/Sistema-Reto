@@ -194,6 +194,20 @@ appMaster.AddZerosNumber = function (number, length) {
     return my_string;
 }
 
+appMaster.getQueryParams = function (qs) {
+    qs = (qs || document.location.search).split('+').join(' ');
+    var params = {},
+        tokens,
+        re = /[?&]?([^=]+)=([^&]*)/g;
+
+    while (tokens = re.exec(qs)) {
+        params[decodeURIComponent(tokens[1])] = decodeURIComponent(tokens[2]);
+    }
+
+    return params;
+}
+
+
 $(function () {
     $.ajaxSetup({ cache: false });
 

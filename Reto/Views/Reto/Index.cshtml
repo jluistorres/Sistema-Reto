@@ -56,7 +56,7 @@
 
                 //return JSON.parse('[[2,null,1,"menor",3],[null,null,null,null,"mayor"],[3,null,2,"mayor",1],["mayor",null,null,null,null],[1,null,3,null,2]]');
                 $.getJSON('@Url.Action("juego")', { Nivel: nivel }, function (result) {
-                    self.NroJuego(result.IdJuego);
+                    self.NroJuego(result.Reto);
                     casillero = JSON.parse(result.Enunciado);
                     self.JuegoSolucion(JSON.parse(result.Solucion));
                     //console.log(result);
@@ -259,7 +259,7 @@
                     </div>
                 </td>
                 <td style="vertical-align: top; width: 150px; padding:2px; display: none;" data-bind="visible: EstadoJuego() > 0">
-                    <div class="cronometro"><span data-bind="text: FormatearReloj(cronometro())"></span></div>
+                    <div class="cronometro"><i class="fa fa-hourglass-2"></i> <span data-bind="text: FormatearReloj(cronometro())"></span></div>
                 </td>               
             </tr>
         </tbody>

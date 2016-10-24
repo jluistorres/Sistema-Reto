@@ -1,0 +1,408 @@
+﻿@{
+    ViewBag.Title = "Registro";
+}
+
+@section styles
+{
+    <style type="text/css">
+        .casillero { margin: 0 auto; }
+        .casillero input { width: 40px; height: 40px; font-size: 1.5em; padding: 5px; border: none; text-align: center; }
+        .casillero tr td { vertical-align: middle; text-align: center; }
+        .casillero tr td i { margin: 7px; cursor: pointer; font-size: 1.3em; }
+        .casillero.solucion .fa-question-circle-o { color: #ddd; }
+        .casillero.solucion .fa-question-circle-o:hover { color: #333; }
+        .casillero.evaluacion .fa-question-circle-o { color: transparent; }
+        .form-inline .txt-sm { width:70px; }
+
+        @@media (max-width: 768px) {
+            .form-inline .txt-sm { width: 100%; }
+        }
+    </style>
+}
+
+@section scripts
+{
+    <script src="~/Scripts/knockout-3.4.0.js"></script>
+    <script src="~/Scripts/js/juego.core.js"></script>
+    <script type="text/javascript">
+        function Juego() {
+            var self = this;
+            self.IdJuego = ko.observable();
+            self.Reto = ko.observable();
+            self.Nivel = ko.observable();
+            self.Solucion = ko.observable();
+            self.Enunciado = ko.observable();
+        }
+
+        function ViewModel() {
+            var self = this;
+            self.GenerarAutomatico = ko.observable(false);
+            self.NroCasillasAleatorias = ko.observable(3);
+            self.reto = new Juego();
+            self.Niveles = [1, 2, 3, 4];
+            self.lstSolucion = ko.observableArray();
+            self.lstEvaluacion = ko.observableArray();
+
+            self.CambiarNivel = function () {
+                self.reto.Reto(null);
+                self.lstSolucion.removeAll();
+                self.lstEvaluacion.removeAll();
+            }
+
+            self.Generar = function () {
+                var nivel = self.reto.Nivel();
+                var n = (nivel + 2) * 2 - 1;
+                var auto;
+                if (self.GenerarAutomatico()) {
+                    auto = Reto.CrearArreglo(nivel + 2);
+                }
+
+                var cs = [], ce = [];
+                for (var i = 0; i < n; i++) {
+                    var fs = [], fe = [];
+                    for (var j = 0; j < n; j++) {
+                        fs.push({ col: ko.observable(auto ? auto[i].fila[j].col : null) });
+                        var simbol = (auto && !(i % 2 == 0 && j % 2 == 0)) ? auto[i].fila[j].col : null;
+                        fe.push({ col: ko.observable(simbol) });
+                    }
+                    cs.push({ fila: fs });
+                    ce.push({ fila: fe });
+                }
+                self.lstSolucion(cs);
+                self.lstEvaluacion(ce);
+
+                self.ObtenerNroReto();
+            }
+
+            self.CopiarSimbolos = ko.computed(function () {
+                var n = self.reto.Nivel();
+                if (n) {
+                    n = (n + 2) * 2 - 1;
+                    var lstEval = self.lstEvaluacion();
+                    var lstSol = self.lstSolucion();
+                    if (lstEval.length > 0 && lstSol.length > 0) {
+                        for (var i = 0; i < n; i++) {
+                            for (var j = 0; j < n; j++) {
+                                if (!(i % 2 == 0 && j % 2 == 0)) {
+                                    if (lstSol[i] && lstSol[i].fila[j] && lstEval[i] && lstEval[i].fila[j]) {
+                                        var simbolo = lstSol[i].fila[j].col();
+                                        lstEval[i].fila[j].col(simbolo);
+                                    }                                    
+                                }
+                            }
+                        }
+                    }                    
+                }
+            });
+
+            self.DefinirSimbolo = function (text, pos, eval) {
+                switch (ko.toJS(text)) {
+                    case 'mayor': return pos == 'c' ? 'fa fa-chevron-right' : 'fa fa-chevron-down';
+                    case 'menor': return pos == 'c' ? 'fa fa-chevron-left' : 'fa fa-chevron-up';
+                    default: return eval == 0 ? '' : 'fa fa-question-circle-o';
+                }
+            }
+
+            self.CambiarSimbolo = function (item) {
+                if (item.col() == null) item.col('mayor');
+                else if (item.col() == 'mayor') item.col('menor');
+                else item.col(null);
+            }
+
+            self.LimpiarSolucion = function () {
+                var n = (self.reto.Nivel() + 2) * 2 - 1;
+                for (var i = 0; i < n; i++) {
+                    for (var j = 0; j < n; j++) {
+                        self.lstSolucion()[i].fila[j].col(null);
+                    }
+                }
+            }
+
+            self.LimpiarEvaluacion = function () {
+                var n = (self.reto.Nivel() + 2) * 2 - 1;
+                for (var i = 0; i < n; i++) {
+                    for (var j = 0; j < n; j++) {
+                        if (i % 2 == 0 && j % 2 == 0) self.lstEvaluacion()[i].fila[j].col(null);
+                    }
+                }
+            }
+
+            self.LlenarEvaluacion = function () {
+                var temp = ko.toJS(self.lstSolucion);
+
+                if (temp.length > 0) {
+                    var n = parseInt(self.reto.Nivel()) + 2;
+                    var nitem = 2 * n - 1;
+
+                    for (var j = 0; j < nitem ; j++) {
+                        for (var i = 0; i < nitem ; i++) {
+                            if (!isNaN(temp[j].fila[i].col)) temp[j].fila[i].col = null
+                        }
+                    }
+
+                    if (self.GenerarAutomatico()) {
+                        var alea = self.NroCasillasAleatorias();
+                        if (alea > n * n) {
+                            toastr.info('No se puede llenar mas de las casillas disponibles');
+                            return;
+                        }
+                        var azar = Reto.ObtenerPosVal(temp, alea);
+                        for (var k = 0; k < azar.length; k++) {
+                            temp[azar[k].y].fila[azar[k].x].col = self.lstSolucion()[azar[k].y].fila[azar[k].x].col();
+                        }
+                    }
+
+                    for (var i = 0; i < nitem; i++) {
+                        for (var j = 0; j < nitem; j++) {
+                            self.lstEvaluacion()[i].fila[j].col(temp[i].fila[j].col);
+                        }
+                    }
+
+                }
+            }
+
+            self.ObtenerNroReto = function () {                
+                $.ajax({
+                    type: 'POST',
+                    url: "CreateId",
+                    data: ko.toJSON({ Nivel: self.reto.Nivel() }),
+                    dataType: 'json',
+                    contentType: 'application/json',
+                    success: function (datos) {                        
+                        self.reto.Reto(datos + 1);
+
+                    }
+                });
+            }
+
+            self.VerRegistro = function (idJuego) {
+                $.ajax({
+                    type: 'POST',
+                    url: "ListarPorId",
+                    data: ko.toJSON({ id: idJuego }),
+                    dataType: 'json',
+                    contentType: 'application/json',
+                    success: function (datos) {
+                        //console.log(datos);
+
+                        self.reto.IdJuego(datos.IdJuego);                        
+                        self.reto.Nivel(datos.Nivel);
+                        self.reto.Reto(datos.Reto);
+                        var n = parseInt(datos.Nivel) + 2;
+                        var nitem = 2 * n - 1;
+                        
+                        var cs = JSON.parse(datos.Solucion);
+                        var ce = JSON.parse(datos.Enunciado);
+
+                        for (var j = 0; j < nitem ; j++) {
+                            var lst = [], lste = [];
+                            for (var i = 0; i < nitem ; i++) {                                
+                                lst.push({ col: ko.observable(cs[j].fila[i].col) });
+                                lste.push({ col: ko.observable(ce[j].fila[i].col) });
+                            }
+
+                            self.lstSolucion.push({ fila: lst });
+                            self.lstEvaluacion.push({ fila: lste });
+                        }                        
+                    }
+                });
+            }
+
+            self.Guardar = function () {
+                //console.log(ko.toJS(self.lstSolucion));
+
+                if (self.lstSolucion() == undefined || self.lstSolucion().length == 0) { appMaster.MessageBox('Alerta', 'Debe generar la matriz'); return; }                
+                self.reto.Enunciado(ko.toJSON(self.lstEvaluacion)),
+                self.reto.Solucion(ko.toJSON(self.lstSolucion))
+                
+                $.ajax({
+                    type: 'POST',
+                    url: "crear",
+                    data: ko.toJSON({ be: self.reto }),
+                    dataType: 'json',
+                    contentType: 'application/json',
+                    success: function (result) {
+                        self.reto.IdJuego(result);
+                        toastr.info('Se ha guardado la plantilla del juego', 'Guardado');
+                    }
+                });
+            }
+
+            self.init = function () {
+                //self.reto.Nivel(4);
+                var query = appMaster.getQueryParams(document.location.search);
+                if (query.id) {
+                    self.VerRegistro(query.id);
+                }
+            }
+        }
+
+        $(function () {
+            var modelo = new ViewModel();
+            ko.applyBindings(modelo);
+            modelo.init();
+        });
+    </script>
+}
+
+<div class="navbar bar-menu" role="navigation">
+    <div class="container-fluid">
+        <div class="nav navbar-nav navbar-left">
+            <h3>Reto Mayor-Menor <span data-bind="visible: reto.IdJuego() && reto.Reto(), text: 'N° ' + reto.Reto() + ' (Nivel ' + reto.Nivel() + ')'"></span></h3>
+        </div>
+        <div class="nav navbar-nav navbar-right">
+            <div class="btn-group">
+                <button type="button" class="btn btn-primary-outline" data-bind="click: Guardar">Guardar</button>
+                <div class="btn-group">
+                    <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown">Más opciones <span class="caret"></span></button>
+                    <ul class="dropdown-menu">
+                        <li><a href="@Url.Action("mayor-menor")">Nuevo</a></li>
+                        <li class="divider" role="separator"></li>
+                        <li><a href="@Url.Action("lista")">Listar plantillas</a></li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="well well-sm">
+    <div class="form-group">
+        <label class="checkbox-inline">
+            <input type="checkbox" data-bind="checked: GenerarAutomatico" /> Llenar casillas en automático
+        </label>
+    </div>
+    <hr />
+    <div class="row">
+        <div class="col-sm-7">
+            <div class="form-inline">                
+                <div class="form-group">
+                    <select class="form-control" data-bind="options: Niveles, optionsText: function(nivel){ return 'Nivel ' + nivel }, optionsCaption: '- Nivel -', value: reto.Nivel, event: {change:CambiarNivel}"></select>
+                </div>
+                <div class="form-group">
+                    <button class="btn btn-default" data-bind="click: Generar, enable: reto.Nivel">Generar</button>
+                </div>
+            </div>            
+        </div>
+        <!--ko if: reto.Nivel-->
+        <div class="col-sm-5">
+            <div class="form-inline">                
+                <div class="form-group">
+                    <label class="control-label">N° Reto:</label>
+                    <input type="text" class="form-control text-center txt-sm" data-bind="value: reto.Reto, enable: reto.Nivel" />
+                </div> 
+                <div class="form-group">
+                    <label class="control-label">Libro:</label>
+                    <select class="form-control">
+                        <option value="1">Libro 1</option>
+                        <option value="2">Libro 2</option>
+                        <option value="3">Libro 3</option>
+                        <option value="4">Libro 4</option>
+                        <option value="5">Libro 5</option>
+                        <option value="6">Libro 6</option>
+                        <option value="7">Libro 7</option>
+                    </select>
+                </div>               
+            </div>            
+        </div>
+        <!--/ko-->
+    </div>
+</div>
+<!--ko if: lstSolucion().length > 0-->
+<div class="row">
+    <div class="col-md-6 text-center">
+        <div class="well well-sm">
+            <div class="row">
+                <div class="col-xs-8 text-left">
+                    <h4>Solución</h4>
+                </div>
+                <div class="col-xs-4 text-right">
+                    <div class="btn-group btn-group-sm">
+                        <button type="button" class="btn btn-default-outline" data-bind="click: LimpiarSolucion" title="Limpiar casillas"><i class="fa fa-trash-o"></i></button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <fieldset data-bind="disable: GenerarAutomatico">
+            <table class="casillero solucion">
+                <tbody data-bind="foreach: lstSolucion">
+                    <tr>
+                        <!--ko if: $index() % 2 == 0-->
+                        <!--ko foreach: fila-->
+                        <td>
+                            <!--ko if: $index() % 2 == 0-->
+                            <input type="text" data-bind="value: col" maxlength="1" />
+                            <!--/ko-->
+                            <!--ko ifnot: $index() % 2 == 0-->
+                            <i data-bind="css: $root.DefinirSimbolo(col, 'c'), click: $root.CambiarSimbolo"></i>
+                            <!--/ko-->
+                        </td>
+                        <!--/ko-->
+                        <!--/ko-->
+                        <!--ko ifnot: $index() % 2 == 0-->
+                        <!--ko foreach: fila-->
+                        <td>
+                            <!--ko if: $index() % 2 == 0-->
+                            <i data-bind="css: $root.DefinirSimbolo(col), click: $root.CambiarSimbolo"></i>
+                            <!--/ko-->
+                        </td>
+                        <!--/ko-->
+                        <!--/ko-->
+                    </tr>
+                </tbody>
+            </table>
+        </fieldset>
+    </div>
+    <div class="col-md-6 text-center">
+        <div class="well well-sm">
+            <div class="row">
+                <div class="col-xs-8 text-left">
+                    <h4>Evaluación</h4>
+                </div>
+                <div class="col-xs-4 text-right">                    
+                    <div class="form-inline">
+                        <!--ko if: GenerarAutomatico-->
+                        <div class="input-group input-group-sm">
+                            <input type="number" min="1" max="16" class="form-control" data-bind="value: NroCasillasAleatorias, attr: {max: Math.pow(((reto.Nivel() || 0) + 2), 2)}" title="Número de casillas aleatorias" style="width:70px" />                            
+                            <div class="input-group-btn">
+                                <button type="button" class="btn btn-primary" data-bind="click: LlenarEvaluacion" title="Llenar casillas"><i class="fa fa-arrow-down"></i></button>
+                            </div>
+                        </div>
+                        <!--/ko-->
+                        <button type="button" class="btn btn-default-outline btn-sm" data-bind="click: LimpiarEvaluacion" title="Limpiar casillas"><i class="fa fa-trash-o"></i></button>
+                    </div> 
+                </div>
+            </div>
+        </div>
+        <fieldset>
+            <table class="casillero evaluacion">
+                <tbody data-bind="foreach: lstEvaluacion">
+                    <tr>
+                        <!--ko if: $index() % 2 == 0-->
+                        <!--ko foreach: fila-->
+                        <td>
+                            <!--ko if: $index() % 2 == 0-->
+                            <input type="text" data-bind="value: col" maxlength="1" />
+                            <!--/ko-->
+                            <!--ko ifnot: $index() % 2 == 0-->
+                            <i data-bind="css: $root.DefinirSimbolo(col, 'c')"></i>
+                            <!--/ko-->
+                        </td>
+                        <!--/ko-->
+                        <!--/ko-->
+                        <!--ko ifnot: $index() % 2 == 0-->
+                        <!--ko foreach: fila-->
+                        <td>
+                            <!--ko if: $index() % 2 == 0-->
+                            <i data-bind="css: $root.DefinirSimbolo(col)"></i>
+                            <!--/ko-->
+                        </td>
+                        <!--/ko-->
+                        <!--/ko-->
+                    </tr>
+                </tbody>
+            </table>
+        </fieldset>
+    </div>
+</div>
+<!--/ko-->
+<br /><br />

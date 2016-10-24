@@ -22,12 +22,13 @@ namespace Reto.Controllers
             return View();
         }
 
-        public ActionResult Registro()
+        [ActionName("mayor-menor")]
+        public ActionResult MayorMenor()
         {
             return View();
-        }        
+        }
 
-        public JsonResult Juego(string Nivel)
+        public JsonResult Juego(int Nivel)
         {
             obrJuego = new brJuego();
             var juego = obrJuego.ExtraerJuegoAzar(Nivel);

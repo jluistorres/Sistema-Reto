@@ -50,14 +50,14 @@ namespace Reto.AccesoDatos
             //return (int)cnx.usp_CreateIdReto(Nivel).FirstOrDefault();
         }
 
-        public Juego ExtraerJuegoAzar(string Nivel)
+        public Juego ExtraerJuegoAzar(int Nivel)
         {
             Juego juego = null;
 
-            var result = cnx.Juego.Where(x => x.Nivel == "Nivel " + Nivel).ToList();
+            var result = cnx.Juego.Where(x => x.Nivel == Nivel).ToList();
             if (result.Count > 0)
             {
-                int Azar = new Random().Next(0, result.Count - 1);
+                int Azar = new Random().Next(0, result.Count);//result.Count - 1
                 juego = result[Azar];
             }
 

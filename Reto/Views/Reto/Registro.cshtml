@@ -103,6 +103,9 @@
                     case 'Nivel 3':
 
                         return 3;
+                    case 'Nivel 4':
+
+                        return 4;
 
                 }
             }
@@ -295,6 +298,7 @@
                                 <option value="1">Nivel 1</option>
                                 <option value="2">Nivel 2</option>
                                 <option value="3">Nivel 3</option>
+                                <option value="4">Nivel 4</option>
                             </select>
                         </div>
                     </div>
@@ -306,13 +310,11 @@
                     <div class="form-group ">
                         <label class="control-label col-md-2 col-xs-4">Solución: </label>
                         <div class="col-md-8">
-                            <table class="col-md-12  ">
-
+                            <table class="col-md-12">
                                 <tbody data-bind="foreach:lstConf">
                                     <tr>
                                         <!--ko if: viewModel.valor($index) -->
                                         <!--ko foreach:fila-->
-
                                         <td class="col-md-1 text-center pointer ">
                                             <!--ko if: viewModel.valor($index) -->
                                             <input type="text" data-bind="value:col " class="form-control text-center casilla " />
@@ -356,10 +358,9 @@
                                     <tr>
                                         <!--ko if: viewModel.valor($index) -->
                                         <!--ko foreach:fila-->
-
                                         <td class="col-md-1 text-center ">
                                             <!--ko if: viewModel.valor($index) -->
-                                            <input type="text" data-bind="value:col " class=" form-control text-center casilla" />
+                                            <input type="text" data-bind="value:col" class="form-control text-center casilla" />
                                             <!--/ko-->
                                             <!--ko if:!viewModel.valor($index) -->
                                             <i data-bind="attr:{class: viewModel.textView(col,'c',0)}"> </i>
