@@ -312,10 +312,10 @@
     <div class="col-md-6 text-center">
         <div class="well well-sm">
             <div class="row">
-                <div class="col-xs-8 text-left">
+                <div class="col-xs-6 text-left">
                     <h4>Solución</h4>
                 </div>
-                <div class="col-xs-4 text-right">
+                <div class="col-xs-6 text-right">
                     <div class="btn-group btn-group-sm">
                         <button type="button" class="btn btn-default-outline" data-bind="click: LimpiarSolucion" title="Limpiar casillas"><i class="fa fa-trash-o"></i></button>
                     </div>
@@ -355,14 +355,14 @@
     <div class="col-md-6 text-center">
         <div class="well well-sm">
             <div class="row">
-                <div class="col-xs-8 text-left">
+                <div class="col-xs-6 text-left">
                     <h4>Evaluación</h4>
                 </div>
-                <div class="col-xs-4 text-right">                    
+                <div class="col-xs-6 text-right">                    
                     <div class="form-inline">
                         <!--ko if: GenerarAutomatico-->
                         <div class="input-group input-group-sm">
-                            <input type="number" min="1" max="16" class="form-control" data-bind="value: NroCasillasAleatorias, attr: {max: Math.pow(((reto.Nivel() || 0) + 2), 2)}" title="Número de casillas aleatorias" style="width:70px" />                            
+                            <input type="number" min="1" max="16" class="form-control" data-bind="value: NroCasillasAleatorias, attr: {max: Math.pow(((reto.Nivel() || 0) + 2), 2)}" title="Número de casillas aleatorias" />                            
                             <div class="input-group-btn">
                                 <button type="button" class="btn btn-primary" data-bind="click: LlenarEvaluacion" title="Llenar casillas"><i class="fa fa-arrow-down"></i></button>
                             </div>

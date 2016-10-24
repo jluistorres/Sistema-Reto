@@ -21,8 +21,7 @@
 
         .registro .nota.flag { color: #fff; }
         .registro .nota.flag:after { position: absolute; top: 50%; left: 50%; margin-left: -7px; margin-top: -7px; content: "\f024"; font: normal normal normal 14px/1 FontAwesome; }
-        .registro .nota.rojo.flag:after { color: #ff0000; }
-        .registro .nota.anaranjado.flag:after { color: #ff6a00; }
+        .registro .nota.rojo.flag:after { color: #ff0000; }        
         .registro .nota.amarillo.flag:after { color: #ffd800; }
         .registro .nota.verde.flag:after { color: #1fba18; }
 
@@ -43,14 +42,15 @@
                     var observable = valueAccessor();
                     var value = $(this).html();
                     if (!isNaN(parseFloat(value))) {
-                        if (parseInt(value) > 3) value = 3;
-                        if (parseInt(value) < 0) value = 0;
+                        if (parseInt(value) > 5) value = 5;
+                        if (parseInt(value) < 3) value = 3;
                     }
                     observable(value);
                     if (value) $(element).addClass('flag');
                 });
 
-                $(element).on('keydown', function (e) {                    
+                $(element).on('keydown', function (e) {
+                    //console.log(e.keyCode);
                     if ((e.keyCode >= 37 && e.keyCode <= 40) || (e.keyCode == 13)) {
                         var index = $(this).index();
 
@@ -63,7 +63,7 @@
                     }
 
                     //Solo puede digitar del 0 al 3
-                    if (!(e.keyCode >= 48 && e.keyCode <= 51)) return false;
+                    if (!(e.keyCode >= 51 && e.keyCode <= 53) && !(e.keyCode >= 99 && e.keyCode <= 101)) return false;
 
                     if (e.keyCode != 13) $(this).html(e.key);
                     return false;
@@ -277,10 +277,9 @@
             self.VerificarNota = function (nota) {
                 if (!isNaN(parseInt(nota))) {
                     switch (parseInt(nota)) {
-                        case 0: return 'flag rojo'; break;
-                        case 1: return 'flag anaranjado'; break;
-                        case 2: return 'flag amarillo'; break;
-                        case 3: return 'flag verde'; break;
+                        case 3: return 'flag rojo'; break;
+                        case 4: return 'flag amarillo'; break;                        
+                        case 5: return 'flag verde'; break;
                     }
                 }
             }
