@@ -14,16 +14,9 @@ namespace Reto.Entidades
     using System.ComponentModel.DataAnnotations;
     
     public partial class NivelEscolar
-    {
-        public NivelEscolar()
-        {
-            this.Matricula = new HashSet<Matricula>();
-        }
-    
+    {        
         [Key]
         public int IdNivelEscolar { get; set; }
-        public string Detalle { get; set; }
-    
-        public virtual ICollection<Matricula> Matricula { get; set; }
+        public string Detalle { get; set; }    
     }
 }

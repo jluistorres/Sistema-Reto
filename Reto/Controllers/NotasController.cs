@@ -23,25 +23,56 @@ namespace Reto.Controllers
             return View();
         }
 
-        public JsonResult CargarDatosDocente(int IdPersona)
+        public JsonResult CargarDatosInicial()
         {
             obrNotas = new brNotas();
-            var result = obrNotas.DocenteCursoSelect(IdPersona);
-            return Json(result, JsonRequestBehavior.AllowGet);
+            var docente = obrNotas.DocenteSelect(SessionHelper.Usuario.IdPersona);
+            var criterios = obrNotas.CriteriosEvaluacionSelect();
+            return Json(new
+            {
+                Docente = docente,
+                Criterios = criterios
+            }, JsonRequestBehavior.AllowGet);
         }
 
-        public JsonResult ListarRegistro(int Grado, string Seccion, int IdCurso)
+        public JsonResult ListarRegistro(int IdNivelEscolar, int Grado, string Seccion, int Bimestre)
         {
             obrNotas = new brNotas();
-            var result = obrNotas.RegistroNotasSelect(Grado, Seccion, IdCurso);
+            var result = obrNotas.NotasSelect(IdNivelEscolar, Grado, Seccion, Bimestre);
             return Json(result, JsonRequestBehavior.AllowGet);
         }
 
         [HttpPost]
-        public int GuardarNotas(DocenteCurso dc, List<NotasCriterio> notas)
+        public int GuardarNotas(int IdNivelEscolar, int Grado, string Seccion, int Bimestre, List<NotasCriterio> criterios, List<Notas> notas)
         {
             obrNotas = new brNotas();
-            return obrNotas.GuardarNotas(dc, notas);
+
+            var docente = obrNotas.DocenteSelect(SessionHelper.Usuario.IdPersona);
+            if (docente == null) return 0;
+
+            var fecha = DateTime.Now;
+
+            if (criterios != null)
+            {
+                foreach (var item in criterios)
+                {
+                    item.IdDocente = docente.IdDocente;
+                    item.Anyo = fecha.Year;
+                    item.Fecha = fecha;
+                }
+            }
+
+            if (notas != null)
+            {
+                foreach (var item in notas)
+                {
+                    item.IdDocente = docente.IdDocente;
+                    item.Anyo = fecha.Year;
+                    item.Fecha = fecha;
+                }
+            }
+
+            return obrNotas.GuardarNotas(IdNivelEscolar, Grado, Seccion, Bimestre, criterios, notas);
         }
     }
 }

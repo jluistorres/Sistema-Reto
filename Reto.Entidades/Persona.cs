@@ -14,22 +14,11 @@ namespace Reto.Entidades
     using System.ComponentModel.DataAnnotations;
     
     public partial class Persona
-    {
-        public Persona()
-        {
-            this.Alumno = new HashSet<Alumno>();
-            this.Docente = new HashSet<Docente>();
-            this.Usuario = new HashSet<Usuario>();
-        }
-
+    {        
         [Key]
         public int IdPersona { get; set; }
         public string Nombres { get; set; }
         public string ApePaterno { get; set; }
-        public string ApeMaterno { get; set; }
-    
-        public virtual ICollection<Alumno> Alumno { get; set; }
-        public virtual ICollection<Docente> Docente { get; set; }
-        public virtual ICollection<Usuario> Usuario { get; set; }
+        public string ApeMaterno { get; set; }    
     }
 }

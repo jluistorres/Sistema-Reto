@@ -14,18 +14,9 @@ namespace Reto.Entidades
     using System.ComponentModel.DataAnnotations;
     
     public partial class CriteriosEvaluacion
-    {
-        public CriteriosEvaluacion()
-        {
-            this.NotasCriterio = new HashSet<NotasCriterio>();
-        }
-    
+    {        
         [Key]
-        public int IdCriterio { get; set; }
-        public Nullable<int> IdCurso { get; set; }
-        public string Nombre { get; set; }
-    
-        public virtual Curso Curso { get; set; }
-        public virtual ICollection<NotasCriterio> NotasCriterio { get; set; }
+        public int IdCriterio { get; set; }        
+        public string Nombre { get; set; }           
     }
 }

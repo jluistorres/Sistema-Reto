@@ -14,19 +14,13 @@ namespace Reto.Entidades
     using System.ComponentModel.DataAnnotations;
     
     public partial class Juego
-    {
-        public Juego()
-        {
-            this.Alumno_Juego = new HashSet<Alumno_Juego>();
-        }
-
+    {        
         [Key]
         public int IdJuego { get; set; }
+        public Nullable<int> Libro { get; set; }
         public Nullable<int> Reto { get; set; }
         public Nullable<int> Nivel { get; set; }
         public string Solucion { get; set; }
-        public string Enunciado { get; set; }
-    
-        public virtual ICollection<Alumno_Juego> Alumno_Juego { get; set; }
+        public string Enunciado { get; set; }    
     }
 }

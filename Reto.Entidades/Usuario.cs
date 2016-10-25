@@ -20,8 +20,6 @@ namespace Reto.Entidades
         public Nullable<int> IdPersona { get; set; }
         public string Clave { get; set; }
         public string Rol { get; set; }
-        public Nullable<bool> FlagActivo { get; set; }
-    
-        public virtual Persona Persona { get; set; }
+        public Nullable<bool> FlagActivo { get; set; }    
     }
 }

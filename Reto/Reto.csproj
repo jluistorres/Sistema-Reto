@@ -104,6 +104,7 @@
     <Content Include="Content\fonts\font-awesome-4.6.3\css\font-awesome.css" />
     <Content Include="Content\fonts\font-awesome-4.6.3\css\font-awesome.min.css" />
     <Content Include="Content\fonts\font-awesome-4.6.3\fonts\fontawesome-webfont.svg" />
+    <Content Include="Content\img\avatar_reto.png" />
     <Content Include="Content\img\avatar.png" />
     <Content Include="Content\img\bcklogin.png" />
     <Content Include="Content\img\logo.png" />

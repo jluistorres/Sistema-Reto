@@ -12,11 +12,8 @@
         .registro td { border: 1px solid #ccc; text-align: center; position: relative; }
         .registro h4, .registro h5 { text-align: center; }
         .registro .alumno { text-align: left; padding: 5px; }
-
-        .registro .rotar { transform: rotate(270deg); font-size: 0.8em; }
-        .registro .rotar > div { display: inline-block; height: 200px; width: 20px; }  
-        /*.registro .rotar { height: 200px; width: 20px; font-size: 0.8em; overflow: hidden; }
-        .registro .rotar div { display: inline-block; white-space: nowrap; transform: translate(0,100%) rotate(-90deg); transform-origin: 0 0; width: 20px; height: 180px; line-height: 20px; }*/
+        .registro .rotar { height: 200px; width: 20px; font-size: 0.8em; overflow: hidden; text-transform:uppercase; }
+        .registro .rotar > * { display: inline-block; white-space: nowrap; transform: translate(0,100%) rotate(-90deg); transform-origin: 0 0; width: 20px; height: 180px; line-height: 20px; }
         /*.registro .rotar div:before { content: ""; float: left; margin-top: 100%; }*/
         .registro .rotar.rotar-reverse div { transform: translate(200%,0) rotate(90deg); }
         .registro .rotar.rotar-reverse div:before { margin: 0; margin-bottom: 100%; }
@@ -38,6 +35,22 @@
     <script src="~/Scripts/knockout-3.4.0.js"></script>
     <script src="~/Scripts/knockout.mapping-latest.js"></script>
     <script type="text/javascript">
+        var onTeclasDireccionales = function (element) {
+            $(element).on('keydown', function (e) {
+                //console.log(e.keyCode);
+                if ((e.keyCode >= 37 && e.keyCode <= 40) || e.keyCode == 13) {
+                    var index = $(this).index();
+
+                    switch (true) {
+                        case e.keyCode == 37: $(this).prev().focus(); break;//left
+                        case e.keyCode == 38: $(this).parent().prev().find('td').eq(index).focus(); break;//up
+                        case e.keyCode == 39: $(this).next().focus(); break;//right
+                        case e.keyCode == 40 || e.keyCode == 13: $(this).parent().next().find('td').eq(index).focus(); break;//bottom
+                    }
+                }
+            });
+        }
+
         ko.bindingHandlers.editableText = {
             init: function (element, valueAccessor) {
                 $(element).on('focus', function () { $(this).removeClass('flag'); });
@@ -53,26 +66,14 @@
                 });
 
                 $(element).on('keypress', function (e) {
-                    //Solo puede digitar del 0 al 3
+                    //Solo puede digitar del 3 al 5
                     if (!(e.keyCode >= 51 && e.keyCode <= 53)) return false;
 
                     if (e.keyCode != 13) $(this).html(e.key);
                     return false;
                 });
 
-                $(element).on('keydown', function (e) {
-                    //console.log(e.keyCode);
-                    if ((e.keyCode >= 37 && e.keyCode <= 40) || e.keyCode == 13) {
-                        var index = $(this).index();
-
-                        switch (true) {
-                            case e.keyCode == 37: $(this).prev().focus(); break;//left
-                            case e.keyCode == 38: $(this).parent().prev().find('td').eq(index).focus(); break;//up
-                            case e.keyCode == 39: $(this).next().focus(); break;//right
-                            case e.keyCode == 40 || e.keyCode == 13: $(this).parent().next().find('td').eq(index).focus(); break;//bottom
-                        }
-                    }
-                });
+                onTeclasDireccionales(element);
             },
             update: function (element, valueAccessor) {
                 var value = ko.utils.unwrapObservable(valueAccessor());
@@ -83,35 +84,84 @@
                 $(element).html(value);
             }
         };
+
+        ko.bindingHandlers.editableNota = {
+            init: function (element, valueAccessor) {
+                $(element).on('blur', function () {
+                    var observable = valueAccessor();
+                    var value = $(this).html();
+                    if (!isNaN(parseFloat(value))) {
+                        if (parseInt(value) > 20) value = 20;
+                        if (parseInt(value) < 0) value = 0;
+                    }
+                    observable(value);
+                });
+
+                $(element).on('keypress', function (e) {
+                    //Solo puede digitar del 0 al 9
+                    if ($(this).text().toString().length == 2 && (e.keyCode == 49 || e.keyCode == 50)) $(this).html('');
+                    if (!(e.keyCode >= 48 && e.keyCode <= 57) || $(this).text().toString().length == 2) return false;
+                });
+
+                onTeclasDireccionales(element);
+            },
+            update: function (element, valueAccessor) {
+                var value = ko.utils.unwrapObservable(valueAccessor());
+                $(element).html(value);
+            }
+        }
     </script>
     <script type="text/javascript">
         function ViewModel() {
             var self = this;
 
             self.Filtro = {
+                IdNivelEscolar: ko.observable(),
+                Niveles: ko.observableArray([
+                    { IdNivel: 1, Nivel: 'Primaria' },
+                    { IdNivel: 2, Nivel: 'Secundaria' }
+                ]),
                 Grado: ko.observable(),
                 Grados: ko.observableArray(),
                 Seccion: ko.observable(),
                 Secciones: ko.observableArray(),
-                IdCurso: ko.observable(),
-                Cursos: ko.observableArray()
+                Bimestre: ko.observable(),
+                Bimestres: ko.observableArray([
+                    { IdBimestre: 1, Nombre: 'PRIMER BIMESTRE' },
+                    { IdBimestre: 2, Nombre: 'SEGUNDO BIMESTRE' },
+                    { IdBimestre: 3, Nombre: 'TERCER BIMESTRE' },
+                    { IdBimestre: 4, Nombre: 'CUARTO BIMESTRE' }
+                ])
             }
 
             //Evaluacion por trimestre
             //variables ko
-            self.evaluaciones = ko.observable(1);
+            self.evaluaciones = ko.observable(2);
             self.docente = ko.observable();
             self.criterios = ko.observableArray();
             self.alumnos = ko.observableArray();
 
+            self.Grado_Texto = function (grado) {
+                switch (grado) {
+                    case 1: return 'PRIMER'; break;
+                    case 2: return 'SEGUNDO'; break;
+                    case 3: return 'TERCERO'; break;
+                    case 4: return 'CUARTO'; break;
+                    case 5: return 'QUINTO'; break;
+                    case 6: return 'SEXTO'; break;
+                    default: return grado;
+                }
+            }
+
             self.EstructurarTabla = function (datos) {
-                var alumnos = [], criterios = [], notas = [];
+                //console.log(datos);
+                var alumnos = [], criterios = self.criterios(), notas = [];
 
                 //Criterios
-                ko.utils.arrayForEach(datos, function (item) {
-                    var crit = ko.utils.arrayFirst(criterios, function (x) { return x.IdCriterio == item.IdCriterio });
-                    if (crit == null) criterios.push({ IdCriterio: item.IdCriterio, Nombre: item.Criterio });
-                });
+                //ko.utils.arrayForEach(datos, function (item) {
+                //    var crit = ko.utils.arrayFirst(criterios, function (x) { return x.IdCriterio == item.IdCriterio });
+                //    if (crit == null) criterios.push({ IdCriterio: item.IdCriterio, Nombre: item.Criterio });
+                //});
 
                 criterios = criterios.sort(function (a, b) {
                     if (a.IdCriterio > b.IdCriterio) return 1;
@@ -121,6 +171,7 @@
 
                 //Alumnos
                 ko.utils.arrayForEach(datos, function (item) {
+                    //if (item.PromedioVirtual) console.log(item);
                     var alum = ko.utils.arrayFirst(alumnos, function (x) { return x.IdAlumno == item.IdAlumno });
                     if (alum == null) {
                         var obj = {
@@ -129,7 +180,15 @@
                             IdAlumno: item.IdAlumno,
                             Nombre: item.Alumno,
                             Notas: [],
-                            PromedioFinal: ko.observable(0)
+                            PromedioProceso: ko.observable(item.PromedioProceso),
+                            PromedioVirtual: ko.observable(item.PromedioVirtual),
+                            TestPresencial: ko.observable(item.TestPresencial),
+                            PromedioSprint: ko.observable(item.PromedioSprint),
+                            Bimestral: ko.observable(item.Bimestral),
+                            Plataforma: ko.observable(item.Plataforma),
+                            Clase: ko.observable(item.Clase),
+                            PromedioActitud: ko.observable(item.PromedioActitud),
+                            NotaFinal: ko.observable(item.NotaFinal)
                         };
 
                         for (var i = 0; i < self.evaluaciones() ; i++) {
@@ -157,7 +216,7 @@
                 //console.log(ko.toJS(alumnos));
 
                 //variables ko
-                self.criterios(criterios);
+                //self.criterios(criterios);
                 self.alumnos(alumnos);
             }
 
@@ -181,92 +240,89 @@
                         e.Promedio(prom);
                     });
 
-                    var final = Math.round(sum_total / evaluaciones.length);
-                    a.PromedioFinal(final);
+                    var prom_proceso = Math.round(sum_total / evaluaciones.length);
+                    a.PromedioProceso(prom_proceso);
+
+                    var prom_sprint = Math.round((parseInt(a.PromedioVirtual() || 0) + parseInt(a.TestPresencial() || 0)) / 2);
+                    a.PromedioSprint(prom_sprint);
+
+                    var prom_actitud = Math.round((parseInt(a.Plataforma() || 0) + parseInt(a.Clase() || 0)) / 2);
+                    a.PromedioActitud(prom_actitud);
+
+                    var bimestral = parseInt(a.Bimestral() || 0);
+
+                    var nota_final = Math.round((prom_proceso * 5 + prom_sprint * 2 + bimestral + prom_actitud * 2) / 10);
+                    a.NotaFinal(nota_final);
                 })
             });
 
-            self.DatosDocente = ko.observableArray();
+            //self.DatosDocente = ko.observableArray();
 
-            self.Filtrar_NroEvaluaciones = ko.computed(function () {
-                if (self.Filtro.IdCurso()) {
-                    var curso = ko.utils.arrayFirst(self.Filtro.Cursos(), function (x) { return x.IdCurso == self.Filtro.IdCurso() });
-                    if (curso != null) {
-                        self.evaluaciones(curso.NroEvaluaciones);
-                    }
-                }
-            });
+            //self.Filtrar_Cursos = function () {
+            //    self.alumnos.removeAll();
+            //    var datos = self.DatosDocente();
+            //    var distinct = [];
 
-            self.Filtrar_Cursos = function () {
-                self.alumnos.removeAll();
-                var datos = self.DatosDocente();
-                var distinct = [];
+            //    ko.utils.arrayForEach(datos, function (x) {
+            //        var obj = ko.utils.arrayFirst(distinct, function (c) { return c.IdCurso == x.IdCurso });
+            //        if (obj == null) distinct.push({ IdCurso: x.IdCurso, Curso: x.Curso, NroEvaluaciones: x.NroEvaluaciones });
+            //    });
 
-                ko.utils.arrayForEach(datos, function (x) {
-                    var obj = ko.utils.arrayFirst(distinct, function (c) { return c.IdCurso == x.IdCurso });
-                    if (obj == null) distinct.push({ IdCurso: x.IdCurso, Curso: x.Curso, NroEvaluaciones: x.NroEvaluaciones });
-                });
-
-                self.Filtro.Cursos(distinct);
-            }
+            //    self.Filtro.Cursos(distinct);
+            //}
 
             self.Filtrar_Grados = function () {
                 self.alumnos.removeAll();
-                var datos = self.DatosDocente();
+                //var datos = self.DatosDocente();
                 var distinct = [];
 
-                ko.utils.arrayForEach(datos, function (x) {
-                    if (distinct.indexOf(x.Grado) == -1) distinct.push(x.Grado);
-                });
+                if (self.Filtro.IdNivelEscolar() == 1) {
+                    distinct = [3, 4, 5, 6];
+                }
+                else if (self.Filtro.IdNivelEscolar() == 2) {
+                    distinct = [1, 2, 3];
+                }
+
+                //ko.utils.arrayForEach(datos, function (x) {
+                //    if (distinct.indexOf(x.Grado) == -1) distinct.push(x.Grado);
+                //});
 
                 self.Filtro.Grados(distinct);
             }
 
             self.Filtrar_Secciones = function () {
                 self.alumnos.removeAll();
-                var datos = self.DatosDocente();
-                var distinct = [];
+                //var datos = self.DatosDocente();
+                var distinct = ['A', 'B', 'C'];
 
-                ko.utils.arrayForEach(datos, function (x) {
-                    if (x.Grado == self.Filtro.Grado()) {
-                        if (distinct.indexOf(x.Seccion) == -1) distinct.push(x.Seccion);
-                    }
-                });
+                //ko.utils.arrayForEach(datos, function (x) {
+                //    if (x.Grado == self.Filtro.Grado()) {
+                //        if (distinct.indexOf(x.Seccion) == -1) distinct.push(x.Seccion);
+                //    }
+                //});
 
                 self.Filtro.Secciones(distinct);
-            }
-
-            self.Grado_Texto = function (grado) {
-                switch (grado) {
-                    case 1: return 'PRIMER'; break;
-                    case 2: return 'SEGUNDO'; break;
-                    case 3: return 'TERCERO'; break;
-                    case 4: return 'CUARTO'; break;
-                    case 5: return 'QUINTO'; break;
-                    case 6: return 'SEXTO'; break;
-                    default: return grado;
-                }
-            }
+            }            
 
             self.init = function () {
                 var IdPersona = '@SessionHelper.Usuario.IdPersona';
 
-                $.getJSON('@Url.Action("CargarDatosDocente")', { IdPersona: IdPersona })
+                $.getJSON('@Url.Action("CargarDatosInicial")')
                 .done(function (result) {
                     //console.log(result);
-                    self.DatosDocente(result);
-                    self.Filtrar_Cursos();
-                    if (result.length > 0) {
-                        self.docente(result[0].Docente);
-                    }
-                });
+                    //self.DatosDocente(result);
+                    //self.Filtrar_Cursos();
+                    self.docente(result.Docente.Docente);
+                    self.criterios(result.Criterios);
+                }).fail(function (xhr) { console.log(xhr); });
             }
 
             self.CargarRegistro = function () {
                 var params = {
+                    IdNivelEscolar: self.Filtro.IdNivelEscolar(),
                     Grado: self.Filtro.Grado(),
                     Seccion: self.Filtro.Seccion(),
-                    IdCurso: self.Filtro.IdCurso()
+                    Bimestre: self.Filtro.Bimestre()
                 };
 
                 $.getJSON('@Url.Action("ListarRegistro")', params)
@@ -276,7 +332,7 @@
                     if (result.length == 0) {
                         appMaster.MessageBox('Sin alumnos', 'No hay alumnos matriculados en el grado y sección seleccionados');
                     }
-                });
+                }).fail(function (xhr) { console.log(xhr); });
             }
 
             self.VerificarNota = function (nota) {
@@ -306,13 +362,15 @@
             }
 
             self.Guardar = function () {
+                var alumnos = ko.toJS(self.alumnos);
+                //console.log(alumnos);
+
                 appMaster.Confirm({
                     Title: 'Registro de notas',
                     Message: '¿Desea guardar los cambios en el registro de notas?',
                     Yes: function () {
-                        var alumnos = ko.toJS(self.alumnos);
                         var registro = [];
-                        //console.log(alumnos);
+                        var Anyo = new Date().getFullYear();
 
                         alumnos.forEach(function (a) {
                             var evaluaciones = a.Notas;
@@ -320,29 +378,47 @@
                                 var notas = e.Notas;
                                 notas.forEach(function (n) {
                                     if (n.Nota) {
-                                        var obj = { IdMatricula: a.IdMatricula, IdDocenteCurso: a.IdDocenteCurso, IdCriterio: n.IdCriterio, NroEvaluacion: i + 1, Nota: n.Nota };
+                                        var obj = {
+                                            IdAlumno: a.IdAlumno,
+                                            IdNivelEscolar: self.Filtro.IdNivelEscolar(),
+                                            Grado: self.Filtro.Grado(),
+                                            Bimestre: self.Filtro.Bimestre(),
+                                            Anyo: Anyo,
+                                            IdCriterio: n.IdCriterio,
+                                            NroEvaluacion: i + 1,
+                                            Nota: n.Nota
+                                        };
+
                                         registro.push(obj);
                                     }
                                 });
                             });
+
+                            a.IdNivelEscolar = self.Filtro.IdNivelEscolar();
+                            a.Grado = self.Filtro.Grado();
+                            a.Bimestre = self.Filtro.Bimestre();
                         });
 
-                        //console.log(registro);
-
-                        var params = {
-                            Grado: self.Filtro.Grado(),
-                            Seccion: self.Filtro.Seccion(),
-                            IdCurso: self.Filtro.IdCurso()
-                        };
+                        console.log(registro);
 
                         $.ajax({
                             type: 'POST',
                             url: '@Url.Action("GuardarNotas")',
-                            data: JSON.stringify({ dc: params, notas: registro }),
+                            data: JSON.stringify({
+                                IdNivelEscolar: self.Filtro.IdNivelEscolar(),
+                                Grado: self.Filtro.Grado(),
+                                Seccion: self.Filtro.Seccion(),
+                                Bimestre: self.Filtro.Bimestre(),
+                                criterios: registro,
+                                notas: alumnos
+                            }),
                             dataType: 'json',
                             contentType: 'application/json',
                             success: function (result) {
-                                appMaster.MessageBox('Listo', 'Datos guardados exitosamente');
+                                toastr.success('Datos guardados exitosamente', 'Listo');
+                            },
+                            error: function (xhr) {
+                                console.log(xhr);
                             }
                         });
                     }
@@ -370,9 +446,9 @@
     <div class="row">
         <div class="col-sm-9">
             <div class="row">
-                <div class="col-sm-6">
-                    <label class="control-label">Juego:</label>
-                    <select class="form-control" data-bind="options: Filtro.Cursos, optionsText: 'Curso', optionsValue: 'IdCurso', optionsCaption: '- Juego -', value: Filtro.IdCurso, event: {change: Filtrar_Grados}"></select>
+                <div class="col-sm-3">
+                    <label class="control-label">Nivel:</label>
+                    <select class="form-control" data-bind="options: Filtro.Niveles, optionsText: 'Nivel', optionsValue: 'IdNivel', optionsCaption: '- Nivel -', value: Filtro.IdNivelEscolar, event: {change: Filtrar_Grados}"></select>
                 </div>
                 <div class="col-sm-3">
                     <label class="control-label">Grado:</label>
@@ -382,15 +458,19 @@
                     <label class="control-label">Sección:</label>
                     <select class="form-control" data-bind="options: Filtro.Secciones, optionsCaption: '- Sección -', value: Filtro.Seccion"></select>
                 </div>
+                <div class="col-sm-3">
+                    <label class="control-label">Bimestre:</label>
+                    <select class="form-control" data-bind="options: Filtro.Bimestres, optionsText: 'Nombre', optionsValue: 'IdBimestre', optionsCaption: '- Bimestre -', value: Filtro.Bimestre"></select>
+                </div>
             </div>
         </div>
         <div class="col-sm-3">
             <label class="control-label">&nbsp;</label>
-            <button type="button" class="btn btn-default btn-block" data-bind="click: $root.CargarRegistro, enable: Filtro.IdCurso() && Filtro.Grado() && Filtro.Seccion()">Mostrar registro</button>
+            <button type="button" class="btn btn-default btn-block" data-bind="click: $root.CargarRegistro, enable: Filtro.Bimestre() && Filtro.Grado() && Filtro.Seccion()">Mostrar registro</button>
         </div>
     </div>
 </div>
-<div data-bind="visible: true || alumnos().length > 0">
+<div data-bind="visible: alumnos().length > 0">
     <div class="well well-sm" style="padding-bottom:0">
         <div class="row">
             <div class="col-sm-9">
@@ -422,7 +502,7 @@
                     <td></td>
                     <td data-bind="attr:{'colspan': evaluaciones() * ($root.criterios().length + 1) + 1}"><h3>EVAL. PROCESO</h3></td>
                     <td colspan="3" rowspan="3">SPRINT</td>
-                    <td class="rotar nota-final" rowspan="6"><div>BIMESTRAL</div></td>
+                    <td class="rotar nota-final" rowspan="6"><div style="height:275px">BIMESTRAL</div></td>
                     <td colspan="3" rowspan="3">ACTITUD</td>
                     <td class="rotar nota-final" rowspan="6"><div style="font-size:2em;">NOTA FINAL</div></td>
                 </tr>
@@ -433,7 +513,7 @@
                     <!--ko foreach: new Array(evaluaciones())-->
                     <td data-bind="attr: {'colspan': $root.criterios().length + 1}"><h5 data-bind="text: 'EVALUACIÓN ' + ($index() + 1)"></h5></td>
                     <!--/ko-->
-                    <td class="rotar nota-final" rowspan="4"><div>PROMEDIO PROCESO</div></td>
+                    <td class="rotar nota-final" rowspan="4"><div style="height:220px">PROMEDIO PROCESO</div></td>
                 </tr>
                 <tr>
                     <td><h4>Colegio: Jack Goldfarb</h4></td>
@@ -490,15 +570,15 @@
                     <!--/ko-->
                     <td class="promedio" data-bind="editableText: $data.Promedio, css: $root.VerificarNota($data.Promedio())"></td>
                     <!--/ko-->
-                    <td class="nota-final" data-bind="editableText: $data.PromedioFinal, css: $root.VerificarNota($data.PromedioFinal())"></td>
-                    <td></td>
-                    <td></td>
-                    <td class="nota-final"></td>
-                    <td class="nota-final"></td>
-                    <td></td>
-                    <td></td>
-                    <td class="nota-final"></td>
-                    <td class="nota-final"></td>
+                    <td class="nota-final" data-bind="editableNota: $data.PromedioProceso, css: $root.VerificarNota($data.PromedioProceso())"></td>
+                    <td contenteditable="true" data-bind="editableNota: $data.PromedioVirtual"></td>
+                    <td contenteditable="true" data-bind="editableNota: $data.TestPresencial"></td>
+                    <td class="nota-final" data-bind="editableNota: $data.PromedioSprint"></td>
+                    <td contenteditable="true" class="nota-final" data-bind="editableNota: $data.Bimestral"></td>
+                    <td contenteditable="true" data-bind="editableNota: $data.Plataforma"></td>
+                    <td contenteditable="true" data-bind="editableNota: $data.Clase"></td>
+                    <td class="nota-final" data-bind="editableNota: $data.PromedioActitud"></td>
+                    <td class="nota-final" data-bind="editableNota: $data.NotaFinal"></td>
                 </tr>
                 <!--/ko-->
             </tbody>

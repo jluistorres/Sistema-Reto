@@ -14,17 +14,9 @@ namespace Reto.Entidades
     using System.ComponentModel.DataAnnotations;
     
     public partial class Docente
-    {
-        public Docente()
-        {
-            this.DocenteCurso = new HashSet<DocenteCurso>();
-        }
-    
+    {        
         [Key]
         public int IdDocente { get; set; }
-        public Nullable<int> IdPersona { get; set; }
-    
-        public virtual Persona Persona { get; set; }
-        public virtual ICollection<DocenteCurso> DocenteCurso { get; set; }
+        public Nullable<int> IdPersona { get; set; }    
     }
 }

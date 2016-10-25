@@ -17,15 +17,22 @@ namespace Reto.Entidades
     public partial class NotasCriterio
     {
         [Key, Column(Order = 0)]
-        public int IdMatricula { get; set; }
+        public int IdAlumno { get; set; }
         [Key, Column(Order = 1)]
-        public int IdDocenteCurso { get; set; }
+        public int IdNivelEscolar { get; set; }
         [Key, Column(Order = 2)]
-        public int IdCriterio { get; set; }
+        public int Grado { get; set; }
         [Key, Column(Order = 3)]
+        public int Bimestre { get; set; }
+        [Key, Column(Order = 4)]
+        public int Anyo { get; set; }
+        [Key, Column(Order = 5)]
+        public int IdCriterio { get; set; }
+        [Key, Column(Order = 6)]
         public int NroEvaluacion { get; set; }
+        
+        public int IdDocente { get; set; }        
         public Nullable<double> Nota { get; set; }
-    
-        public virtual CriteriosEvaluacion CriteriosEvaluacion { get; set; }
+        public Nullable<DateTime> Fecha { get; set; }
     }
 }

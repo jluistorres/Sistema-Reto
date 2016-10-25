@@ -288,6 +288,9 @@
                         <h1>Muy bien <span>@SessionHelper.Usuario.Nombres</span>!</h1>
                         <!--/ko-->
                         <h3>Resumen de Resultados</h3>
+                        <!--ko if: errores().length > 0-->
+                        <h4><span data-bind="text: errores().length"></span> Errores</h4>
+                        <!--/ko-->
                         <div>Tiempo de resolución</div>
                         <div class="cronometro"><i class="fa fa-hourglass-2"></i><br /> <span data-bind="text: FormatearReloj(cronometro())"></span></div>                        
                         <br />

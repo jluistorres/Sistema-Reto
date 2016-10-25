@@ -11,16 +11,9 @@ namespace Reto.Entidades
 {
     using System;
     
-    public partial class usp_DocenteCursoSelect_Result
+    public partial class usp_DocenteSelect_Result
     {
         public int IdDocente { get; set; }
-        public string Docente { get; set; }
-        public Nullable<int> IdNivelEscolar { get; set; }
-        public string Nivel { get; set; }
-        public int IdCurso { get; set; }
-        public string Curso { get; set; }
-        public Nullable<int> Grado { get; set; }
-        public string Seccion { get; set; }
-        public Nullable<int> NroEvaluaciones { get; set; }
+        public string Docente { get; set; }        
     }
 }

@@ -6,7 +6,7 @@
 {
     <style type="text/css">
         .casillero { margin: 0 auto; }
-        .casillero input { width: 40px; height: 40px; font-size: 1.5em; padding: 5px; border: none; text-align: center; }
+        .casillero input { width: 40px; height: 40px; font-size: 1.5em; padding: 5px; border: none; text-align: center; background:#fff; }         
         .casillero tr td { vertical-align: middle; text-align: center; }
         .casillero tr td i { margin: 7px; cursor: pointer; font-size: 1.3em; }
         .casillero.solucion .fa-question-circle-o { color: #ddd; }
@@ -28,6 +28,7 @@
         function Juego() {
             var self = this;
             self.IdJuego = ko.observable();
+            self.Libro = ko.observable();
             self.Reto = ko.observable();
             self.Nivel = ko.observable();
             self.Solucion = ko.observable();
@@ -188,6 +189,7 @@
                         self.reto.IdJuego(datos.IdJuego);                        
                         self.reto.Nivel(datos.Nivel);
                         self.reto.Reto(datos.Reto);
+                        self.reto.Libro(datos.Libro);
                         var n = parseInt(datos.Nivel) + 2;
                         var nitem = 2 * n - 1;
                         
@@ -292,7 +294,7 @@
                 </div> 
                 <div class="form-group">
                     <label class="control-label">Libro:</label>
-                    <select class="form-control">
+                    <select class="form-control" data-bind="value: reto.Libro">
                         <option value="1">Libro 1</option>
                         <option value="2">Libro 2</option>
                         <option value="3">Libro 3</option>

@@ -11,17 +11,25 @@ namespace Reto.Entidades
 {
     using System;
     
-    public partial class usp_RegistroNotasSelect_Result
-    {
-        public int IdMatricula { get; set; }
+    public partial class usp_NotasSelect_Result
+    {                
         public Nullable<int> IdAlumno { get; set; }
-        public string Alumno { get; set; }
-        public Nullable<int> IdCurso { get; set; }
-        public string Curso { get; set; }
+        public string Alumno { get; set; }        
+
         public Nullable<int> IdCriterio { get; set; }
         public string Criterio { get; set; }
         public Nullable<int> NroEvaluacion { get; set; }
         public Nullable<double> Nota { get; set; }
-        public Nullable<int> IdDocenteCurso { get; set; }
+
+        public Nullable<double> PromedioProceso { get; set; }
+        public Nullable<double> PromedioVirtual { get; set; }
+        public Nullable<double> TestPresencial { get; set; }
+        public Nullable<double> PromedioSprint { get; set; }
+        public Nullable<double> Bimestral { get; set; }
+        public Nullable<double> Plataforma { get; set; }
+        public Nullable<double> Clase { get; set; }
+        public Nullable<double> PromedioActitud { get; set; }
+        public Nullable<double> NotaFinal { get; set; }
+        
     }
 }

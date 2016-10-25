@@ -17,32 +17,43 @@ namespace Reto.AccesoDatos
             cnx.Configuration.ProxyCreationEnabled = false;
         }
 
-        public List<usp_DocenteCursoSelect_Result> DocenteCursoSelect(int IdPersona)
+        public usp_DocenteSelect_Result DocenteSelect(int IdPersona)
         {
-            var result = this.cnx.Database.SqlQuery<usp_DocenteCursoSelect_Result>("usp_DocenteCursoSelect @IdPersona = {0}", IdPersona);
-            return result.ToList();
+            var result = this.cnx.Database.SqlQuery<usp_DocenteSelect_Result>("usp_DocenteSelect @IdPersona = {0}", IdPersona);
+            return result.FirstOrDefault();
             //return cnx.usp_DocenteCursoSelect(IdPersona).ToList();
         }
 
-        public List<usp_RegistroNotasSelect_Result> RegistroNotasSelect(int Grado, string Seccion, int IdCurso)
+        public List<CriteriosEvaluacion> CriteriosEvaluacionSelect()
         {
-            var result = this.cnx.Database.SqlQuery<usp_RegistroNotasSelect_Result>("usp_RegistroNotasSelect @Grado = {0}, @Seccion={1}, @IdCurso={2}", Grado, Seccion, IdCurso);
+            return cnx.CriteriosEvaluacion.ToList();
+        }
+
+        public List<usp_NotasSelect_Result> NotasSelect(int IdNivelEscolar, int Grado, string Seccion, int Bimestre)
+        {
+            var result = this.cnx.Database.SqlQuery<usp_NotasSelect_Result>("usp_NotasSelect @IdNivelEscolar = {0}, @Grado = {1}, @Seccion={2}, @Bimestre={3}", IdNivelEscolar, Grado, Seccion, Bimestre);
             return result.ToList();
             //return cnx.usp_RegistroNotasSelect(Grado, Seccion, IdCurso).ToList();
         }
 
-        public int GuardarNotas(DocenteCurso dc, List<NotasCriterio> notas)
+        public int GuardarNotas(int IdNivelEscolar, int Grado, string Seccion, int Bimestre, List<NotasCriterio> criterios, List<Notas> notas)
         {
             int registros = 0;
             cnx = new dbretoEntities();
-            int result = this.cnx.Database.ExecuteSqlCommand("usp_NotasCriterioEliminar @Grado = {0}, @Seccion={1}, @IdCurso={2}", dc.Grado, dc.Seccion, dc.IdCurso);           
-            //cnx.usp_NotasCriterioEliminar(dc.Grado, dc.Seccion, dc.IdCurso);
+
+            this.cnx.Database.ExecuteSqlCommand("usp_NotasEliminar @IdNivelEscolar = {0}, @Grado = {1}, @Seccion={2}, @Bimestre={3}", IdNivelEscolar, Grado, Seccion, Bimestre);
+
+            if (criterios != null && criterios.Count > 0)
+            {
+                cnx.NotasCriterio.AddRange(criterios);
+            }
 
             if (notas != null && notas.Count > 0)
             {
-                cnx.NotasCriterio.AddRange(notas);
-                registros = cnx.SaveChanges();
+                cnx.Notas.AddRange(notas);
             }
+
+            registros = cnx.SaveChanges();
 
             return registros;
         }

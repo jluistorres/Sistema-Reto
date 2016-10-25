@@ -17,19 +17,24 @@ namespace Reto.LogicaNegocio
             odaNotas = new daNotas();
         }
 
-        public List<usp_DocenteCursoSelect_Result> DocenteCursoSelect(int IdPersona)
+        public List<CriteriosEvaluacion> CriteriosEvaluacionSelect()
         {
-            return odaNotas.DocenteCursoSelect(IdPersona);
+            return odaNotas.CriteriosEvaluacionSelect();
         }
 
-        public List<usp_RegistroNotasSelect_Result> RegistroNotasSelect(int Grado, string Seccion, int IdCurso)
+        public usp_DocenteSelect_Result DocenteSelect(int IdPersona)
         {
-            return odaNotas.RegistroNotasSelect(Grado, Seccion, IdCurso);
+            return odaNotas.DocenteSelect(IdPersona);
         }
 
-        public int GuardarNotas(DocenteCurso dc, List<NotasCriterio> notas)
+        public List<usp_NotasSelect_Result> NotasSelect(int IdNivelEscolar, int Grado, string Seccion, int Bimestre)
         {
-            return odaNotas.GuardarNotas(dc, notas);
+            return odaNotas.NotasSelect(IdNivelEscolar, Grado, Seccion, Bimestre);
+        }
+
+        public int GuardarNotas(int IdNivelEscolar, int Grado, string Seccion, int Bimestre, List<NotasCriterio> criterios, List<Notas> notas)
+        {
+            return odaNotas.GuardarNotas(IdNivelEscolar, Grado, Seccion, Bimestre, criterios, notas);
         }
     }
 }
