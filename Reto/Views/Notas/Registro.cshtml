@@ -49,9 +49,17 @@
                     if (value) $(element).addClass('flag');
                 });
 
+                $(element).on('keypress', function (e) {
+                    //Solo puede digitar del 0 al 3
+                    if (!(e.keyCode >= 51 && e.keyCode <= 53)) return false;
+
+                    if (e.keyCode != 13) $(this).html(e.key);
+                    return false;
+                });
+
                 $(element).on('keydown', function (e) {
                     //console.log(e.keyCode);
-                    if ((e.keyCode >= 37 && e.keyCode <= 40) || (e.keyCode == 13)) {
+                    if ((e.keyCode >= 37 && e.keyCode <= 40) || e.keyCode == 13) {
                         var index = $(this).index();
 
                         switch (true) {
@@ -60,13 +68,7 @@
                             case e.keyCode == 39: $(this).next().focus(); break;//right
                             case e.keyCode == 40 || e.keyCode == 13: $(this).parent().next().find('td').eq(index).focus(); break;//bottom
                         }
-                    }
-
-                    //Solo puede digitar del 0 al 3
-                    if (!(e.keyCode >= 51 && e.keyCode <= 53) && !(e.keyCode >= 99 && e.keyCode <= 101)) return false;
-
-                    if (e.keyCode != 13) $(this).html(e.key);
-                    return false;
+                    }                    
                 });
             },
             update: function (element, valueAccessor) {
@@ -171,7 +173,7 @@
                             if (!isNaN(parseFloat(n.Nota()))) suma += parseInt(n.Nota());
                         });
 
-                        var prom = Math.round((suma / notas.length));
+                        var prom = Math.round(suma);
                         sum_total += prom;
                         e.Promedio(prom);
                     });
@@ -343,6 +345,14 @@
                     }
                 });
             }
+
+            self.Imprimir = function () {
+
+            }
+
+            self.Descargar = function () {
+
+            }
         }
 
         $(function () {
@@ -394,6 +404,8 @@
                 <div class="form-group">
                     <div class="btn-group btn-group-justified">
                         <a class="btn btn-primary" data-bind="click: Guardar" title="Guardar registro"><i class="fa fa-save fa-lg"></i></a>
+                        <a class="btn btn-default" data-bind="click: Imprimir" title="Imprimir"><i class="fa fa-print fa-lg"></i></a>
+                        <a class="btn btn-default" data-bind="click: Descargar" title="Descargar"><i class="fa fa-cloud-download fa-lg"></i></a>
                         <a class="btn btn-default" data-bind="click: LimpiarRegistro" title="Limpiar"><i class="fa fa-trash-o fa-lg"></i></a>
                         <a href="~/" class="btn btn-default" title="Salir"><i class="fa fa-sign-out fa-lg"></i></a>
                     </div>
@@ -405,7 +417,7 @@
         <table class="registro">
             <tbody>
                 <tr>
-                    <td class="rotar rotar-reverse" rowspan="4"><div><h3>ECOLOGICA</h3></div></td>
+                    <td class="rotar rotar-reverse" rowspan="4"></td>
                     <td rowspan="2"></td>
                 </tr>
                 <tr style="height:20px">
@@ -413,7 +425,10 @@
                     <td data-bind="attr: {'colspan': $root.criterios().length + 1}"><h5 data-bind="text: 'EVALUACIÓN ' + ($index() + 1)"></h5></td>
                     <!--/ko-->
                     <td class="nota-final"></td>
-                    <td>Valor</td>
+                    <td colspan="3">SPRINT</td> 
+                    <td class="nota-final"></td>
+                    <td colspan="3">ACTITUD</td> 
+                    <td class="nota-final"></td>                                      
                 </tr>
                 <tr>
                     <td>&nbsp;</td>
@@ -423,9 +438,15 @@
                     <!--/ko-->
                     <td class="rotar promedio" rowspan="3"><div data-bind="text: 'Nota ' + ($index() + 1)"></div></td>
                     <!--/ko-->
-                    <td class="rotar nota-final" rowspan="3"><div>NOTA FINAL</div></td>
-                    <td class="rotar" rowspan="3"></td>
-
+                    <td class="rotar nota-final" rowspan="3"><div>PROMEDIO PROCESO</div></td>
+                    <td class="rotar" rowspan="3"><div>PROMEDIO VIRTUAL</div></td>
+                    <td class="rotar" rowspan="3"><div>TEST PRESENCIAL</div></td>
+                    <td class="rotar nota-final" rowspan="3"><div>PROMEDIO SPRINT</div></td>                    
+                    <td class="rotar nota-final" rowspan="3"><div>BIMESTRAL</div></td> 
+                    <td class="rotar" rowspan="3"><div>PLATAFORMA</div></td>
+                    <td class="rotar" rowspan="3"><div>CLASE</div></td>
+                    <td class="rotar nota-final" rowspan="3"><div>PROMEDIO ACTITUD</div></td>
+                    <td class="rotar nota-final" rowspan="3"><div style="font-size:2em;">NOTA FINAL</div></td>
                 </tr>
                 <tr style="height:30px;">
                     <td><h4><span data-bind="text: $root.Grado_Texto($root.Filtro.Grado())"></span> GRADO</h4></td>
@@ -444,7 +465,18 @@
                     <td class="promedio"></td>
                     <!--/ko-->
                     <td class="nota-final"></td>
+                    <!--Sprint-->
                     <td></td>
+                    <td></td>
+                    <td class="nota-final"></td>
+                    <!--Bimestral-->
+                    <td class="nota-final"></td> 
+                    <!--Actitud-->
+                    <td></td>
+                    <td></td>
+                    <td class="nota-final"></td>
+                    <!--Nota Final-->                   
+                    <td class="nota-final"></td>
                 </tr>
                 <!--ko foreach: alumnos-->
                 <tr>
@@ -455,9 +487,16 @@
                     <td class="nota" contenteditable="true" data-bind="editableText: $data.Nota, css: $root.VerificarNota($data.Nota())"></td>
                     <!--/ko-->
                     <td class="promedio" data-bind="editableText: $data.Promedio, css: $root.VerificarNota($data.Promedio())"></td>
-                    <!--/ko-->
-                    <td class="nota-final" data-bind="editableText: $data.PromedioFinal, css: $root.VerificarNota($data.PromedioFinal())"></td>
+                    <!--/ko-->                    
+                    <td class="nota-final" data-bind="editableText: $data.PromedioFinal, css: $root.VerificarNota($data.PromedioFinal())"></td>                    
                     <td></td>
+                    <td></td>
+                    <td class="nota-final"></td>
+                    <td class="nota-final"></td>
+                    <td></td>
+                    <td></td>
+                    <td class="nota-final"></td>
+                    <td class="nota-final"></td>
                 </tr>
                 <!--/ko-->
             </tbody>

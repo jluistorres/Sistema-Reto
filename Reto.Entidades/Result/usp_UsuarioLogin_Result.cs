@@ -15,7 +15,9 @@ namespace Reto.Entidades
     {
         public string IdUsuario { get; set; }
         public int IdPersona { get; set; }
-        public string Nombre { get; set; }
+        public string Nombres { get; set; }
+        public string ApePaterno { get; set; }
+        public string ApeMaterno { get; set; }
         public string Rol { get; set; }
     }
 }

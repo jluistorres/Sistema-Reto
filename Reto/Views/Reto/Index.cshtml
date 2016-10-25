@@ -18,21 +18,27 @@
             self.niveles = [1, 2, 3, 4];
 
             var casillero;
-            var conteo_segundos;
+            var cronometro_interval_1, cronometro_interval_2;
 
             self.EstadoJuego = ko.observable(0);
             self.cronometro = ko.observable(0);
+            self.cronometro_2 = ko.observable(0);
             self.NroJuego = ko.observable();
             //self.JuegoEnunciado = ko.observable();
             self.JuegoSolucion = ko.observable();
             self.nivelSeleccionado = ko.observable();
             self.PosicionesResolver = ko.observable();
 
+            self.errores = ko.observable(0);
+
             self.NuevoJuego = function () {
                 self.NroJuego(null);
-                if (conteo_segundos) clearInterval(conteo_segundos);
+                if (cronometro_interval_1) clearInterval(cronometro_interval_1);
+                if (cronometro_interval_2) clearInterval(cronometro_interval_2);
                 self.cronometro(0);
-
+                self.cronometro_2(0);
+                self.errores(0);
+                
                 if (self.nivelSeleccionado()) {
                     var t = self.nivelSeleccionado() + 1;
                     //casillero = Reto.CrearArreglo(t + 1);
@@ -48,13 +54,15 @@
 
             self.Empezar = function () {
                 self.NroJuego(null);
-                if (conteo_segundos) clearInterval(conteo_segundos);
+                if (cronometro_interval_1) clearInterval(cronometro_interval_1);
+                if (cronometro_interval_2) clearInterval(cronometro_interval_2);
                 self.cronometro(0);
+                self.cronometro_2(0);
+                self.errores(0);
                 
                 $('.tabla').html('');
                 var nivel = self.nivelSeleccionado();
-
-                //return JSON.parse('[[2,null,1,"menor",3],[null,null,null,null,"mayor"],[3,null,2,"mayor",1],["mayor",null,null,null,null],[1,null,3,null,2]]');
+                
                 $.getJSON('@Url.Action("juego")', { Nivel: nivel }, function (result) {
                     self.NroJuego(result.Reto);
                     casillero = JSON.parse(result.Enunciado);
@@ -64,6 +72,15 @@
                     Reto.LlenarCasillas(casillero);
 
                     self.EstadoJuego(2);
+
+                    var empezar_cronometro = function () {
+                        cronometro_interval_1 = setInterval(function () {
+                            self.cronometro(self.cronometro() + 10);
+                        }, 100);
+                    }
+
+                    empezar_cronometro();
+
                 }).fail(function (xhr) {
                     toastr.warning('No existen plantillas registradas del Nivel ' + nivel, 'Atención');
                 });
@@ -75,14 +92,10 @@
                 //Reto.LlenarCasillas(casillero);
                 //Reto.LlenarCasillasAzar(casillero);
 
+                if (cronometro_interval_1) clearInterval(cronometro_interval_1);
+
                 if (self.BloquearResponder()) return;
                 self.BloquearResponder(true);
-
-                var empezar_cronometro = function () {                    
-                    conteo_segundos = setInterval(function () {
-                        self.cronometro(self.cronometro() + 10);
-                    }, 100);
-                }
 
                 var cont = 0;
                 var intentos = setInterval(function () {
@@ -101,16 +114,24 @@
 
                         self.BloquearResponder(false);
                         self.EstadoJuego(3);
+                        
+                        var empezar_cronometro_2 = function () {
+                            cronometro_interval_2 = setInterval(function () {
+                                self.cronometro_2(self.cronometro_2() + 10);
+                            }, 100);
+                        }
 
                         //Hacemmos una pausa antes de empezar y mostramos el cronometro
-                        setTimeout(function () { empezar_cronometro(); }, 1000);
+                        setTimeout(function () {
+                           if(self.EstadoJuego() == 3) empezar_cronometro_2();
+                        }, 1000);
                     }
                 }, 150);
 
             }
 
             self.EnviarRepuestas = function () {
-                clearInterval(conteo_segundos);
+                clearInterval(cronometro_interval_2);
 
                 var errores = [];
 
@@ -121,6 +142,7 @@
                 });
                 
                 self.EstadoJuego(4);
+                self.errores(errores);
 
                 if (errores.length == 0) {
                     //Formula: nota = (((nxn - d)+3)/t)*20
@@ -157,18 +179,19 @@
                         contentType: 'application/json',
                         success: function (result) {                            
                             if (result) {
-                                appMaster.MessageBox('Logrado', '<div class="text-center"><img src="@Url.Content("~/content/img/logrado.jpg")" /></div>');
+                                //appMaster.MessageBox('Logrado', '<div class="text-center"><img src="@Url.Content("~/content/img/logrado.jpg")" /></div>');
                             } else {
                                 toastr.info('Debes ingresar con perfil de alumno para poder registrar tu score');
                             }
                         }
                     });
-                } else {
-                    var message = '<table><td style="padding-right:10px;">{0}</td><td>{1}</td></table>';
-                    message = message.replace('{0}', '<i class="fa fa-warning fa-3x"></i>');
-                    message = message.replace('{1}', '¡Pronto tendrás una nueva oportunidad! Los que aceptan el reto nunca se rinden!!');
-                    appMaster.MessageBox(errores.length + ' errores', message);
-                }                
+                }
+                //else {
+                //    var message = '<table><td style="padding-right:10px;">{0}</td><td>{1}</td></table>';
+                //    message = message.replace('{0}', '<i class="fa fa-warning fa-3x"></i>');
+                //    message = message.replace('{1}', '¡Pronto tendrás una nueva oportunidad! Los que aceptan el reto nunca se rinden!!');
+                //    appMaster.MessageBox(errores.length + ' errores', message);
+                //}                
             }
 
             self.FormatearReloj = function (number) {
@@ -240,29 +263,53 @@
                         </ol>
                     </div>                    
                 </td>
-                <td class="text-center" style="position:relative; display:none;" data-bind="visible: EstadoJuego() > 0">
-                    <div class="reto-info" data-bind="visible: NroJuego, click: Empezar">Reto N° <span data-bind="text: NroJuego"></span></div>
-                    <h1>EVALUACIÓN</h1>
-                    <h4>Mayor - Menor</h4>
-                    <table class="tabla"></table>
-                    <br />
-                    <div class="form-group">
-                        <button type="button" class="btn btn-success" data-bind="click: Empezar, visible: EstadoJuego() == 1">Empezar</button>
-                        <button type="button" class="btn btn-primary" data-bind="click: Responder, visible: EstadoJuego() == 2, disable: BloquearResponder">Responder</button>
-                        <button type="button" class="btn btn-success" data-bind="click: EnviarRepuestas, visible: EstadoJuego() >= 3, disable: EstadoJuego() == 4">Enviar Repuestas</button>
+                <td class="text-center" style="position:relative; display:none;" data-bind="visible: EstadoJuego() > 0">                    
+                    <div data-bind="visible: EstadoJuego() < 4">
+                        <div class="reto-info" data-bind="visible: NroJuego, click: Empezar">Reto N° <span data-bind="text: NroJuego"></span></div>
+                        <h1>EVALUACIÓN</h1>
+                        <h4>Mayor - Menor</h4>
+                        <table class="tabla"></table>
+                        <br />
+                        <div class="form-group">
+                            <button type="button" class="btn btn-success" data-bind="click: Empezar, visible: EstadoJuego() == 1">Empezar</button>
+                            <button type="button" class="btn btn-primary" data-bind="click: Responder, visible: EstadoJuego() == 2, disable: BloquearResponder">Responder</button>
+                            <button type="button" class="btn btn-success" data-bind="click: EnviarRepuestas, visible: EstadoJuego() >= 3, disable: EstadoJuego() == 4">Enviar Repuestas</button>
+                        </div>
+                        <div class="respuestas" data-bind="visible: EstadoJuego() >= 3">
+                            <div class="rpta yellow" data-color="yellow" data-bind="attr: { 'contenteditable' : EstadoJuego() == 3 }"></div>
+                            <div class="rpta green" data-color="green" data-bind="attr: { 'contenteditable' : EstadoJuego() == 3 }"></div>
+                            <div class="rpta blue" data-color="blue" data-bind="attr: { 'contenteditable' : EstadoJuego() == 3 }"></div>
+                            <div class="rpta red" data-color="red" data-bind="attr: { 'contenteditable' : EstadoJuego() == 3 }"></div>
+                        </div>
                     </div>
-                    <div class="respuestas" data-bind="visible: EstadoJuego() >= 3">
-                        <div class="rpta yellow" data-color="yellow" data-bind="attr: { 'contenteditable' : EstadoJuego() == 3 }"></div>
-                        <div class="rpta green" data-color="green" data-bind="attr: { 'contenteditable' : EstadoJuego() == 3 }"></div>
-                        <div class="rpta blue" data-color="blue" data-bind="attr: { 'contenteditable' : EstadoJuego() == 3 }"></div>
-                        <div class="rpta red" data-color="red" data-bind="attr: { 'contenteditable' : EstadoJuego() == 3 }"></div>
+                    <!--ko if: EstadoJuego() == 4-->
+                    <div class="text-center">
+                        <!--ko if: errores().length == 0-->
+                        <h1>Muy bien <span>@SessionHelper.Usuario.Nombres</span>!</h1>
+                        <!--/ko-->
+                        <h3>Resumen de Resultados</h3>
+                        <div>Tiempo de resolución</div>
+                        <div class="cronometro"><i class="fa fa-hourglass-2"></i><br /> <span data-bind="text: FormatearReloj(cronometro())"></span></div>                        
+                        <br />
+                        <div>Tiempo de reacción</div>
+                        <div class="cronometro"><i class="fa fa-hourglass-2"></i><br /> <span data-bind="text: FormatearReloj(cronometro_2())"></span></div>                        
+                        <br /><br />
+                        <!--ko if: errores().length > 0-->
+                        <h4>Pronto tendrás una nueva oportunidad</h4>
+                        <!--/ko-->
+                        <h3>¡Los que aceptan el reto, nunca se rinden!</h3>
                     </div>
+                    <!--/ko-->
                 </td>
-                <td style="vertical-align: top; width: 150px; padding:2px; display: none;" data-bind="visible: EstadoJuego() > 0">
-                    <div class="cronometro"><i class="fa fa-hourglass-2"></i> <span data-bind="text: FormatearReloj(cronometro())"></span></div>
+                <td style="vertical-align: top; width: 150px; padding:2px; display: none;" data-bind="visible: EstadoJuego() > 0 && EstadoJuego() < 4">
+                    <div class="cronometro"><i class="fa fa-hourglass-2"></i><br /> <span data-bind="text: FormatearReloj(cronometro())"></span></div>
+                    <!--ko if: EstadoJuego() >= 3-->
+                    <hr />
+                    <div>Tiempo de reacción</div>
+                    <div class="cronometro"><i class="fa fa-hourglass-2"></i><br /> <span data-bind="text: FormatearReloj(cronometro_2())"></span></div>
+                    <!--/ko-->
                 </td>               
             </tr>
         </tbody>
     </table>
-
 </div>

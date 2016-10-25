@@ -195,6 +195,7 @@
     },
     CrearHtmlCasillas: function (x) {
         var long_casillero = (x + 1) / 2;
+        //console.log('Creando casillero de ' + long_casillero + ' x ' + long_casillero + '...');
 
         var box = $('.tabla');
         box.html('');
