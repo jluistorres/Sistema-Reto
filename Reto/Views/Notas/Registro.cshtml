@@ -12,16 +12,19 @@
         .registro td { border: 1px solid #ccc; text-align: center; position: relative; }
         .registro h4, .registro h5 { text-align: center; }
         .registro .alumno { text-align: left; padding: 5px; }
-        .registro .rotar { height: 200px; width: 20px; font-size: 0.8em; overflow: hidden; }
-        .registro .rotar div { display: inline-block; white-space: nowrap; transform: translate(0,100%) rotate(-90deg); transform-origin: 0 0; width: 20px; height: 180px; line-height: 20px; }
-        .registro .rotar div:before { content: ""; float: left; margin-top: 100%; }
+
+        .registro .rotar { transform: rotate(270deg); font-size: 0.8em; }
+        .registro .rotar > div { display: inline-block; height: 200px; width: 20px; }  
+        /*.registro .rotar { height: 200px; width: 20px; font-size: 0.8em; overflow: hidden; }
+        .registro .rotar div { display: inline-block; white-space: nowrap; transform: translate(0,100%) rotate(-90deg); transform-origin: 0 0; width: 20px; height: 180px; line-height: 20px; }*/
+        /*.registro .rotar div:before { content: ""; float: left; margin-top: 100%; }*/
         .registro .rotar.rotar-reverse div { transform: translate(200%,0) rotate(90deg); }
         .registro .rotar.rotar-reverse div:before { margin: 0; margin-bottom: 100%; }
         .registro .nota-final { background-color: #f4f4f4; font-weight: bold; }
 
         .registro .nota.flag { color: #fff; }
         .registro .nota.flag:after { position: absolute; top: 50%; left: 50%; margin-left: -7px; margin-top: -7px; content: "\f024"; font: normal normal normal 14px/1 FontAwesome; }
-        .registro .nota.rojo.flag:after { color: #ff0000; }        
+        .registro .nota.rojo.flag:after { color: #ff0000; }
         .registro .nota.amarillo.flag:after { color: #ffd800; }
         .registro .nota.verde.flag:after { color: #1fba18; }
 
@@ -68,7 +71,7 @@
                             case e.keyCode == 39: $(this).next().focus(); break;//right
                             case e.keyCode == 40 || e.keyCode == 13: $(this).parent().next().find('td').eq(index).focus(); break;//bottom
                         }
-                    }                    
+                    }
                 });
             },
             update: function (element, valueAccessor) {
@@ -280,7 +283,7 @@
                 if (!isNaN(parseInt(nota))) {
                     switch (parseInt(nota)) {
                         case 3: return 'flag rojo'; break;
-                        case 4: return 'flag amarillo'; break;                        
+                        case 4: return 'flag amarillo'; break;
                         case 5: return 'flag verde'; break;
                     }
                 }
@@ -386,10 +389,8 @@
             <button type="button" class="btn btn-default btn-block" data-bind="click: $root.CargarRegistro, enable: Filtro.IdCurso() && Filtro.Grado() && Filtro.Seccion()">Mostrar registro</button>
         </div>
     </div>
-
 </div>
-
-<div data-bind="visible: alumnos().length > 0">
+<div data-bind="visible: true || alumnos().length > 0">
     <div class="well well-sm" style="padding-bottom:0">
         <div class="row">
             <div class="col-sm-9">
@@ -417,36 +418,37 @@
         <table class="registro">
             <tbody>
                 <tr>
-                    <td class="rotar rotar-reverse" rowspan="4"></td>
-                    <td rowspan="2"></td>
+                    <td rowspan="5"></td>
+                    <td></td>
+                    <td data-bind="attr:{'colspan': evaluaciones() * ($root.criterios().length + 1) + 1}"><h3>EVAL. PROCESO</h3></td>
+                    <td colspan="3" rowspan="3">SPRINT</td>
+                    <td class="rotar nota-final" rowspan="6"><div>BIMESTRAL</div></td>
+                    <td colspan="3" rowspan="3">ACTITUD</td>
+                    <td class="rotar nota-final" rowspan="6"><div style="font-size:2em;">NOTA FINAL</div></td>
+                </tr>
+                <tr>
+                    <td rowspan="2"><h4>PRIMER BIMESTRE</h4></td>
                 </tr>
                 <tr style="height:20px">
                     <!--ko foreach: new Array(evaluaciones())-->
                     <td data-bind="attr: {'colspan': $root.criterios().length + 1}"><h5 data-bind="text: 'EVALUACIÓN ' + ($index() + 1)"></h5></td>
                     <!--/ko-->
-                    <td class="nota-final"></td>
-                    <td colspan="3">SPRINT</td> 
-                    <td class="nota-final"></td>
-                    <td colspan="3">ACTITUD</td> 
-                    <td class="nota-final"></td>                                      
+                    <td class="rotar nota-final" rowspan="4"><div>PROMEDIO PROCESO</div></td>
                 </tr>
                 <tr>
-                    <td>&nbsp;</td>
+                    <td><h4>Colegio: Jack Goldfarb</h4></td>
                     <!--ko foreach: new Array(evaluaciones())-->
                     <!--ko foreach: $root.criterios-->
                     <td class="rotar" rowspan="3"><div data-bind="text: $data.Nombre"></div></td>
                     <!--/ko-->
                     <td class="rotar promedio" rowspan="3"><div data-bind="text: 'Nota ' + ($index() + 1)"></div></td>
                     <!--/ko-->
-                    <td class="rotar nota-final" rowspan="3"><div>PROMEDIO PROCESO</div></td>
                     <td class="rotar" rowspan="3"><div>PROMEDIO VIRTUAL</div></td>
                     <td class="rotar" rowspan="3"><div>TEST PRESENCIAL</div></td>
-                    <td class="rotar nota-final" rowspan="3"><div>PROMEDIO SPRINT</div></td>                    
-                    <td class="rotar nota-final" rowspan="3"><div>BIMESTRAL</div></td> 
+                    <td class="rotar nota-final" rowspan="3"><div>PROMEDIO SPRINT</div></td>
                     <td class="rotar" rowspan="3"><div>PLATAFORMA</div></td>
                     <td class="rotar" rowspan="3"><div>CLASE</div></td>
                     <td class="rotar nota-final" rowspan="3"><div>PROMEDIO ACTITUD</div></td>
-                    <td class="rotar nota-final" rowspan="3"><div style="font-size:2em;">NOTA FINAL</div></td>
                 </tr>
                 <tr style="height:30px;">
                     <td><h4><span data-bind="text: $root.Grado_Texto($root.Filtro.Grado())"></span> GRADO</h4></td>
@@ -470,12 +472,12 @@
                     <td></td>
                     <td class="nota-final"></td>
                     <!--Bimestral-->
-                    <td class="nota-final"></td> 
+                    <td class="nota-final"></td>
                     <!--Actitud-->
                     <td></td>
                     <td></td>
                     <td class="nota-final"></td>
-                    <!--Nota Final-->                   
+                    <!--Nota Final-->
                     <td class="nota-final"></td>
                 </tr>
                 <!--ko foreach: alumnos-->
@@ -487,8 +489,8 @@
                     <td class="nota" contenteditable="true" data-bind="editableText: $data.Nota, css: $root.VerificarNota($data.Nota())"></td>
                     <!--/ko-->
                     <td class="promedio" data-bind="editableText: $data.Promedio, css: $root.VerificarNota($data.Promedio())"></td>
-                    <!--/ko-->                    
-                    <td class="nota-final" data-bind="editableText: $data.PromedioFinal, css: $root.VerificarNota($data.PromedioFinal())"></td>                    
+                    <!--/ko-->
+                    <td class="nota-final" data-bind="editableText: $data.PromedioFinal, css: $root.VerificarNota($data.PromedioFinal())"></td>
                     <td></td>
                     <td></td>
                     <td class="nota-final"></td>
