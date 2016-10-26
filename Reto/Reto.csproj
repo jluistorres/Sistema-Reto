@@ -98,6 +98,7 @@
     <Content Include="Content\css\jquery.jscrollpane.css" />
     <Content Include="Content\css\jscrollpane.css" />
     <Content Include="Content\css\juego.css" />
+    <Content Include="Content\css\notas.css" />
     <Content Include="Content\css\site.css" />
     <Content Include="Content\css\theme-orange.css" />
     <Content Include="Content\fonts\custom\fonts.css" />
@@ -123,6 +124,7 @@
     <Content Include="Content\fonts\font-awesome-4.6.3\fonts\FontAwesome.otf" />
     <Content Include="Content\fonts\custom\digital-7.regular.ttf" />
     <None Include="Scripts\jquery-1.10.2.intellisense.js" />
+    <Content Include="Scripts\jquery-print.js" />
     <Content Include="Scripts\jquery.jscrollpane.min.js" />
     <Content Include="Scripts\jquery.mousewheel.min.js" />
     <Content Include="Scripts\js\app.js" />

@@ -207,6 +207,44 @@ appMaster.getQueryParams = function (qs) {
     return params;
 }
 
+appMaster.ExportToExcel = function (name, sHtmlFinal, cssInclude) {
+    var template = '<html xmlns:o="urn:schemas-microsoft-com:office:office" xmlns:x="urn:schemas-microsoft-com:office:excel" xmlns="http://www.w3.org/TR/REC-html40">' +
+        '<head><!--[if gte mso 9]><xml><x:ExcelWorkbook><x:ExcelWorksheets><x:ExcelWorksheet><x:Name>{{worksheet}}</x:Name><x:WorksheetOptions><x:DisplayGridlines/></x:WorksheetOptions></x:ExcelWorksheet></x:ExcelWorksheets></x:ExcelWorkbook></xml><![endif]--><style type="text/css">{{css}}</style></head>' +
+        '<body>{{table}}</body>' +
+        '</html>';
+    template = template.replace('{{css}}', '.single-line { white-space:nowrap; width:auto; } .text { mso-number-format:"\@" } .date {mso-number-format:"Short Date";} .decimal { mso-number-format:"\#\,\#\#0\.00"; } ' + (cssInclude || ''));
+    template = template.replace('{{worksheet}}', 'Hoja1');
+    template = template.replace('{{table}}', sHtmlFinal);
+
+    var ua = window.navigator.userAgent;
+    var msie = ua.indexOf("MSIE ");
+
+    if (msie > 0 || !!navigator.userAgent.match(/Trident.*rv\:11\./))      // Si es Internet Explorer
+    {
+        //XportArea es un iframe creado en el html de la pagina
+        $('#XportArea').remove();
+        var xa = document.createElement('iframe');
+        xa.id = 'XportArea';
+        xa.style.display = 'none';
+        document.body.appendChild(xa);
+        XportArea.document.open("txt/html", "replace");
+        XportArea.document.write(template);
+        XportArea.document.close();
+        XportArea.focus();
+        sa = XportArea.document.execCommand("SaveAs", true, name + ".xls");
+        return sa;
+    }
+    else { //Otro explorador
+        var formBlob = new Blob(["\ufeff", template], { type: 'application/vnd.ms-excel' });
+        var link = document.createElement("a");
+        link.download = name + ".xls";
+        link.href = window.URL.createObjectURL(formBlob);
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+    }
+}
+
 
 $(function () {
     $.ajaxSetup({ cache: false });
