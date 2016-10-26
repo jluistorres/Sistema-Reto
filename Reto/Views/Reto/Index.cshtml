@@ -3,7 +3,7 @@
 }
 
 @section styles
-{    
+{
     <link href="~/Content/fonts/custom/fonts.css" rel="stylesheet" />
     <link href="~/Content/css/juego.css" rel="stylesheet" />
 }
@@ -38,7 +38,7 @@
                 self.cronometro(0);
                 self.cronometro_2(0);
                 self.errores(0);
-                
+
                 if (self.nivelSeleccionado()) {
                     var t = self.nivelSeleccionado() + 1;
                     //casillero = Reto.CrearArreglo(t + 1);
@@ -59,10 +59,10 @@
                 self.cronometro(0);
                 self.cronometro_2(0);
                 self.errores(0);
-                
+
                 $('.tabla').html('');
                 var nivel = self.nivelSeleccionado();
-                
+
                 $.getJSON('@Url.Action("juego")', { Nivel: nivel }, function (result) {
                     self.NroJuego(result.Reto);
                     casillero = JSON.parse(result.Enunciado);
@@ -105,7 +105,7 @@
                     if (cont == 10) {
                         clearInterval(intentos);
 
-                        $('.respuestas .rpta').removeData('value');                        
+                        $('.respuestas .rpta').removeData('value');
                         //Pintamos las casillas que debe resolver
                         var pos = Reto.PintarCasillasAzar(self.JuegoSolucion(), casillero);
                         self.PosicionesResolver(pos);
@@ -114,7 +114,7 @@
 
                         self.BloquearResponder(false);
                         self.EstadoJuego(3);
-                        
+
                         var empezar_cronometro_2 = function () {
                             cronometro_interval_2 = setInterval(function () {
                                 self.cronometro_2(self.cronometro_2() + 10);
@@ -123,7 +123,7 @@
 
                         //Hacemmos una pausa antes de empezar y mostramos el cronometro
                         setTimeout(function () {
-                           if(self.EstadoJuego() == 3) empezar_cronometro_2();
+                            if (self.EstadoJuego() == 3) empezar_cronometro_2();
                         }, 1000);
                     }
                 }, 150);
@@ -136,11 +136,11 @@
                 var errores = [];
 
                 $('.respuestas .rpta').each(function (index, el) {
-                    if ($(this).data('value') != $(this).text()) {                        
+                    if ($(this).data('value') != $(this).text()) {
                         errores.push(index);
                     }
                 });
-                
+
                 self.EstadoJuego(4);
                 self.errores(errores);
 
@@ -177,7 +177,7 @@
                         data: JSON.stringify({ score: params }),
                         dataType: 'json',
                         contentType: 'application/json',
-                        success: function (result) {                            
+                        success: function (result) {
                             if (result) {
                                 //appMaster.MessageBox('Logrado', '<div class="text-center"><img src="@Url.Content("~/content/img/logrado.jpg")" /></div>');
                             } else {
@@ -191,7 +191,7 @@
                 //    message = message.replace('{0}', '<i class="fa fa-warning fa-3x"></i>');
                 //    message = message.replace('{1}', '¡Pronto tendrás una nueva oportunidad! Los que aceptan el reto nunca se rinden!!');
                 //    appMaster.MessageBox(errores.length + ' errores', message);
-                //}                
+                //}
             }
 
             self.FormatearReloj = function (number) {
@@ -207,9 +207,9 @@
                 var decimales = (cad.length == 2) ? cad[1] : 0;
                 cad[0] = ('0' + cad[0]).slice(-2);
                 decimales = ('0' + decimales).slice(-2);
-                
+
                 return min + ':' + cad[0] + '.' + decimales;
-            }            
+            }
 
             self.Limpiar = function () {
                 $('.tabla .q:not(.v):not(.h)').each(function (el, index) {
@@ -233,8 +233,29 @@
     </script>
 }
 
+@*<div class="row">
+    <div class="col-sm-3">
+        <div class="list-group">
+            <a class="list-group-item active"><h3 style="margin:0">Juegos</h3></a>
+            <a class="list-group-item">Mayor - Menor</a>
+            <a class="list-group-item">Minisudoku</a>
+            <a class="list-group-item">A primera vista</a>
+            <a class="list-group-item">Conect-arte</a>
+            <a class="list-group-item">Cuadrado inteligente</a>
+            <a class="list-group-item">Campamentos</a>
+            <a class="list-group-item">Cripto Zero</a>
+            <a class="list-group-item">Islas y puentes</a>
+            <a class="list-group-item">Virtual-mente</a>
+            <a class="list-group-item">Mathematically</a>
+        </div>
+    </div>
+    <div class="col-sm-9">
+        
+    </div>
+</div>*@
+
 <div class="text-center">
-    <div class="well well-sm">
+    <div class="well well-sm" style="margin-top:0">
         <div class="btn-group" data-toggle="buttons">
             <button class="btn btn-default-outline">Nivel</button>
             <!--ko foreach: niveles-->
@@ -245,10 +266,10 @@
         <!--ko if: NroJuego-->
         <button type="button" class="btn btn-default" data-bind="click: NuevoJuego, visible: NroJuego"><i class="fa fa-table fa-fw"></i> Nuevo reto</button>
         @*<button type="button" class="btn btn-default" data-bind="click: Limpiar" title="Limpiar"><i class="fa fa-retweet fa-lg"></i></button>
-        <button type="button" class="btn btn-default" data-bind="click: Procesar" title="Verificar"><i class="fa fa-check fa-lg"></i></button>*@
+            <button type="button" class="btn btn-default" data-bind="click: Procesar" title="Verificar"><i class="fa fa-check fa-lg"></i></button>*@
         <!--/ko-->
-        <a href="~/" class="btn btn-danger" title="Salir"><i class="fa fa-sign-out fa-lg"></i></a>        
-    </div>    
+        <a href="~/" class="btn btn-danger" title="Salir"><i class="fa fa-sign-out fa-lg"></i></a>
+    </div>
     <table class="formulario">
         <tbody>
             <tr>
@@ -261,9 +282,9 @@
                             <li>Determina el nivel (de preferencia debes haber acabado un nivel inferior para pasar a otro superior)</li>
                             <li>Elige un tipo de Reto (juego)</li>
                         </ol>
-                    </div>                    
+                    </div>
                 </td>
-                <td class="text-center" style="position:relative; display:none;" data-bind="visible: EstadoJuego() > 0">                    
+                <td class="text-center" style="position:relative; display:none;" data-bind="visible: EstadoJuego() > 0">
                     <div data-bind="visible: EstadoJuego() < 4">
                         <div class="reto-info" data-bind="visible: NroJuego, click: Empezar">Reto N° <span data-bind="text: NroJuego"></span></div>
                         <h1>EVALUACIÓN</h1>
@@ -292,10 +313,10 @@
                         <h4><span data-bind="text: errores().length"></span> Errores</h4>
                         <!--/ko-->
                         <div>Tiempo de resolución</div>
-                        <div class="cronometro"><i class="fa fa-hourglass-2"></i><br /> <span data-bind="text: FormatearReloj(cronometro())"></span></div>                        
+                        <div class="cronometro"><i class="fa fa-hourglass-2"></i><br /> <span data-bind="text: FormatearReloj(cronometro())"></span></div>
                         <br />
                         <div>Tiempo de reacción</div>
-                        <div class="cronometro"><i class="fa fa-hourglass-2"></i><br /> <span data-bind="text: FormatearReloj(cronometro_2())"></span></div>                        
+                        <div class="cronometro"><i class="fa fa-hourglass-2"></i><br /> <span data-bind="text: FormatearReloj(cronometro_2())"></span></div>
                         <br /><br />
                         <!--ko if: errores().length > 0-->
                         <h4>Pronto tendrás una nueva oportunidad</h4>
@@ -311,7 +332,7 @@
                     <div>Tiempo de reacción</div>
                     <div class="cronometro"><i class="fa fa-hourglass-2"></i><br /> <span data-bind="text: FormatearReloj(cronometro_2())"></span></div>
                     <!--/ko-->
-                </td>               
+                </td>
             </tr>
         </tbody>
     </table>

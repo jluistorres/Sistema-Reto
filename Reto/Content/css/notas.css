@@ -1,19 +1,19 @@
-﻿.registro { font-size: 13px; background-color: #fff; }
-.registro, .registro table { width: 100%; }
-.registro, .registro table td:first-child { border-left: none; }
-.registro, .registro table td:last-child { border-right: none; }
+﻿.registro { font-size: 13px; background-color: #fff; width: 100%; }
 .registro td { border: 1px solid #ccc; text-align: center; position: relative; }
 .registro h4, .registro h5 { text-align: center; }
 .registro .alumno { text-align: left; padding: 5px; }
-.registro .rotar { height: 200px; width: 20px; font-size: 0.8em; overflow: hidden; text-transform: uppercase; }
-.registro .rotar > * { display: inline-block; white-space: nowrap; transform: translate(0,100%) rotate(-90deg); transform-origin: 0 0; width: 20px; height: 180px; line-height: 20px; }
+.registro .rotar { vertical-align:bottom; /*height: 200px;*/ width: 20px; font-size: 0.9em; overflow: hidden; text-transform: uppercase; }
+.registro .rotar > * { display: inline-block; -webkit-writing-mode: vertical-rl; -ms-writing-mode: tb-rl; writing-mode: vertical-rl; white-space: nowrap; transform: translate(0,0) rotate(-180deg); text-align:left; padding:3px 0 20px 0; }
+/*.registro .rotar { height: 200px; width: 20px; font-size: 0.8em; overflow: hidden; text-transform: uppercase; }
+.registro .rotar > * { display: inline-block; white-space: nowrap; transform: translate(0,100%) rotate(-90deg); transform-origin: 0 0; width: 20px; height: 180px; line-height: 20px; }*/
 /*.registro .rotar div:before { content: ""; float: left; margin-top: 100%; }*/
-.registro .rotar.rotar-reverse div { transform: translate(200%,0) rotate(90deg); }
-.registro .rotar.rotar-reverse div:before { margin: 0; margin-bottom: 100%; }
-.registro .nota-final { background-color: #f4f4f4; font-weight: bold; }
+.registro .rotar.rotar-reverse > * { transform: translate(0,0) rotate(360deg); padding:20px 0 3px 0; }
+/*.registro .rotar.rotar-reverse div:before { margin: 0; margin-bottom: 100%; }*/
 .registro .nota.flag { color: transparent !important; }
 .registro .nota.flag:after { position: absolute; top: 50%; left: 50%; margin-left: -7px; margin-top: -7px; content: "\f024"; font: normal normal normal 14px/1 FontAwesome; }
 .registro .nota.rojo.flag:after { color: #ff0000 !important; }
 .registro .nota.amarillo.flag:after { color: #ffd800 !important; }
 .registro .nota.verde.flag:after { color: #1fba18 !important; }
 .registro .promedio { font-weight: bold; background-color: #f6f6f6; }
+.registro .nota-final { background-color: #f4f4f4; font-weight: bold; }
+

@@ -13,6 +13,18 @@
     <script src="~/Scripts/knockout.mapping-latest.js"></script>
     <script src="~/Scripts/jquery-print.js"></script>
     <script type="text/javascript">
+        //var tableToExcel = (function () {
+        //    var uri = 'data:application/vnd.ms-excel;base64,'
+        //      , template = '<html xmlns:o="urn:schemas-microsoft-com:office:office" xmlns:x="urn:schemas-microsoft-com:office:excel" xmlns="http://www.w3.org/TR/REC-html40"><head><!--[if gte mso 9]><xml><x:ExcelWorkbook><x:ExcelWorksheets><x:ExcelWorksheet><x:Name>{worksheet}</x:Name><x:WorksheetOptions><x:DisplayGridlines/></x:WorksheetOptions></x:ExcelWorksheet></x:ExcelWorksheets></x:ExcelWorkbook></xml><![endif]--><meta http-equiv="content-type" content="text/plain; charset=UTF-8"/></head><body><table>{table}</table></body></html>'
+        //      , base64 = function (s) { return window.btoa(unescape(encodeURIComponent(s))) }
+        //      , format = function (s, c) { return s.replace(/{(\w+)}/g, function (m, p) { return c[p]; }) }
+        //    return function (table, name) {
+        //        if (!table.nodeType) table = document.getElementById(table)
+        //        var ctx = { worksheet: name || 'Worksheet', table: table.innerHTML }
+        //        window.location.href = uri + base64(format(template, ctx))
+        //    }
+        //})();
+
         var onTeclasDireccionales = function (element) {
             $(element).on('keydown', function (e) {
                 //console.log(e.keyCode);
@@ -266,7 +278,7 @@
             self.Filtrar_Secciones = function () {
                 self.alumnos.removeAll();
                 //var datos = self.DatosDocente();
-                var distinct = ['A', 'B', 'C'];
+                var distinct = ['A', 'B', 'C', 'D', 'E', 'F'];
 
                 //ko.utils.arrayForEach(datos, function (x) {
                 //    if (x.Grado == self.Filtro.Grado()) {
@@ -329,6 +341,12 @@
                                     n.Nota(null);
                                 });
                             });
+                                                        
+                            a.PromedioVirtual(null);
+                            a.TestPresencial(null);
+                            a.Bimestral(null);
+                            a.Plataforma(null);
+                            a.Clase(null);                            
                         });
                     }
                 });
@@ -372,7 +390,7 @@
                             a.Bimestre = self.Filtro.Bimestre();
                         });
 
-                        console.log(registro);
+                        //console.log(registro);
 
                         $.ajax({
                             type: 'POST',
@@ -399,15 +417,15 @@
             }
 
             self.Imprimir = function () {
-                $(".registro").printThis();
-                //$(".registro").printThis({ loadCSS: "~/Content/css/notas.css" });
+                $(".registro").printThis();                
             }
 
             self.Descargar = function () {
-                $.when($.get('@Url.Content("~/content/css/notas.css")'))
+                @*$.when($.get('@Url.Content("~/content/css/notas.css")'))
                 .done(function (css) {
                     appMaster.ExportToExcel('Registro de notas', $('.registro').parent().html(), css);
-                });                
+                });*@     
+                appMaster.ExportToExcel('Registro de notas', $('.registro').parent().html());                
             }
         }
 
@@ -472,16 +490,16 @@
         </div>
     </div>
     <div>
-        <table class="registro">
+        <table id="notas" class="registro">
             <tbody>
                 <tr>
                     <td rowspan="5"></td>
                     <td></td>
                     <td data-bind="attr:{'colspan': evaluaciones() * ($root.criterios().length + 1) + 1}"><h3>EVAL. PROCESO</h3></td>
                     <td colspan="3" rowspan="3">SPRINT</td>
-                    <td class="rotar nota-final" rowspan="6"><div style="height:275px">BIMESTRAL</div></td>
+                    <td class="rotar nota-final" rowspan="6"><div>BIMESTRAL</div></td>
                     <td colspan="3" rowspan="3">ACTITUD</td>
-                    <td class="rotar nota-final" rowspan="6"><div style="font-size:2em;">NOTA FINAL</div></td>
+                    <td class="rotar nota-final" rowspan="6" style="vertical-align: middle; font-size: 1.5em;"><div>NOTA FINAL</div></td>
                 </tr>
                 <tr>
                     <td rowspan="2"><h4><span data-bind="text: ConvertOrdinal(Filtro.Bimestre())"></span> BIMESTRE</h4></td>
@@ -490,7 +508,7 @@
                     <!--ko foreach: new Array(evaluaciones())-->
                     <td data-bind="attr: {'colspan': $root.criterios().length + 1}"><h5 data-bind="text: 'EVALUACIÓN ' + ($index() + 1)"></h5></td>
                     <!--/ko-->
-                    <td class="rotar nota-final" rowspan="4"><div style="height:220px">PROMEDIO PROCESO</div></td>
+                    <td class="rotar nota-final" rowspan="4"><div>PROMEDIO PROCESO</div></td>
                 </tr>
                 <tr>
                     <td><h4>Colegio: Jack Goldfarb</h4></td>
