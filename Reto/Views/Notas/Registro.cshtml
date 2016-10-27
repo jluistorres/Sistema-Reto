@@ -81,8 +81,12 @@
                     var observable = valueAccessor();
                     var value = $(this).html();
                     if (!isNaN(parseFloat(value))) {
-                        if (parseInt(value) > 20) value = 20;
-                        if (parseInt(value) < 0) value = 0;
+                        if (parseInt(value) > 20) value = '';
+                        if (parseInt(value) < 0) value = '';
+                        if (value == '') {
+                            $(this).html(value);
+                            toastr.warning('Ha ingresado una nota inválida', 'Error');
+                        }
                     }
                     observable(value);
                 });
@@ -222,22 +226,22 @@
 
                         var prom = Math.round(suma);
                         sum_total += prom;
-                        e.Promedio(prom);
+                        e.Promedio(prom || null);
                     });
 
                     var prom_proceso = Math.round(sum_total / evaluaciones.length);
-                    a.PromedioProceso(prom_proceso);
+                    a.PromedioProceso(prom_proceso || null);
 
                     var prom_sprint = Math.round((parseInt(a.PromedioVirtual() || 0) + parseInt(a.TestPresencial() || 0)) / 2);
-                    a.PromedioSprint(prom_sprint);
+                    a.PromedioSprint(prom_sprint || null);
 
                     var prom_actitud = Math.round((parseInt(a.Plataforma() || 0) + parseInt(a.Clase() || 0)) / 2);
-                    a.PromedioActitud(prom_actitud);
+                    a.PromedioActitud(prom_actitud || null);
 
                     var bimestral = parseInt(a.Bimestral() || 0);
 
                     var nota_final = Math.round((prom_proceso * 5 + prom_sprint * 2 + bimestral + prom_actitud * 2) / 10);
-                    a.NotaFinal(nota_final);
+                    a.NotaFinal(nota_final || null);
                 })
             });
 
@@ -532,7 +536,7 @@
                     <td style="width:30px;"><h4>N°</h4></td>
                     <td style="width:250px;"><h4>ALUMNO</h4></td>
                 </tr>
-                <tr>
+                @*<tr>
                     <td></td>
                     <td>OBSERVACIONES</td>
                     <!--ko foreach: new Array(evaluaciones())-->
@@ -554,7 +558,7 @@
                     <td class="nota-final"></td>
                     <!--Nota Final-->
                     <td class="nota-final"></td>
-                </tr>
+                </tr>*@
                 <!--ko foreach: alumnos-->
                 <tr>
                     <td data-bind="text: $index() + 1">1</td>

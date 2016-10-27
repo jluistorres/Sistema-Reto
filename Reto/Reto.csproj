@@ -188,6 +188,7 @@
     <Content Include="Views\Home\Index.cshtml" />
     <Content Include="Views\Error\Restringido.cshtml" />
     <Content Include="Views\Reto\Lista.cshtml" />
+    <Content Include="Views\Reto\Modulos.cshtml" />
     <None Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>

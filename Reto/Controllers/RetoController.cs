@@ -22,6 +22,11 @@ namespace Reto.Controllers
             return View();
         }
 
+        public ActionResult Modulos()
+        {
+            return View();
+        }
+
         [ActionName("mayor-menor")]
         public ActionResult MayorMenor()
         {

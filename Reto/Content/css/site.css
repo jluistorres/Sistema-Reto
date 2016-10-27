@@ -74,11 +74,12 @@ h1, h2, h3, h4 { font-family: 'Fredoka One', 'Ubuntu', sans-serif; }
 
 @media (min-width: 768px) {
     .hidden-md-up { display: none !important; }
-    .navbar.bar-menu .container-fluid { padding-left: 0; }
+    .navbar.bar-menu .container-fluid { padding-left: 0; }    
 }
 
 @media screen and (max-width:768px) {    
     .modal.modal-custom .modal-dialog { width: inherit !important; }
+    nav.top-menu .menu .menu-info-block .left { display:none; }
 }
 
 @media (max-width: 991px) {

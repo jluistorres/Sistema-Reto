@@ -1,0 +1,78 @@
+﻿@{
+    ViewBag.Title = "Modulos";
+}
+
+@section styles
+{
+    <style type="text/css">
+        .ranking { margin: 15px 0; }
+        .ranking .user { position: relative; background: #ECEFF4; border: 1px solid #FFCC29; width: 14%; display: inline-block; padding: 50px 15px; text-align: center; cursor: pointer; transition: transform 200ms, filter 500ms ease-in-out; filter: grayscale(0); -webkit-filter: grayscale(0); }
+        .ranking .user.disable { filter: grayscale(100%); -webkit-filter: grayscale(100%); }
+        .ranking .user:hover { transform: scale(1.15); box-shadow: 3px 3px 0px rgba(0,0,0,0.2); z-index: 200; }
+        .ranking .user .nombre { font-weight: bold; margin: 5px 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+        .ranking .user .foto img { width: 80px; }
+        .ranking .user .puntos { font-size: 0.85em; }
+        .ranking .user .puesto { position: absolute; top: 5px; right: 5px; }
+        .ranking .user .puesto .numero { position: absolute; top: 50%; left: 0; margin-top: -10px; text-align: center; width: 100%; color: #fff; font-family: 'Fredoka One', 'Ubuntu', sans-serif; }
+        .ranking .user .user-content { position: relative; z-index: 10; }
+        .ranking .user .bg-user { position: absolute; background: #FFCC29; top: 0; left: 0; right: 0; height: 100px; z-index: 0; }
+        .ranking .user .detalle { font-weight: bold; margin-top: 15px; }
+        .ranking .user .nivel { margin-top: 15px; height: 40px; overflow: hidden; }
+        .ranking .user.libro-1 { border-color: #f5f140; }
+        .ranking .user.libro-1 .bg-user { background: #f5f140; }
+        .ranking .user.libro-2 { border-color: #FFCC29; }
+        .ranking .user.libro-2 .bg-user { background: #FFCC29; }      
+        .ranking .user.libro-3 { border-color: #a4d035; }
+        .ranking .user.libro-3 .bg-user { background: #a4d035; }
+        .ranking .user.libro-4 { border-color: #3fa526; }
+        .ranking .user.libro-4 .bg-user { background: #3fa526; }
+        .ranking .user.libro-5 { border-color: #35cbd0; }
+        .ranking .user.libro-5 .bg-user { background: #35cbd0; }
+        .ranking .user.libro-6 { border-color: #217cc8; }
+        .ranking .user.libro-6 .bg-user { background: #217cc8; }
+        .ranking .user.libro-7 { border-color: #f83131; }
+        .ranking .user.libro-7 .bg-user { background: #f83131; }
+    </style>
+}
+@section scripts
+{
+    <script type="text/javascript">
+        $(function () {
+            $('.ranking .user').hover(function () {
+                $('.ranking .user').not($(this)).addClass('disable');
+            }, function () {
+                $('.ranking .user').removeClass('disable');
+            });
+        });
+    </script>
+}
+
+<h2>Módulos Reto</h2>
+
+<div class="ranking clearfix">
+    @for (int i = 0; i < 7; i++)
+    {
+        <div class="user @("libro-" + (i+1))">
+            <div class="bg-user"></div>
+            <div class="puesto">
+                <i class="fa fa-certificate fa-3x"></i>
+                <span class="numero">@(i + 1)</span>
+            </div>
+            <div class="user-content">
+                <div class="foto">
+                    <img src="~/Content/img/avatar_reto.png" />
+                </div>
+                <div class="info">
+                    @*<div class="nombre"></div>*@
+                    <div class="detalle">Guía de Actividades del Alumno</div>
+                    <div class="nivel">
+                        @for (int j = 0; j < i + 1; j++)
+                        {
+                            <i class="fa fa-star-o"></i>
+                        }
+                    </div>
+                </div>
+            </div>
+        </div>
+    }
+</div>
