@@ -34,14 +34,11 @@
                         <i class="fa fa-home fa-fw"><!-- --></i> Inicio
                     </a>
                 </li>
-                @if (SessionHelper.IsInRole("Alumno"))
-                {
-                    <li>
-                        <a class="left-menu-link" href="~/reto/modulos">
-                            <i class="fa fa-inbox fa-fw"><!-- --></i> Módulos
-                        </a>
-                    </li>
-                }
+                <li>
+                    <a class="left-menu-link" href="~/reto/modulos">
+                        <i class="fa fa-inbox fa-fw"><!-- --></i> Módulos
+                    </a>
+                </li>
                 <li class="left-menu-list-separator"><!-- --></li>
                 <li class="left-menu-list-submenu">
                     <a class="left-menu-link" href="javascript: void(0);">
@@ -49,14 +46,8 @@
                     </a>
                     <ul class="left-menu-list list-unstyled">
                         <li>
-                            <a class="left-menu-link" href="~/reto?tipo=1">Evaluación</a>
+                            <a class="left-menu-link" href="~/reto">Evaluación</a>
                         </li>
-                        @*<li>
-                                <a class="left-menu-link" href="~/reto?tipo=2">Entrenamiento</a>
-                            </li>
-                            <li>
-                                <a class="left-menu-link" href="~/reto?tipo=3">Reto familiar</a>
-                            </li>*@
                         @if (SessionHelper.IsInRole("Docente"))
                         {
                             <li>
