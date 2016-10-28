@@ -44,6 +44,14 @@ namespace Reto.LogicaNegocio
 
         public bool GuardarScore(Alumno_Juego score, int IdPersona)
         {
+            //int Bimestre = 1;
+            //DateTime fecha = DateTime.Now;
+
+            //if (fecha >= DateTime.Parse(string.Format("10/03/{0}", fecha.Year)) && fecha <= DateTime.Parse(string.Format("02/05/{0}", fecha.Year)))
+            //{
+            //    Bimestre = 1;
+            //}
+
             return odaJuego.GuardarScore(score, IdPersona);
         }
     }
