@@ -42,7 +42,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Alumno.cs" />
-    <Compile Include="Alumno_Juego.cs" />
+    <Compile Include="JuegoScore.cs" />
     <Compile Include="CriteriosEvaluacion.cs" />
     <Compile Include="Docente.cs" />
     <Compile Include="Juego.cs" />

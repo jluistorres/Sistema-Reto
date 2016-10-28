@@ -25,7 +25,7 @@ namespace Reto.AccesoDatos
         }
 
         public virtual DbSet<Alumno> Alumno { get; set; }
-        public virtual DbSet<Alumno_Juego> Alumno_Juego { get; set; }
+        public virtual DbSet<JuegoScore> JuegoScore { get; set; }
         public virtual DbSet<CriteriosEvaluacion> CriteriosEvaluacion { get; set; }        
         public virtual DbSet<Docente> Docente { get; set; }        
         public virtual DbSet<Juego> Juego { get; set; }        

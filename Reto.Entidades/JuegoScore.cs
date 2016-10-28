@@ -14,7 +14,7 @@ namespace Reto.Entidades
     using System.ComponentModel.DataAnnotations;
     using System.ComponentModel.DataAnnotations.Schema;
 
-    public partial class Alumno_Juego
+    public partial class JuegoScore
     {
         [Key, Column(Order = 0)]
         public int IdAlumno { get; set; }
@@ -22,8 +22,8 @@ namespace Reto.Entidades
         public int IdJuego { get; set; }
         public Nullable<double> Calificacion { get; set; }
         public string Respuesta { get; set; }
-        public Nullable<double> TiempoSegundos { get; set; }
-
+        public Nullable<double> TiempoResolucion { get; set; }
+        public Nullable<double> TiempoReaccion { get; set; }
         public virtual Alumno Alumno { get; set; }
         public virtual Juego Juego { get; set; }
     }

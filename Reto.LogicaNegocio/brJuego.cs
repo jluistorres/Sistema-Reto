@@ -42,7 +42,7 @@ namespace Reto.LogicaNegocio
             return odaJuego.ExtraerJuegoAzar(Nivel);
         }
 
-        public bool GuardarScore(Alumno_Juego score, int IdPersona)
+        public bool GuardarScore(JuegoScore score, int IdPersona)
         {
             //int Bimestre = 1;
             //DateTime fecha = DateTime.Now;

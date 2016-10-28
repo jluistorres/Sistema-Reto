@@ -64,17 +64,17 @@ namespace Reto.AccesoDatos
             return juego;
         }
 
-        public bool GuardarScore(Alumno_Juego score, int IdPersona)
+        public bool GuardarScore(JuegoScore score, int IdPersona)
         {
             var alumno = cnx.Alumno.FirstOrDefault(x => x.IdPersona == IdPersona);
             if (alumno != null)
             {
                 score.IdAlumno = alumno.IdAlumno;
 
-                cnx.Alumno_Juego.RemoveRange(cnx.Alumno_Juego.Where(x => x.IdAlumno == score.IdAlumno && x.IdJuego == score.IdJuego).ToList());
+                cnx.JuegoScore.RemoveRange(cnx.JuegoScore.Where(x => x.IdAlumno == score.IdAlumno && x.IdJuego == score.IdJuego).ToList());
                 cnx.SaveChanges();
 
-                cnx.Alumno_Juego.Add(score);
+                cnx.JuegoScore.Add(score);
                return cnx.SaveChanges() != 0;
             }
 

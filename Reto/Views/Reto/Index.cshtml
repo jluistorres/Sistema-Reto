@@ -157,16 +157,18 @@
                     }
 
                     var n = (casillero.length + 1) / 2;
-                    var t = Math.round(self.cronometro()) / 100;
+                    var t_resolucion = Math.round(self.cronometro()) / 100;
+                    var t_reaccion = Math.round(self.cronometro_2()) / 100;
 
-                    var nota = Math.round((((n * n - d) + 3) / t) * 20);
+                    var nota = Math.round((((n * n - d) + 3) / t_resolucion) * 20);
 
                     var params = {
                         //IdAlumno: 1,
                         IdJuego: self.NroJuego(),
                         Calificacion: nota,
                         Respuesta: $('.respuestas .rpta').text(),
-                        TiempoSegundos: t
+                        TiempoResolucion: t_resolucion,
+                        TiempoReaccion: t_reaccion
                     };
 
                     //console.log(params);
@@ -233,107 +235,130 @@
     </script>
 }
 
-@*<div class="row">
-    <div class="col-sm-3">
-        <div class="list-group">
-            <a class="list-group-item active"><h3 style="margin:0">Juegos</h3></a>
-            <a class="list-group-item">Mayor - Menor</a>
-            <a class="list-group-item">Minisudoku</a>
-            <a class="list-group-item">A primera vista</a>
-            <a class="list-group-item">Conect-arte</a>
-            <a class="list-group-item">Cuadrado inteligente</a>
-            <a class="list-group-item">Campamentos</a>
-            <a class="list-group-item">Cripto Zero</a>
-            <a class="list-group-item">Islas y puentes</a>
-            <a class="list-group-item">Virtual-mente</a>
-            <a class="list-group-item">Mathematically</a>
-        </div>
-    </div>
-    <div class="col-sm-9">
-        
-    </div>
-</div>*@
+@{
+    var reto = Request.QueryString["juego"];
+}
 
-<div class="text-center">
-    <div class="well well-sm" style="margin-top:0">
-        <div class="btn-group" data-toggle="buttons">
-            <button class="btn btn-default-outline">Nivel</button>
-            <!--ko foreach: niveles-->
-            <button class="btn btn-info" data-bind="click: function(){ $root.nivelSeleccionado($data) }, css: {'active': $data == $root.nivelSeleccionado()}, text: $data"></button>
-            <!--/ko-->
+@if (string.IsNullOrEmpty(reto))
+{
+    <div class="row">
+        <div class="col-sm-3">
+            <div class="list-group">
+                <a class="list-group-item active"><h3 style="margin:0">Juegos</h3></a>
+                <a class="list-group-item" href="~/reto?juego=mayor_menor">Mayor - Menor</a>
+                <a class="list-group-item disabled">Minisudoku</a>
+                <a class="list-group-item disabled">A primera vista</a>
+                <a class="list-group-item disabled">Conect-arte</a>
+                <a class="list-group-item disabled">Cuadrado inteligente</a>
+                <a class="list-group-item disabled">Campamentos</a>
+                <a class="list-group-item disabled">Cripto Zero</a>
+                <a class="list-group-item disabled">Islas y puentes</a>
+                <a class="list-group-item disabled">Virtual-mente</a>
+                <a class="list-group-item disabled">Mathematically</a>
+            </div>
         </div>
-        <span class="visible-xs"><br /></span>
-        <!--ko if: NroJuego-->
-        <button type="button" class="btn btn-default" data-bind="click: NuevoJuego, visible: NroJuego"><i class="fa fa-table fa-fw"></i> Nuevo reto</button>
-        @*<button type="button" class="btn btn-default" data-bind="click: Limpiar" title="Limpiar"><i class="fa fa-retweet fa-lg"></i></button>
-            <button type="button" class="btn btn-default" data-bind="click: Procesar" title="Verificar"><i class="fa fa-check fa-lg"></i></button>*@
-        <!--/ko-->
-        <a href="~/" class="btn btn-danger" title="Salir"><i class="fa fa-sign-out fa-lg"></i></a>
+        <div class="col-sm-9">
+            <h1 style="margin-top:0;">Indicaciones</h1>
+            <h4>Bienvenido al Módulo @Request.QueryString["modulo"]!</h4>
+            <p>
+                Querido aprendiz en este módulo prodrás entrenar, evaluarte, consultar tus estadísticas, comparar tus resultados con los demás aprendices de tu colegio,
+                estar al tanto de las noticias de Mente Brillante, como torneos, promociones, evaluaciones, etc.
+            </p>
+            <p>
+                Al terminar este Módulo @Request.QueryString["modulo"], habrás desarrollado la capacidad de Razonamiento Deductivo, asi como potenciado el razonamiento geoespacial, y mejorando en tu proceso de argumentación.
+            </p>
+            <p>
+                Con los ejercicios de este módulo tenemos como primer objetivo que te "diviertas pensando", que puedas mejorar día a día, que formes tu caracter y disciplina.
+            </p>
+        </div>
     </div>
-    <table class="formulario">
-        <tbody>
-            <tr>
-                <td data-bind="visible: EstadoJuego() == 0">
-                    <div style="padding:15px" class="text-justify">
-                        <h1 class="text-center">Instrucciones</h1>
-                        <p>La sección evaluación tiene como objetivo, entrenar tu mente de forma disciplinada, además de recoger información de tu constancia y perseverancia, anota estadísticas y proyecta tu éxito en los diferentes juegos o Reto del sistema.</p>
-                        <p>Para iniciar la evaluación debes seguir estos pasos:</p>
-                        <ol>
-                            <li>Determina el nivel (de preferencia debes haber acabado un nivel inferior para pasar a otro superior)</li>
-                            <li>Elige un tipo de Reto (juego)</li>
-                        </ol>
-                    </div>
-                </td>
-                <td class="text-center" style="position:relative; display:none;" data-bind="visible: EstadoJuego() > 0">
-                    <div data-bind="visible: EstadoJuego() < 4">
-                        <div class="reto-info" data-bind="visible: NroJuego, click: Empezar">Reto N° <span data-bind="text: NroJuego"></span></div>
-                        <h1>EVALUACIÓN</h1>
-                        <h4>Mayor - Menor</h4>
-                        <table class="tabla"></table>
-                        <br />
-                        <div class="form-group">
-                            <button type="button" class="btn btn-success" data-bind="click: Empezar, visible: EstadoJuego() == 1">Empezar</button>
-                            <button type="button" class="btn btn-primary" data-bind="click: Responder, visible: EstadoJuego() == 2, disable: BloquearResponder">Responder</button>
-                            <button type="button" class="btn btn-success" data-bind="click: EnviarRepuestas, visible: EstadoJuego() >= 3, disable: EstadoJuego() == 4">Enviar Repuestas</button>
+}
+else
+{
+    <div class="text-center">
+        <div class="well well-sm" style="margin-top:0">
+            <div class="btn-group" data-toggle="buttons">
+                <button class="btn btn-default-outline">Nivel</button>
+                <!--ko foreach: niveles-->
+                <button class="btn btn-info" data-bind="click: function(){ $root.nivelSeleccionado($data) }, css: {'active': $data == $root.nivelSeleccionado()}, text: $data"></button>
+                <!--/ko-->
+            </div>
+            <span class="visible-xs"><br /></span>
+            <!--ko if: NroJuego-->
+            <button type="button" class="btn btn-default" data-bind="click: NuevoJuego, visible: NroJuego"><i class="fa fa-table fa-fw"></i> Nuevo reto</button>
+            @*<button type="button" class="btn btn-default" data-bind="click: Limpiar" title="Limpiar"><i class="fa fa-retweet fa-lg"></i></button>
+                <button type="button" class="btn btn-default" data-bind="click: Procesar" title="Verificar"><i class="fa fa-check fa-lg"></i></button>*@
+            <!--/ko-->
+            <a href="~/" class="btn btn-danger" title="Salir"><i class="fa fa-sign-out fa-lg"></i></a>
+        </div>
+        <table class="formulario">
+            <tbody>
+                <tr>
+                    <td data-bind="visible: EstadoJuego() == 0">
+                        <div style="padding:15px" class="text-justify">
+                            <h1 class="text-center">Instrucciones</h1>
+                            <p>
+                                La sección evaluación tiene como objetivo, entrenar tu mente de forma disciplinada, además de recoger información de tu constancia y perseverancia, anota estadísticas y proyecta tu éxito en los diferentes juegos o Reto del sistema.
+                            </p>
+                            <p>Para iniciar la evaluación debes seguir estos pasos:</p>
+                            <ol>
+                                <li>Determina el nivel (de preferencia debes haber acabado un nivel inferior para pasar a otro superior)</li>
+                                <li>Elige un tipo de Reto (juego)</li>
+                            </ol>
                         </div>
-                        <div class="respuestas" data-bind="visible: EstadoJuego() >= 3">
-                            <div class="rpta yellow" data-color="yellow" data-bind="attr: { 'contenteditable' : EstadoJuego() == 3 }"></div>
-                            <div class="rpta green" data-color="green" data-bind="attr: { 'contenteditable' : EstadoJuego() == 3 }"></div>
-                            <div class="rpta blue" data-color="blue" data-bind="attr: { 'contenteditable' : EstadoJuego() == 3 }"></div>
-                            <div class="rpta red" data-color="red" data-bind="attr: { 'contenteditable' : EstadoJuego() == 3 }"></div>
+                    </td>
+                    <td class="text-center" style="position:relative; display:none;" data-bind="visible: EstadoJuego() > 0">
+                        <div data-bind="visible: EstadoJuego() < 4">
+                            <div class="reto-info" data-bind="visible: NroJuego, click: Empezar">Reto N° <span data-bind="text: NroJuego"></span></div>
+                            <h1>EVALUACIÓN</h1>
+                            <h4>Mayor - Menor</h4>
+                            <table class="tabla"></table>
+                            <br />
+                            <div class="form-group">
+                                <button type="button" class="btn btn-success" data-bind="click: Empezar, visible: EstadoJuego() == 1">Empezar</button>
+                                <button type="button" class="btn btn-primary" data-bind="click: Responder, visible: EstadoJuego() == 2, disable: BloquearResponder">Responder</button>
+                                <button type="button" class="btn btn-success" data-bind="click: EnviarRepuestas, visible: EstadoJuego() >= 3, disable: EstadoJuego() == 4">Enviar Repuestas</button>
+                            </div>
+                            <div class="respuestas" data-bind="visible: EstadoJuego() >= 3">
+                                <div class="rpta yellow" data-color="yellow" data-bind="attr: { 'contenteditable' : EstadoJuego() == 3 }"></div>
+                                <div class="rpta green" data-color="green" data-bind="attr: { 'contenteditable' : EstadoJuego() == 3 }"></div>
+                                <div class="rpta blue" data-color="blue" data-bind="attr: { 'contenteditable' : EstadoJuego() == 3 }"></div>
+                                <div class="rpta red" data-color="red" data-bind="attr: { 'contenteditable' : EstadoJuego() == 3 }"></div>
+                            </div>
                         </div>
-                    </div>
-                    <!--ko if: EstadoJuego() == 4-->
-                    <div class="text-center">
-                        <!--ko if: errores().length == 0-->
-                        <h1>Muy bien <span>@SessionHelper.Usuario.Nombres</span>!</h1>
+                        <!--ko if: EstadoJuego() == 4-->
+                        <div class="text-center">
+                            <!--ko if: errores().length == 0-->
+                            <h1>Muy bien <span>@SessionHelper.Usuario.Nombres</span>!</h1>
+                            <!--/ko-->
+                            <h3>Resumen de Resultados</h3>
+                            <!--ko if: errores().length > 0-->
+                            <h4><span data-bind="text: errores().length"></span> Errores</h4>
+                            <!--/ko-->
+                            <div>Tiempo de resolución</div>
+                            <div class="cronometro"><i class="fa fa-hourglass-2"></i><br /> <span data-bind="text: FormatearReloj(cronometro())"></span></div>
+                            <br />
+                            <div>Tiempo de reacción</div>
+                            <div class="cronometro"><i class="fa fa-hourglass-2"></i><br /> <span data-bind="text: FormatearReloj(cronometro_2())"></span></div>
+                            <br /><br />
+                            <!--ko if: errores().length > 0-->
+                            <h4>Pronto tendrás una nueva oportunidad</h4>
+                            <!--/ko-->
+                            <h3>¡Los que aceptan el reto, nunca se rinden!</h3>
+                        </div>
                         <!--/ko-->
-                        <h3>Resumen de Resultados</h3>
-                        <!--ko if: errores().length > 0-->
-                        <h4><span data-bind="text: errores().length"></span> Errores</h4>
-                        <!--/ko-->
-                        <div>Tiempo de resolución</div>
+                    </td>
+                    <td style="vertical-align: top; width: 150px; padding:2px; display: none;" data-bind="visible: EstadoJuego() > 0 && EstadoJuego() < 4">
                         <div class="cronometro"><i class="fa fa-hourglass-2"></i><br /> <span data-bind="text: FormatearReloj(cronometro())"></span></div>
-                        <br />
+                        <!--ko if: EstadoJuego() >= 3-->
+                        <hr />
                         <div>Tiempo de reacción</div>
                         <div class="cronometro"><i class="fa fa-hourglass-2"></i><br /> <span data-bind="text: FormatearReloj(cronometro_2())"></span></div>
-                        <br /><br />
-                        <!--ko if: errores().length > 0-->
-                        <h4>Pronto tendrás una nueva oportunidad</h4>
                         <!--/ko-->
-                        <h3>¡Los que aceptan el reto, nunca se rinden!</h3>
-                    </div>
-                    <!--/ko-->
-                </td>
-                <td style="vertical-align: top; width: 150px; padding:2px; display: none;" data-bind="visible: EstadoJuego() > 0 && EstadoJuego() < 4">
-                    <div class="cronometro"><i class="fa fa-hourglass-2"></i><br /> <span data-bind="text: FormatearReloj(cronometro())"></span></div>
-                    <!--ko if: EstadoJuego() >= 3-->
-                    <hr />
-                    <div>Tiempo de reacción</div>
-                    <div class="cronometro"><i class="fa fa-hourglass-2"></i><br /> <span data-bind="text: FormatearReloj(cronometro_2())"></span></div>
-                    <!--/ko-->
-                </td>
-            </tr>
-        </tbody>
-    </table>
-</div>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+}
+
