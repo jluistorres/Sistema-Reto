@@ -6,6 +6,9 @@
 {
     <link href="~/Content/fonts/custom/fonts.css" rel="stylesheet" />
     <link href="~/Content/css/juego.css" rel="stylesheet" />
+    <style type="text/css">
+        .well { background:#ffd800; }        
+    </style>
 }
 
 @section scripts
@@ -20,6 +23,7 @@
             var casillero;
             var cronometro_interval_1, cronometro_interval_2;
 
+            self.JuegoSeleccionado = ko.observable();
             self.EstadoJuego = ko.observable(0);
             self.cronometro = ko.observable(0);
             self.cronometro_2 = ko.observable(0);
@@ -30,6 +34,11 @@
             self.PosicionesResolver = ko.observable();
 
             self.errores = ko.observable(0);
+
+            self.SeleccionarJuego = function (juego) {
+                self.JuegoSeleccionado(juego);
+                if (!self.nivelSeleccionado()) self.nivelSeleccionado(1);
+            }
 
             self.NuevoJuego = function () {
                 self.NroJuego(null);
@@ -235,47 +244,56 @@
     </script>
 }
 
-@{
-    var reto = Request.QueryString["juego"];
-}
+<div class="text-center">
 
-@if (string.IsNullOrEmpty(reto))
-{
-    <div class="row">
+
+    <div class="row" data-bind="ifnot: $root.JuegoSeleccionado">
         <div class="col-sm-3">
-            <div class="list-group">
-                <a class="list-group-item active"><h3 style="margin:0">Juegos</h3></a>
-                <a class="list-group-item" href="~/reto?juego=mayor_menor">Mayor - Menor</a>
-                <a class="list-group-item disabled">Minisudoku</a>
-                <a class="list-group-item disabled">A primera vista</a>
-                <a class="list-group-item disabled">Conect-arte</a>
-                <a class="list-group-item disabled">Cuadrado inteligente</a>
-                <a class="list-group-item disabled">Campamentos</a>
-                <a class="list-group-item disabled">Cripto Zero</a>
-                <a class="list-group-item disabled">Islas y puentes</a>
-                <a class="list-group-item disabled">Virtual-mente</a>
-                <a class="list-group-item disabled">Mathematically</a>
+            <div class="list-group text-left">
+                <a class="list-group-item" style="background:#ffd800;"><h3 style="margin:0;">Juegos</h3></a>
+                <a class="list-group-item active" data-bind="click: SeleccionarJuego.bind('mayor_menor')">Mayor - Menor</a>
+                <a class="list-group-item active disabled">Minisudoku</a>
+                <a class="list-group-item active disabled">A primera vista</a>
+                <a class="list-group-item active disabled">Conect-arte</a>
+                <a class="list-group-item active disabled">Cuadrado inteligente</a>
+                <a class="list-group-item active disabled">Campamentos</a>
+                <a class="list-group-item active disabled">Cripto Zero</a>
+                <a class="list-group-item active disabled">Islas y puentes</a>
+                <a class="list-group-item active disabled">Virtual-mente</a>
+                <a class="list-group-item active disabled">Mathematically</a>
             </div>
         </div>
         <div class="col-sm-9">
-            <h1 style="margin-top:0;">Indicaciones</h1>
-            <h4>Bienvenido al Módulo @Request.QueryString["modulo"]!</h4>
-            <p>
-                Querido aprendiz en este módulo prodrás entrenar, evaluarte, consultar tus estadísticas, comparar tus resultados con los demás aprendices de tu colegio,
-                estar al tanto de las noticias de Mente Brillante, como torneos, promociones, evaluaciones, etc.
-            </p>
-            <p>
-                Al terminar este Módulo @Request.QueryString["modulo"], habrás desarrollado la capacidad de Razonamiento Deductivo, asi como potenciado el razonamiento geoespacial, y mejorando en tu proceso de argumentación.
-            </p>
-            <p>
-                Con los ejercicios de este módulo tenemos como primer objetivo que te "diviertas pensando", que puedas mejorar día a día, que formes tu caracter y disciplina.
-            </p>
+            <div class="well well-sm" style="margin-top:0">
+                <div class="btn-group" data-toggle="buttons">
+                    <button class="btn btn-default-outline">Nivel</button>
+                    <!--ko foreach: niveles-->
+                    <button class="btn btn-info" data-bind="click: function(){ $root.nivelSeleccionado($data) }, css: {'active': $data == $root.nivelSeleccionado()}, text: $data"></button>
+                    <!--/ko-->
+                </div>
+                <span class="visible-xs"><br /></span>
+                <!--ko if: NroJuego-->
+                <button type="button" class="btn btn-default" data-bind="click: NuevoJuego, visible: NroJuego"><i class="fa fa-table fa-fw"></i> Nuevo reto</button>
+                @*<button type="button" class="btn btn-default" data-bind="click: Limpiar" title="Limpiar"><i class="fa fa-retweet fa-lg"></i></button>
+                    <button type="button" class="btn btn-default" data-bind="click: Procesar" title="Verificar"><i class="fa fa-check fa-lg"></i></button>*@
+                <!--/ko-->
+                <a href="~/" class="btn btn-danger" title="Salir"><i class="fa fa-sign-out fa-lg"></i></a>
+            </div>
+            <div style="padding:15px" class="text-justify">
+                <h1 class="text-center">Instrucciones</h1>
+                <p>
+                    La sección evaluación tiene como objetivo, entrenar tu mente de forma disciplinada, además de recoger información de tu constancia y perseverancia, anota estadísticas y proyecta tu éxito en los diferentes juegos o Reto del sistema.
+                </p>
+                <p>Para iniciar la evaluación debes seguir estos pasos:</p>
+                <ol>
+                    <li>Determina el nivel (de preferencia debes haber acabado un nivel inferior para pasar a otro superior)</li>
+                    <li>Elige un tipo de Reto (juego)</li>
+                </ol>
+            </div>
         </div>
     </div>
-}
-else
-{
-    <div class="text-center">
+
+    <div data-bind="visible: $root.JuegoSeleccionado">
         <div class="well well-sm" style="margin-top:0">
             <div class="btn-group" data-toggle="buttons">
                 <button class="btn btn-default-outline">Nivel</button>
@@ -286,27 +304,12 @@ else
             <span class="visible-xs"><br /></span>
             <!--ko if: NroJuego-->
             <button type="button" class="btn btn-default" data-bind="click: NuevoJuego, visible: NroJuego"><i class="fa fa-table fa-fw"></i> Nuevo reto</button>
-            @*<button type="button" class="btn btn-default" data-bind="click: Limpiar" title="Limpiar"><i class="fa fa-retweet fa-lg"></i></button>
-                <button type="button" class="btn btn-default" data-bind="click: Procesar" title="Verificar"><i class="fa fa-check fa-lg"></i></button>*@
             <!--/ko-->
             <a href="~/" class="btn btn-danger" title="Salir"><i class="fa fa-sign-out fa-lg"></i></a>
         </div>
         <table class="formulario">
             <tbody>
                 <tr>
-                    <td data-bind="visible: EstadoJuego() == 0">
-                        <div style="padding:15px" class="text-justify">
-                            <h1 class="text-center">Instrucciones</h1>
-                            <p>
-                                La sección evaluación tiene como objetivo, entrenar tu mente de forma disciplinada, además de recoger información de tu constancia y perseverancia, anota estadísticas y proyecta tu éxito en los diferentes juegos o Reto del sistema.
-                            </p>
-                            <p>Para iniciar la evaluación debes seguir estos pasos:</p>
-                            <ol>
-                                <li>Determina el nivel (de preferencia debes haber acabado un nivel inferior para pasar a otro superior)</li>
-                                <li>Elige un tipo de Reto (juego)</li>
-                            </ol>
-                        </div>
-                    </td>
                     <td class="text-center" style="position:relative; display:none;" data-bind="visible: EstadoJuego() > 0">
                         <div data-bind="visible: EstadoJuego() < 4">
                             <div class="reto-info" data-bind="visible: NroJuego, click: Empezar">Reto N° <span data-bind="text: NroJuego"></span></div>
@@ -360,5 +363,5 @@ else
             </tbody>
         </table>
     </div>
-}
+</div>
 

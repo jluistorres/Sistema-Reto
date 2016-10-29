@@ -27,6 +27,12 @@ namespace Reto.Controllers
             return View();
         }
 
+        public JsonResult SeleccionarModulo(int Modulo)
+        {
+            Session["Modulo"] = Modulo;
+            return Json(true);
+        }
+
         [ActionName("mayor-menor")]
         public ActionResult MayorMenor()
         {

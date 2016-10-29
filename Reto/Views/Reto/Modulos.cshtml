@@ -21,7 +21,7 @@
         .ranking .user.libro-1 { border-color: #f5f140; }
         .ranking .user.libro-1 .bg-user { background: #f5f140; }
         .ranking .user.libro-2 { border-color: #FFCC29; }
-        .ranking .user.libro-2 .bg-user { background: #FFCC29; }      
+        .ranking .user.libro-2 .bg-user { background: #FFCC29; }
         .ranking .user.libro-3 { border-color: #a4d035; }
         .ranking .user.libro-3 .bg-user { background: #a4d035; }
         .ranking .user.libro-4 { border-color: #3fa526; }
@@ -36,45 +36,73 @@
 }
 @section scripts
 {
+    <script src="~/Scripts/knockout-3.4.0.js"></script>
     <script type="text/javascript">
+        function ViewModel() {
+            var self = this;
+            self.Modulo = ko.observable('@Request.QueryString["m"]');
+            self.SeleccionarModulo = function (data) {                
+                self.Modulo(data);
+                $.post('@Url.Action("SeleccionarModulo")', { Modulo: data })
+                .done(function (result) {
+                    window.location.href = '@Url.Action("modulos")?m=' + data;
+                });
+            }
+        }
+
         $(function () {
+            ko.applyBindings(new ViewModel());
+
             $('.ranking .user').hover(function () {
                 $('.ranking .user').not($(this)).addClass('disable');
             }, function () {
                 $('.ranking .user').removeClass('disable');
-            }).click(function () {
-                window.location.href = $(this).data('href');
             });
         });
     </script>
 }
 
+<!--ko ifnot: Modulo-->
 <h2>Módulos Reto</h2>
-
 <div class="ranking clearfix">
-    @for (int i = 1; i <= 7; i++)
-    {
-        <div data-href="@Url.Content("~/reto?modulo=" + i)" class="user @("libro-" + i)">
-            <div class="bg-user"></div>
-            <div class="puesto">
-                <i class="fa fa-certificate fa-3x"></i>
-                <span class="numero">@i</span>
+    <!--ko foreach: new Array(7)-->
+    <div class="user" data-bind="css: 'libro-' + ($index() + 1), click: $root.SeleccionarModulo.bind(null, $index() + 1)">
+        <div class="bg-user"></div>
+        <div class="puesto">
+            <i class="fa fa-certificate fa-3x"></i>
+            <span class="numero" data-bind="text: ($index() + 1)"></span>
+        </div>
+        <div class="user-content">
+            <div class="foto">
+                <img src="~/Content/img/avatar_reto.png" />
             </div>
-            <div class="user-content">
-                <div class="foto">
-                    <img src="~/Content/img/avatar_reto.png" />
-                </div>
-                <div class="info">
-                    @*<div class="nombre"></div>*@
-                    <div class="detalle">Guía de Actividades del Alumno</div>
-                    <div class="nivel">
-                        @for (int j = 0; j < i; j++)
-                        {
-                            <i class="fa fa-star-o"></i>
-                        }
-                    </div>
+            <div class="info">
+                @*<div class="nombre"></div>*@
+                <div class="detalle">Guía de Actividades del Alumno</div>
+                <div class="nivel">
+                    <!--ko foreach: new Array($index())-->
+                    <i class="fa fa-star-o"></i>
+                    <!--/ko-->
                 </div>
             </div>
         </div>
-    }
+    </div>
+    <!--/ko-->
 </div>
+<!--/ko-->
+<!--ko if: Modulo-->
+<div class="text-justify">
+    <h1 style="margin-top:0;">Indicaciones</h1>
+    <h4>Bienvenido al Módulo <span data-bind="text: Modulo"></span>!</h4>
+    <p>
+        Querido aprendiz en este módulo prodrás entrenar, evaluarte, consultar tus estadísticas, comparar tus resultados con los demás aprendices de tu colegio,
+        estar al tanto de las noticias de Mente Brillante, como torneos, promociones, evaluaciones, etc.
+    </p>
+    <p>
+        Al terminar este Módulo <span data-bind="text: Modulo"></span>, habrás desarrollado la capacidad de Razonamiento Deductivo, asi como potenciado el razonamiento geoespacial, y mejorando en tu proceso de argumentación.
+    </p>
+    <p>
+        Con los ejercicios de este módulo tenemos como primer objetivo que te "diviertas pensando", que puedas mejorar día a día, que formes tu caracter y disciplina.
+    </p>
+</div>
+<!--/ko-->

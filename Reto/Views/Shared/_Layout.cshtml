@@ -39,64 +39,67 @@
                         <i class="fa fa-inbox fa-fw"><!-- --></i> Módulos
                     </a>
                 </li>
-                <li class="left-menu-list-separator"><!-- --></li>
-                <li class="left-menu-list-submenu">
-                    <a class="left-menu-link" href="javascript: void(0);">
-                        <i class="fa fa-table fa-fw"><!-- --></i> Sprint
-                    </a>
-                    <ul class="left-menu-list list-unstyled">
-                        <li>
-                            <a class="left-menu-link" href="~/reto">Evaluación</a>
-                        </li>
-                        @if (SessionHelper.IsInRole("Docente"))
-                        {
-                            <li>
-                                <a class="left-menu-link" href="~/reto/lista">Administrar plantillas</a>
-                            </li>
-                        }
-
-                    </ul>
-                </li>
-                @if (SessionHelper.IsInRole("Docente"))
+                @if (SessionHelper.IsInRole("Docente") || Session["Modulo"] != null)
                 {
+                    <li class="left-menu-list-separator"><!-- --></li>
                     <li class="left-menu-list-submenu">
                         <a class="left-menu-link" href="javascript: void(0);">
-                            <i class="fa fa-edit fa-fw"><!-- --></i> Registros
+                            <i class="fa fa-table fa-fw"><!-- --></i> Sprint
                         </a>
                         <ul class="left-menu-list list-unstyled">
                             <li>
-                                <a class="left-menu-link" href="~/notas/registro">Notas</a>
+                                <a class="left-menu-link" href="~/reto">Evaluación</a>
                             </li>
-                            <li>
-                                <a class="left-menu-link" href="#">Anotaciones</a>
-                            </li>
+                            @if (SessionHelper.IsInRole("Docente"))
+                            {
+                                <li>
+                                    <a class="left-menu-link" href="~/reto/lista">Administrar plantillas</a>
+                                </li>
+                            }
+
                         </ul>
                     </li>
+                    if (SessionHelper.IsInRole("Docente"))
+                    {
+                        <li class="left-menu-list-submenu">
+                            <a class="left-menu-link" href="javascript: void(0);">
+                                <i class="fa fa-edit fa-fw"><!-- --></i> Registros
+                            </a>
+                            <ul class="left-menu-list list-unstyled">
+                                <li>
+                                    <a class="left-menu-link" href="~/notas/registro">Notas</a>
+                                </li>
+                                <li>
+                                    <a class="left-menu-link" href="#">Anotaciones</a>
+                                </li>
+                            </ul>
+                        </li>
+                        <li class="left-menu-list-submenu">
+                            <a class="left-menu-link" href="javascript: void(0);">
+                                <i class="fa fa-bar-chart fa-fw"><!-- --></i> Estadísticas
+                            </a>
+                            <ul class="left-menu-list list-unstyled">
+                                <li>
+                                    <a class="left-menu-link" href="#">Situación Académica</a>
+                                </li>
+                            </ul>
+                        </li>
+                    }
+                    <li class="left-menu-list-separator"><!-- --></li>
                     <li class="left-menu-list-submenu">
                         <a class="left-menu-link" href="javascript: void(0);">
-                            <i class="fa fa-bar-chart fa-fw"><!-- --></i> Estadísticas
+                            <i class="fa fa-newspaper-o fa-fw"><!-- --></i> Panel de noticias
                         </a>
                         <ul class="left-menu-list list-unstyled">
                             <li>
-                                <a class="left-menu-link" href="#">Situación Académica</a>
+                                <a class="left-menu-link" href="#">Agenda</a>
+                            </li>
+                            <li>
+                                <a class="left-menu-link" href="#">Descargas</a>
                             </li>
                         </ul>
                     </li>
                 }
-                <li class="left-menu-list-separator"><!-- --></li>
-                <li class="left-menu-list-submenu">
-                    <a class="left-menu-link" href="javascript: void(0);">
-                        <i class="fa fa-newspaper-o fa-fw"><!-- --></i> Panel de noticias
-                    </a>
-                    <ul class="left-menu-list list-unstyled">
-                        <li>
-                            <a class="left-menu-link" href="#">Agenda</a>
-                        </li>
-                        <li>
-                            <a class="left-menu-link" href="#">Descargas</a>
-                        </li>
-                    </ul>
-                </li>
             </ul>
         </div>
     </nav>
