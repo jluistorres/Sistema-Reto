@@ -42,10 +42,16 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Alumno.cs" />
+    <Compile Include="Bimestre.cs">
+      <SubType>Code</SubType>
+    </Compile>
     <Compile Include="JuegoScore.cs" />
     <Compile Include="CriteriosEvaluacion.cs" />
     <Compile Include="Docente.cs" />
     <Compile Include="Juego.cs" />
+    <Compile Include="JuegoScoreFactor.cs">
+      <SubType>Code</SubType>
+    </Compile>
     <Compile Include="NivelEscolar.cs" />
     <Compile Include="Notas.cs" />
     <Compile Include="NotasCriterio.cs" />
@@ -53,6 +59,9 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Result\usp_DocenteSelect_Result.cs" />
     <Compile Include="Result\usp_NotasSelect_Result.cs" />
+    <Compile Include="Result\usp_ScoreSelectTop_Result.cs">
+      <SubType>Code</SubType>
+    </Compile>
     <Compile Include="Result\usp_UsuarioLogin_Result.cs" />
     <Compile Include="Usuario.cs" />
   </ItemGroup>

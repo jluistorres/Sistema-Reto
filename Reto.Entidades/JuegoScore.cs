@@ -19,12 +19,13 @@ namespace Reto.Entidades
         [Key, Column(Order = 0)]
         public int IdAlumno { get; set; }
         [Key, Column(Order = 1)]
-        public int IdJuego { get; set; }
-        public Nullable<double> Calificacion { get; set; }
+        public int IdJuego { get; set; }        
         public string Respuesta { get; set; }
         public Nullable<double> TiempoResolucion { get; set; }
         public Nullable<double> TiempoReaccion { get; set; }
-        public virtual Alumno Alumno { get; set; }
-        public virtual Juego Juego { get; set; }
+        public Nullable<double> Puntaje { get; set; }
+        public Nullable<DateTime> FechaRegistro { get; set; }
+        //public virtual Alumno Alumno { get; set; }
+        //public virtual Juego Juego { get; set; }
     }
 }

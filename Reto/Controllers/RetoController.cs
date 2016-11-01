@@ -48,10 +48,10 @@ namespace Reto.Controllers
         }
 
         [HttpPost]
-        public JsonResult GuardarScore(JuegoScore score)
+        public JsonResult GuardarScore(JuegoScore score, int nivel)
         {
             obrJuego = new brJuego();
-            var result = obrJuego.GuardarScore(score, SessionHelper.Usuario.IdPersona);
+            var result = obrJuego.GuardarScore(score, SessionHelper.Usuario.IdPersona, nivel);
             return Json(result);
         }
 

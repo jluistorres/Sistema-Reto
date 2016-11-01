@@ -26,7 +26,7 @@ namespace Reto.Entidades
         public int Bimestre { get; set; }
         [Key, Column(Order = 4)]
         public int Anyo { get; set; }        
-        public int IdDocente { get; set; }
+        public Nullable<int> IdDocente { get; set; }
         public Nullable<double> PromedioProceso { get; set; }
         public Nullable<double> PromedioVirtual { get; set; }
         public Nullable<double> TestPresencial { get; set; }

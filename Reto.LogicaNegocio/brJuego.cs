@@ -42,7 +42,7 @@ namespace Reto.LogicaNegocio
             return odaJuego.ExtraerJuegoAzar(Nivel);
         }
 
-        public bool GuardarScore(JuegoScore score, int IdPersona)
+        public bool GuardarScore(JuegoScore score, int IdPersona, int Nivel)
         {
             //int Bimestre = 1;
             //DateTime fecha = DateTime.Now;
@@ -52,7 +52,7 @@ namespace Reto.LogicaNegocio
             //    Bimestre = 1;
             //}
 
-            return odaJuego.GuardarScore(score, IdPersona);
+            return odaJuego.GuardarScore(score, IdPersona, Nivel);
         }
     }
 }

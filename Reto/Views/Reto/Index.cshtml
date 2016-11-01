@@ -73,7 +73,7 @@
                 var nivel = self.nivelSeleccionado();
 
                 $.getJSON('@Url.Action("juego")', { Nivel: nivel }, function (result) {
-                    self.NroJuego(result.Reto);
+                    self.NroJuego(result.IdJuego);
                     casillero = JSON.parse(result.Enunciado);
                     self.JuegoSolucion(JSON.parse(result.Solucion));
                     //console.log(result);
@@ -169,12 +169,11 @@
                     var t_resolucion = Math.round(self.cronometro()) / 100;
                     var t_reaccion = Math.round(self.cronometro_2()) / 100;
 
-                    var nota = Math.round((((n * n - d) + 3) / t_resolucion) * 20);
+                    //var nota = Math.round((((n * n - d) + 3) / t_resolucion) * 20);
 
                     var params = {
                         //IdAlumno: 1,
-                        IdJuego: self.NroJuego(),
-                        Calificacion: nota,
+                        IdJuego: self.NroJuego(),                        
                         Respuesta: $('.respuestas .rpta').text(),
                         TiempoResolucion: t_resolucion,
                         TiempoReaccion: t_reaccion
@@ -185,24 +184,16 @@
                     $.ajax({
                         type: 'POST',
                         url: '@Url.Content("~/reto/GuardarScore")',
-                        data: JSON.stringify({ score: params }),
+                        data: JSON.stringify({ score: params, nivel: self.nivelSeleccionado() }),
                         dataType: 'json',
                         contentType: 'application/json',
                         success: function (result) {
-                            if (result) {
-                                //appMaster.MessageBox('Logrado', '<div class="text-center"><img src="@Url.Content("~/content/img/logrado.jpg")" /></div>');
-                            } else {
+                            if (!result) {
                                 toastr.info('Debes ingresar con perfil de alumno para poder registrar tu score');
                             }
                         }
                     });
-                }
-                //else {
-                //    var message = '<table><td style="padding-right:10px;">{0}</td><td>{1}</td></table>';
-                //    message = message.replace('{0}', '<i class="fa fa-warning fa-3x"></i>');
-                //    message = message.replace('{1}', '¡Pronto tendrás una nueva oportunidad! Los que aceptan el reto nunca se rinden!!');
-                //    appMaster.MessageBox(errores.length + ' errores', message);
-                //}
+                }               
             }
 
             self.FormatearReloj = function (number) {
