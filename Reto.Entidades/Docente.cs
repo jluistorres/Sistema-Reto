@@ -17,6 +17,6 @@ namespace Reto.Entidades
     {        
         [Key]
         public int IdDocente { get; set; }
-        public Nullable<int> IdPersona { get; set; }    
+        public Nullable<int> IdPersona { get; set; }
     }
 }

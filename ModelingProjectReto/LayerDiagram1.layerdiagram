@@ -1,0 +1,20 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<layerModel xmlns:dm0="http://schemas.microsoft.com/VisualStudio/2008/DslTools/Core" xmlns:dm1="http://schemas.microsoft.com/dsltools/SimpleShapesModel" dslVersion="1.0.0.0" Id="fff143ec-2d76-4337-81ad-03bf7c40ceca" xmlns="http://schemas.microsoft.com/VisualStudio/TeamArchitect/LayerDesigner">
+  <layers>
+    <layer Id="c6fc2a57-f55f-4776-b2b7-45b5d01fa061" name="Capa de presentación">
+      <dependencyToLayers>
+        <dependencyFromLayerToLayer Id="f6fe6ad7-2da7-4acc-b728-a466b84e66ba" direction="Forward">
+          <layerMoniker Id="f20681ee-5854-4dbb-a880-447ff516ac17" />
+        </dependencyFromLayerToLayer>
+      </dependencyToLayers>
+    </layer>
+    <layer Id="f20681ee-5854-4dbb-a880-447ff516ac17" name="Capa Logica de Negocio">
+      <dependencyToLayers>
+        <dependencyFromLayerToLayer Id="23513162-97d9-41d6-b350-17aaba84bd4d" direction="Forward">
+          <layerMoniker Id="1f015d59-2f02-4a3a-a720-87036d42caad" />
+        </dependencyFromLayerToLayer>
+      </dependencyToLayers>
+    </layer>
+    <layer Id="1f015d59-2f02-4a3a-a720-87036d42caad" name="Capa de Acceso a Datos" />
+  </layers>
+</layerModel>
