@@ -1,0 +1,111 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<ClassDiagram MajorVersion="1" MinorVersion="1">
+  <Class Name="Reto.Entidades.JuegoScoreFactor">
+    <Position X="0.5" Y="0.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAABBBAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAUAA=</HashCode>
+      <FileName>JuegoScoreFactor.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Reto.Entidades.JuegoScore">
+    <Position X="3" Y="0.5" Width="1.75" />
+    <TypeIdentifier>
+      <HashCode>CAgAAAAAAAMAAAAAAAQAAAAAAAAAAJAAQAAQAAAAAAI=</HashCode>
+      <FileName>JuegoScore.cs</FileName>
+    </TypeIdentifier>
+    <ShowAsAssociation>
+      <Property Name="Alumno" />
+      <Property Name="Juego" />
+      <Property Name="JuegoScoreFactor" />
+    </ShowAsAssociation>
+  </Class>
+  <Class Name="Reto.Entidades.Alumno">
+    <Position X="2.5" Y="3" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAgAAAAAAAEAAEAAAAAAAAQAAAAAAAAAAAIEAAAAAAA=</HashCode>
+      <FileName>Alumno.cs</FileName>
+    </TypeIdentifier>
+    <ShowAsAssociation>
+      <Property Name="Persona" />
+    </ShowAsAssociation>
+  </Class>
+  <Class Name="Reto.Entidades.Bimestre">
+    <Position X="5.25" Y="2.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAABAAAAAAAAAAAAAAgCAAAAAAAAAQAAAAAA=</HashCode>
+      <FileName>Bimestre.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Reto.Entidades.CriteriosEvaluacion">
+    <Position X="7" Y="0.75" Width="1.75" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAgAAAAAAAAAAAAAAAAAAEAAA=</HashCode>
+      <FileName>CriteriosEvaluacion.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Reto.Entidades.Docente">
+    <Position X="8.25" Y="5.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAIECAAAAAA=</HashCode>
+      <FileName>Docente.cs</FileName>
+    </TypeIdentifier>
+    <ShowAsAssociation>
+      <Property Name="Persona" />
+    </ShowAsAssociation>
+  </Class>
+  <Class Name="Reto.Entidades.Juego">
+    <Position X="7.5" Y="3" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAABAAAAAAAAAQAAAAJAgAAAEAAAAAAAAAAAAA=</HashCode>
+      <FileName>Juego.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Reto.Entidades.NivelEscolar">
+    <Position X="11.75" Y="2.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAgAAAAAAAAEAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>NivelEscolar.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Reto.Entidades.Notas">
+    <Position X="9.5" Y="0.75" Width="1.75" />
+    <TypeIdentifier>
+      <HashCode>AAgAAAAEAAAgAGEAAAAAAAQAIAAAAAQEAAAMSACAIgA=</HashCode>
+      <FileName>Notas.cs</FileName>
+    </TypeIdentifier>
+    <ShowAsAssociation>
+      <Property Name="Bimestre1" />
+      <Property Name="Docente" />
+      <Property Name="NivelEscolar" />
+    </ShowAsAssociation>
+  </Class>
+  <Class Name="Reto.Entidades.NotasCriterio">
+    <Position X="4.75" Y="4.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAgAAAAAAAAAAEEAAAAEAAQAAAAAABQAAAAAWAEEAAA=</HashCode>
+      <FileName>NotasCriterio.cs</FileName>
+    </TypeIdentifier>
+    <ShowAsAssociation>
+      <Property Name="CriteriosEvaluacion" />
+      <Property Name="Alumno" />
+    </ShowAsAssociation>
+  </Class>
+  <Class Name="Reto.Entidades.Persona">
+    <Position X="6.5" Y="7.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAEAAgAAAAAAQAAAAAAIAAAAAAAA=</HashCode>
+      <FileName>Persona.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Reto.Entidades.Usuario">
+    <Position X="0.75" Y="4.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAEAQAAAAAAAAAAAAAAAAAAAAAAgAAAAIEAAAAEAA=</HashCode>
+      <FileName>Usuario.cs</FileName>
+    </TypeIdentifier>
+    <ShowAsAssociation>
+      <Property Name="Persona" />
+    </ShowAsAssociation>
+  </Class>
+  <Font Name="Segoe UI" Size="9" />
+</ClassDiagram>

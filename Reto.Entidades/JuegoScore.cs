@@ -25,6 +25,7 @@ namespace Reto.Entidades
         public Nullable<double> TiempoReaccion { get; set; }
         public Nullable<double> Puntaje { get; set; }
         public Nullable<DateTime> FechaRegistro { get; set; }
+
         //public virtual Alumno Alumno { get; set; }
         //public virtual Juego Juego { get; set; }
     }
