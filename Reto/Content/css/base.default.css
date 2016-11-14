@@ -5,7 +5,7 @@ html { font-size: 14px; height: 100%; }
 
 body { font-family: "Lato", sans; background: #eceff4; color: #514d6a; overflow-x: hidden; }
 
-a { color: #827ca1; -webkit-transition: all 0.05s ease-in-out; -o-transition: all 0.05s ease-in-out; transition: all 0.05s ease-in-out; }
+a { color: #827ca1; -webkit-transition: all 0.05s ease-in-out; -o-transition: all 0.05s ease-in-out; transition: all 0.05s ease-in-out; cursor:pointer; }
 
 a:hover, a:focus { color: #0088ff; text-decoration: none; -webkit-transition: all 0.05s ease-in-out; -o-transition: all 0.05s ease-in-out; transition: all 0.05s ease-in-out; }
 
@@ -305,6 +305,8 @@ nav.left-menu .left-menu-list-color-yellow:hover:before, nav.left-menu .left-men
 .sidebar-large.panel.panel-with-sidebar.panel-with-right-sidebar .panel-sidebar { float: right; }
 
 .sidebar-large.panel.panel-with-sidebar.panel-with-right-sidebar .panel-heading, .sidebar-large.panel.panel-with-sidebar.panel-with-right-sidebar .panel-body, .sidebar-large.panel.panel-with-sidebar.panel-with-right-sidebar .panel-footer { margin-left: 0px; margin-right: 300px; }
+
+.tab-content .tab-pane .panel-default { border:1px solid #ccc; border-top:none; }
 
 /*
  * AVATAR

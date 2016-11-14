@@ -74,5 +74,12 @@ namespace Reto.Controllers
 
             return obrNotas.GuardarNotas(IdNivelEscolar, Grado, Seccion, Bimestre, criterios, notas);
         }
+
+        public int RegistrarObservacion(Notas objEN)
+        {
+            obrNotas = new brNotas();
+            var result = obrNotas.RegistrarObservaciones(objEN);
+            return result;
+        }
     }
 }

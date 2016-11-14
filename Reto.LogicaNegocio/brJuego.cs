@@ -1,5 +1,6 @@
 ﻿using Reto.AccesoDatos;
 using Reto.Entidades;
+using Reto.Entidades.Result;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -53,6 +54,16 @@ namespace Reto.LogicaNegocio
             //}
 
             return odaJuego.GuardarScore(score, IdPersona, Nivel);
+        }
+
+        public dynamic ScorePromedioBimestre(int IdAlumno, int Bimestre)
+        {
+            return odaJuego.ScorePromedioBimestre(IdAlumno, Bimestre, DateTime.Now.Year);            
+        }
+
+        public List<usp_ScoreHistorial_Result> ScoreHistorial(int? Modulo, int? IdJuego, DateTime FechaInicio, DateTime FechaFin)
+        {
+            return odaJuego.ScoreHistorial(Modulo, IdJuego, FechaInicio, FechaFin);
         }
     }
 }

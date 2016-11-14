@@ -35,7 +35,8 @@ namespace Reto.Entidades
         public Nullable<double> Plataforma { get; set; }
         public Nullable<double> Clase { get; set; }
         public Nullable<double> PromedioActitud { get; set; }
-        public Nullable<double> NotaFinal { get; set; }
+        public Nullable<double> NotaFinal { get; set; }        
         public Nullable<DateTime> Fecha { get; set; }
+        public string Observaciones { get; set; }
     }
 }

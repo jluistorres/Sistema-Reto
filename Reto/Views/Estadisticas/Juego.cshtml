@@ -1,0 +1,398 @@
+﻿@{
+    ViewBag.Title = "Estadísticas de Juego";
+}
+
+@section styles
+{
+
+    <link href="~/Scripts/datepicker/bootstrap-datetimepicker.min.css" rel="stylesheet" />
+    <style type="text/css">
+        .ranking { background: #333; color: #fff; }
+        .ranking .ranking-header, .ranking .ranking-body { padding: 10px; }
+        .ranking .ranking-header { background: #000; text-align: center; }
+        .ranking .progress { border-radius: 0; height: 30px; background: #808080; margin-bottom: 10px; }
+        .ranking .progress .progress-bar { text-align: left; padding-left: 10px; white-space: nowrap; }
+        .ranking .progress, .ranking .progress .progress-bar { line-height: 30px; }
+        .ranking .progress .info { /*float: right; margin-right:10px;*/ position: absolute; right: 33px; }
+        .ranking .progress .icon { font-size: 14px; padding: 3px 7px; border-radius: 50%; display: inline-block; line-height: 1em; margin-left: 5px; box-shadow: 0px 0px 5px #808080; }
+        .ranking .progress.progress-orange .progress-bar, .ranking .progress.progress-orange .icon { background: #FF9933; }
+        .ranking .progress.progress-green .progress-bar, .ranking .progress.progress-green .icon { background: #33CC66; }
+        .ranking .progress.progress-blue .progress-bar, .ranking .progress.progress-blue .icon { background: #6666FF; }
+
+        #chart { height: 500px; }
+    </style>
+}
+
+@section scripts
+{
+
+    <script src="~/Scripts/knockout-3.4.0.js"></script>
+    <script src="~/Scripts/moment/moment.min.js"></script>
+    <script src="~/Scripts/moment/es.js"></script>
+    <script src="~/Scripts/datepicker/bootstrap-datetimepicker.min.js"></script>
+    <script src="~/Scripts/datepicker/datetimepicker-knockout.js"></script>
+    <script src="~/Scripts/amcharts/amcharts.js"></script>
+    <script src="~/Scripts/amcharts/serial.js"></script>
+    <script src="~/Scripts/linq.min.js"></script>
+    <script type="text/javascript">
+        var chart;
+
+        function createChart(data) {
+            chart = new AmCharts.AmSerialChart();
+            chart.theme = "light";
+            //chart.pathToImages = appMaster.baseUrl + "content/images/";
+            chart.dataProvider = data;
+            chart.categoryField = 'Fecha';
+            chart.startDuration = 1;
+            //chart.backgroundColor = '#99FF00';
+            //chart.backgroundAlpha = 1;
+
+            ////cursor
+            //var chartCursor = new AmCharts.ChartCursor();
+            ////chartCursor.oneBalloonOnly = true;
+            //chartCursor.cursorPosition = "mouse";
+            //chart.addChartCursor(chartCursor);
+
+            // AXES
+            // category (Eje x)
+            var categoryAxis = chart.categoryAxis;
+            categoryAxis.axisColor = "#DADADA";
+            categoryAxis.dashLength = 1;
+            categoryAxis.minorGridEnabled = true;
+            categoryAxis.autoWrap = true;
+
+            //chart.dataDateFormat = "DD/MM/YYYY";
+
+            categoryAxis.parseDates = true;
+            //categoryAxis.boldPeriodBeginning = false;
+            //categoryAxis.minPeriod = "MM";
+            //categoryAxis.dateFormats = [
+            //    { period: 'fff', format: 'JJ:NN:SS' },
+            //    { period: 'ss', format: 'JJ:NN:SS' },
+            //    { period: 'mm', format: 'JJ:NN' },
+            //    { period: 'hh', format: 'JJ:NN' },
+            //    { period: 'DD', format: 'MMM DD' },
+            //    { period: 'WW', format: 'MMM DD' },
+            //    { period: 'MM', format: 'MMM YYYY' },
+            //    { period: 'YYYY', format: 'MMM YYYY' }
+            //];
+
+
+            // value (Eje y)
+            var valueAxis = new AmCharts.ValueAxis();
+            valueAxis.dashLength = 3;
+            valueAxis.axisAlpha = 0.2;
+            valueAxis.position = "left";
+            valueAxis.title = 'Puntaje Promedio';
+            valueAxis.integersOnly = true;
+            chart.addValueAxis(valueAxis);
+
+            var graph = new AmCharts.AmGraph();
+            graph.type = 'column';
+            graph.title = 'Promedio';
+            graph.valueField = 'Promedio';
+            graph.balloonText = "[[category]]: [[value]]";
+            graph.fillColors = ["#9597FE"];
+            graph.lineColor = '#333';
+            //graph.lineThickness = 0;
+            graph.bulletBorderAlpha = 1;
+
+            //Relleno del grafico
+            graph.fillAlphas = 0.8;
+
+            chart.addGraph(graph);
+
+            //// LEGEND
+            //var legend = new AmCharts.AmLegend();
+            //legend.useGraphSettings = true;
+            //legend.valueWidth = 120;
+            //legend.valueText = "";
+            //chart.addLegend(legend);
+
+            //charts.push(chart);
+            chart.write('chart');
+        }
+
+        function ViewModel() {
+            var self = this;
+
+            var modulos = [
+                { IdModulo: 1, Detalle: 'Módulo 1' },
+                { IdModulo: 2, Detalle: 'Módulo 2' },
+                { IdModulo: 3, Detalle: 'Módulo 3' },
+                { IdModulo: 4, Detalle: 'Módulo 4' },
+                { IdModulo: 5, Detalle: 'Módulo 5' },
+                { IdModulo: 6, Detalle: 'Módulo 6' },
+                { IdModulo: 7, Detalle: 'Módulo 7' }
+            ];
+
+            var juegos = [
+                { IdJuego: 1, Nombre: 'Mayor-Menor', IdModulo: 1 }
+            ];
+
+            self.Modulos = ko.observableArray(modulos);
+            self.Juegos = ko.observableArray();
+
+            self.historial = ko.observableArray();
+
+            self.Resumen = {
+                TiempoInvertido: ko.observable(0),
+                NotaReto: ko.observable(0),
+                Juegos: ko.observableArray()
+            };
+
+            self.Filtro = {
+                FechaInicio: ko.observable(),
+                FechaFin: ko.observable(new Date()),
+                maxDate: ko.observable(new Date()),
+                Modulo: ko.observable(),
+                IdJuego: ko.observable()
+            }
+
+            self.change_modulo = ko.computed(function () {
+                var Modulo = self.Filtro.Modulo();
+                self.Juegos.removeAll();
+
+                if (Modulo) {
+                    var j = ko.utils.arrayFilter(juegos, function (x) { return x.IdModulo == Modulo });
+                    self.Juegos(j);
+                }
+            });
+
+            self.changeDate = ko.computed(function () {
+                var ff = self.Filtro.FechaFin();
+                if (ff) {
+                    var d = new Date(ff.getFullYear(), ff.getMonth(), ff.getDate());
+                    d.setDate(d.getDate() - 6);
+                    self.Filtro.FechaInicio(d);
+                }
+            });
+
+            self.Buscar = function () {
+                $.ajax({
+                    type: 'POST',
+                    url: '@Url.Action("ScoreHistorial")',
+                    data: JSON.stringify({
+                        Modulo: self.Filtro.Modulo() || null,
+                        IdJuego: self.Filtro.IdJuego() || null,
+                        FechaInicio: self.Filtro.FechaInicio(),
+                        FechaFin: self.Filtro.FechaFin()
+                    }),
+                    dataType: 'json',
+                    contentType: 'application/json',
+                    success: function (result) {
+                        //console.log(result);
+                        self.historial(result);
+
+                        var query = Enumerable.From(result).
+                            GroupBy("$.FechaRegistro", null,
+                            function (key, g) {
+                                return {
+                                    Fecha: new Date(key),
+                                    Promedio: g.Average("$.Puntaje")
+                                }
+                            }).OrderBy('$.Fecha').ToArray();
+
+                        //console.log(query);
+
+                        createChart(query);
+
+                        //Resumen
+                        var t_invertido = Math.round(Enumerable.From(result).Average('$.TiempoResolucion') * 100) / 100;
+                        self.Resumen.TiempoInvertido(t_invertido);
+
+                        var puntaje = Math.round(Enumerable.From(result).Average('$.Puntaje') * 100) / 100;
+                        self.Resumen.NotaReto(puntaje);
+
+                        //Juegos
+                        var qj = Enumerable.From(result).
+                            GroupBy("$.TipoJuego", null,
+                            function (key, g) {
+                                return {
+                                    Juego: key,
+                                    Promedio: Math.round(g.Average("$.TiempoResolucion") * 100) / 100
+                                }
+                            }).ToArray();
+
+                        self.Resumen.Juegos(qj);
+                    }
+                });
+            }
+
+            self.init = function () {
+                //var ff = self.Filtro.FechaFin();
+                //var data = [];
+
+                //for (var i = 6; i >= 0; i--) {
+                //    var d = new Date(ff.getFullYear(), ff.getMonth(), ff.getDate());
+                //    d.setDate(d.getDate() - i);
+                //    data.push({ Fecha: d, Promedio: i * 2 });
+                //}
+
+                ////data = data.reverse();
+
+                ////var data = [
+                ////{ Fecha: new Date(2016, 3, 1), Promedio: 12 },
+                ////{ Fecha: new Date(2016, 3, 2), Promedio: 10 }
+                ////];
+
+                //createChart(data);
+
+                self.Buscar();
+            }
+
+            $(".nav-tabs a").on("shown.bs.tab", function () {
+                if (chart) chart.validateSize();
+            });
+        }
+
+        $(function () {
+            var modelo = new ViewModel();
+            ko.applyBindings(modelo);
+
+            modelo.init();
+        });
+    </script>
+}
+
+<h2>Estadísticas de la Semana</h2>
+
+<div class="panel panel-default">
+    <div class="panel-body">
+        <h3>Estadísticas</h3>
+        <hr />
+
+        <div class="well well-sm">
+            <div class="row">
+                <div class="col-sm-3">
+                    <div class="form-group">
+                        <label>Módulo:</label>
+                        <select class="form-control" data-bind="options: Modulos, optionsValue: 'IdModulo', optionsText: 'Detalle', optionsCaption: '-Todos-', value: Filtro.Modulo"></select>
+                    </div>
+                </div>
+                <div class="col-sm-3">
+                    <div class="form-group">
+                        <label>Juego:</label>
+                        <select class="form-control" data-bind="options: Juegos, optionsValue: 'IdJuego', optionsText: 'Nombre', optionsCaption: '-Todos-', value: Filtro.IdJuego"></select>
+                    </div>
+                </div>
+                <div class="col-sm-2">
+                    <div class="form-group">
+                        <label>Fecha Inicio:</label>
+                        <div class="input-group">
+                            <input type="text" class="form-control" data-bind="dateTimePicker: Filtro.FechaInicio, dateTimePickerOptions: {format: 'L'}" disabled />
+                            <div class="input-group-addon"><i class="fa fa-calendar"></i></div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-sm-2">
+                    <div class="form-group">
+                        <label>Fecha Fin:</label>
+                        <div class="input-group">
+                            <input type="text" class="form-control" data-bind="dateTimePicker: Filtro.FechaFin, dateTimePickerOptions: {format: 'L'}, rangePicker: {max: Filtro.maxDate }" />
+                            <div class="input-group-addon"><i class="fa fa-calendar"></i></div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-sm-2">
+                    <div class="form-group">
+                        <button type="button" class="btn btn-primary" style="margin-top:23px;" data-bind="click: Buscar">
+                            <i class="fa fa-search"></i>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col-sm-8">
+                <div class="row">
+                    <div class="col-xs-8">
+                        <div class="form-group">
+                            <label>Tiempo invertido a la semana (minutos)</label>
+                            <h3 data-bind="text: Resumen.TiempoInvertido"></h3>
+                        </div>
+                    </div>
+                    <div class="col-xs-4">
+                        <div class="form-group">
+                            <label>Nota Reto</label>
+                            <h3 data-bind="text: Resumen.NotaReto"></h3>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-sm-4">
+                <div class="form-group">
+                    <div class="ranking">
+                        <div class="ranking-header">ESTADÍSTICAS DE JUEGO</div>
+                        <div class="ranking-body">
+                            <div>JUEGOS</div>
+                            <div style="color:#808080; font-size:0.85em;">Tiempo promedio de resolución</div>
+                            <br />
+                            <!--ko foreach: Resumen.Juegos-->
+                            <div class="progress progress-orange">
+                                <div class="progress-bar" role="progressbar" aria-valuenow="60" aria-valuemin="0" aria-valuemax="100" style="width:60%" data-bind="text: $data.Juego">
+                                    Mayor Menor
+                                </div>
+                                <div class="info">
+                                    <span class="number" data-bind="text: $data.Promedio"></span>
+                                    <span class="icon"><i class="fa fa-info"></i></span>
+                                </div>
+                            </div>
+                            <!--/ko-->                            
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <ul class="nav nav-tabs">
+            <li class="active"><a data-toggle="tab" href="#home">Resumen</a></li>
+            <li><a data-toggle="tab" href="#menu1">Gráfico</a></li>
+        </ul>
+
+        <div class="tab-content">
+            <div id="home" class="tab-pane fade in active">
+                <div class="panel panel-default">
+                    <div class="panel-body">
+                        <div class="table-responsive">
+                            <table class="table table-bordered">
+                                <thead>
+                                    <tr>
+                                        <th>Fecha</th>
+                                        <th style="width:150px;">Juego</th>
+                                        <th>Nivel</th>
+                                        <th>Situación</th>
+                                        <th>T. Juego (Min)</th>
+                                        <th>T. Reacción (Min)</th>
+                                        <th>Puntaje</th>
+                                    </tr>
+                                </thead>
+                                <tbody data-bind="foreach: historial">
+                                    <tr>
+                                        <td data-bind="text: $data.FechaRegistro"></td>
+                                        <td data-bind="text: $data.TipoJuego"></td>
+                                        <td data-bind="text: $data.Nivel"></td>
+                                        <td></td>
+                                        <td data-bind="text: $data.TiempoResolucion"></td>
+                                        <td data-bind="text: $data.TiempoReaccion"></td>
+                                        <td data-bind="text: $data.Puntaje"></td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div id="menu1" class="tab-pane fade">
+                <div class="panel panel-default">
+                    <div class="panel-body">
+                        <div id="chart"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </div>
+</div>
+

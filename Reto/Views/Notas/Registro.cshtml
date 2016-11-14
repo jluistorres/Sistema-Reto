@@ -437,6 +437,13 @@
             var modelo = new ViewModel();
             ko.applyBindings(modelo);
             modelo.init();
+
+            modelo.Filtro.IdNivelEscolar(1);
+            modelo.Filtrar_Grados();
+            modelo.Filtro.Grado(3);
+            modelo.Filtrar_Secciones();
+            modelo.Filtro.Seccion('A');
+            modelo.Filtro.Bimestre(1);
         });
     </script>
 }

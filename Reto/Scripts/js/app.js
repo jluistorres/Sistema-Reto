@@ -207,6 +207,10 @@ appMaster.getQueryParams = function (qs) {
     return params;
 }
 
+appMaster.EnterToNewLine = function (texto) {
+    return (texto ? String(texto).replace(/\r\n|\r|\n/g, "<br />") : '');
+}
+
 appMaster.ExportToExcel = function (name, sHtmlFinal, cssInclude) {
     var template = '<html xmlns:o="urn:schemas-microsoft-com:office:office" xmlns:x="urn:schemas-microsoft-com:office:excel" xmlns="http://www.w3.org/TR/REC-html40">' +
         '<head><!--[if gte mso 9]><xml><x:ExcelWorkbook><x:ExcelWorksheets><x:ExcelWorksheet><x:Name>{{worksheet}}</x:Name><x:WorksheetOptions><x:DisplayGridlines/></x:WorksheetOptions></x:ExcelWorksheet></x:ExcelWorksheets></x:ExcelWorkbook></xml><![endif]--><style type="text/css">{{css}}</style></head>' +

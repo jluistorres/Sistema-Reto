@@ -80,7 +80,13 @@
                             </a>
                             <ul class="left-menu-list list-unstyled">
                                 <li>
-                                    <a class="left-menu-link" href="#">Situación Académica</a>
+                                    <a class="left-menu-link" href="~/estadisticas/juego">Juegos</a>
+                                </li>
+                                <li>
+                                    <a class="left-menu-link" href="~/estadisticas/situacionacademica">Situación Académica</a>
+                                </li>
+                                <li>
+                                    <a class="left-menu-link" href="~/estadisticas/informe">Informe Académico</a>
                                 </li>
                             </ul>
                         </li>
@@ -186,7 +192,7 @@
         appMaster.baseUrl = '@Url.Content("~")';
         appMaster.currentUrl = '@(Url.Action("Index") + "/")';
     </script>
-    <script src="~/Scripts/js/app.js"></script>
+    <script src="~/Scripts/js/app.js?v=2"></script>
     @RenderSection("scripts", required: false)
 </body>
 </html>

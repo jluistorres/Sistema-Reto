@@ -71,11 +71,39 @@ namespace Reto.AccesoDatos
             return result.ToList();
         }
 
+        public dynamic ScorePromedioBimestre(int IdAlumno, int Bimestre, int anyo)
+        {            
+            var query = from s in cnx.JuegoScore 
+                        where s.IdAlumno == IdAlumno && s.Bimestre == Bimestre && s.FechaRegistro.Value.Year == anyo
+                        group s by new { s.IdAlumno, s.Bimestre } into g
+                        select new
+                        {
+                            g.Key.IdAlumno,
+                            g.Key.Bimestre,
+                            Puntaje = g.Average(x => x.Puntaje),
+                            TiempoResolucion = g.Average(x => x.TiempoResolucion),
+                            TiempoReaccion =  g.Average(x => x.TiempoReaccion),
+                            Jugadas = g.Count()
+                        };
+           
+            return query.FirstOrDefault();
+        }
+
+        public List<usp_ScoreHistorial_Result> ScoreHistorial(int? Modulo, int? IdJuego, DateTime FechaInicio, DateTime FechaFin)
+        {
+            var result = cnx.Database.SqlQuery<usp_ScoreHistorial_Result>("usp_ScoreHistorial @Modulo={0}, @IdJuego={1}, @FechaInicio={2}, @FechaFin={3}", Modulo, IdJuego, FechaInicio, FechaFin);
+            return result.ToList();
+        }
+
         public bool GuardarScore(JuegoScore score, int IdPersona, int Nivel)
         {
             var alumno = cnx.Alumno.FirstOrDefault(x => x.IdPersona == IdPersona);
             if (alumno != null)
             {
+                //Bimestre
+                var fecha = DateTime.Now;
+                var bimestre = cnx.Bimestre.FirstOrDefault(x => x.Anyo == DateTime.Now.Year && fecha >= x.FechaInicio && fecha <= x.FechaFinal);
+
                 score.IdAlumno = alumno.IdAlumno;
 
                 var factor = cnx.JuegoScoreFactor.FirstOrDefault(x => x.Nivel == Nivel);
@@ -87,19 +115,14 @@ namespace Reto.AccesoDatos
                     cnx.SaveChanges();
                 }                
 
-                var fecha = DateTime.Now;
-
                 //Calculo de puntaje
                 score.Puntaje = factor.Base - ((score.TiempoResolucion + score.TiempoReaccion) * factor.Factor) / Nivel;
                 score.FechaRegistro = fecha;
+                if (bimestre != null) score.Bimestre = bimestre.NroBimestre;
                 cnx.JuegoScore.Add(score);
                 cnx.SaveChanges();
 
                 //Registramos la nota
-                //Bimestre
-
-                var bimestre = cnx.Bimestre.FirstOrDefault(x => x.Anyo == DateTime.Now.Year && fecha >= x.FechaInicio && fecha <= x.FechaFinal);
-
                 if (bimestre != null)
                 {
                     var lista = ScoreSelect(Nivel, score.IdAlumno);

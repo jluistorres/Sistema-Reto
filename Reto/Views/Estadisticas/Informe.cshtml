@@ -1,0 +1,645 @@
+﻿@{
+    ViewBag.Title = "Informe Académico";
+}
+
+@section styles
+{
+    <link href="~/Content/css/animate.min.css" rel="stylesheet" />
+    <link href="~/Scripts/datatables/plugins/bootstrap/dataTables.bootstrap.min.css" rel="stylesheet" />
+    <link href="~/Content/css/notas.css?v=3" rel="stylesheet" />
+    <style type="text/css">
+        #chart_pie { height: 200px; }
+        #chart_bar { height: 250px; }
+    </style>
+}
+
+@section scripts
+{
+    <script src="~/Scripts/knockout-3.4.0.js"></script>
+    <script src="~/Scripts/knockout.mapping-latest.js"></script>
+    <script src="~/Scripts/amcharts/amcharts.js"></script>
+    <script src="~/Scripts/amcharts/serial.js"></script>
+    <script src="~/Scripts/amcharts/pie.js"></script>
+    <script src="~/Scripts/datatables/media/js/jquery.dataTables.min.js"></script>
+    <script src="~/Scripts/datatables/plugins/bootstrap/dataTables.bootstrap.min.js"></script>
+    <script src="~/Scripts/datatables/knockout-datatables.js"></script>
+    <script src="~/Scripts/jquery-print.js"></script>
+    <script type="text/javascript">
+        function ViewModel() {
+            var self = this;
+
+            self.AlumnoSeleccionado = ko.observable({});
+
+            self.Filtro = {
+                IdNivelEscolar: ko.observable(),
+                Niveles: ko.observableArray([
+                    { IdNivel: 1, Nivel: 'Primaria' },
+                    { IdNivel: 2, Nivel: 'Secundaria' }
+                ]),
+                Grado: ko.observable(),
+                Grados: ko.observableArray(),
+                Seccion: ko.observable(),
+                Secciones: ko.observableArray(),
+                Bimestre: ko.observable(),
+                Bimestres: ko.observableArray([1, 2, 3, 4])
+            };
+
+            self.evaluaciones = ko.observable(2);
+            self.docente = ko.observable();
+            self.criterios = ko.observableArray();
+            self.alumnos = ko.observableArray();
+
+            self.ConvertOrdinal = function (number) {
+                switch (number) {
+                    case 1: return 'PRIMER'; break;
+                    case 2: return 'SEGUNDO'; break;
+                    case 3: return 'TERCER'; break;
+                    case 4: return 'CUARTO'; break;
+                    case 5: return 'QUINTO'; break;
+                    case 6: return 'SEXTO'; break;
+                    default: return number;
+                }
+            }
+
+            self.EstructurarTabla = function (datos) {
+                var alumnos = [], criterios = self.criterios(), notas = [];
+
+                criterios = criterios.sort(function (a, b) {
+                    if (a.IdCriterio > b.IdCriterio) return 1;
+                    else if (a.IdCriterio > b.IdCriterio) return -1;
+                    else return 0;
+                });
+
+                //Alumnos
+                ko.utils.arrayForEach(datos, function (item) {
+                    //if (item.PromedioVirtual) console.log(item);
+                    var alum = ko.utils.arrayFirst(alumnos, function (x) { return x.IdAlumno == item.IdAlumno });
+                    if (alum == null) {
+                        var obj = {
+                            IdAlumno: item.IdAlumno,
+                            Nombre: item.Alumno,
+                            Notas: [],
+                            PromedioProceso: ko.observable(item.PromedioProceso),
+                            PromedioVirtual: ko.observable(item.PromedioVirtual),
+                            TestPresencial: ko.observable(item.TestPresencial),
+                            PromedioSprint: ko.observable(item.PromedioSprint),
+                            Bimestral: ko.observable(item.Bimestral),
+                            Plataforma: ko.observable(item.Plataforma),
+                            Clase: ko.observable(item.Clase),
+                            PromedioActitud: ko.observable(item.PromedioActitud),
+                            NotaFinal: ko.observable(item.NotaFinal),
+                            Observaciones: ko.observable(item.Observaciones),
+                            Seleccionado: ko.observable(false)
+                        };
+
+                        for (var i = 0; i < self.evaluaciones() ; i++) {
+                            var trimestre = {}, oTr = [];
+                            for (var j = 0; j < criterios.length; j++) {
+                                var r = ko.utils.arrayFirst(datos, function (n) {
+                                    return n.IdAlumno == item.IdAlumno &&
+                                           n.IdCriterio == criterios[j].IdCriterio &&
+                                           n.NroEvaluacion == i + 1
+                                }) || {};
+
+                                oTr.push({ IdCriterio: criterios[j].IdCriterio, Criterio: criterios[j].Nombre, Nota: ko.observable(r.Nota) });
+                            }
+
+                            trimestre.Notas = oTr;
+                            trimestre.Promedio = ko.observable(0);
+                            obj.Notas.push(trimestre);
+                        }
+
+                        alumnos.push(obj);
+                    }
+                });
+
+                //console.log(ko.toJS(alumnos));
+
+                //variables ko
+                //self.criterios(criterios);
+                self.alumnos(alumnos);
+            }
+
+            self.Promediar = ko.computed(function () {
+                var alumnos = self.alumnos();
+                var sum_total = 0;
+
+                alumnos.forEach(function (a) {
+                    var evaluaciones = a.Notas;
+                    sum_total = 0;
+
+                    evaluaciones.forEach(function (e) {
+                        var notas = e.Notas;
+                        var suma = 0;
+                        notas.forEach(function (n) {
+                            if (!isNaN(parseFloat(n.Nota()))) suma += parseInt(n.Nota());
+                        });
+
+                        var prom = Math.round(suma);
+                        sum_total += prom;
+                        e.Promedio(prom || null);
+                    });
+
+                    var prom_proceso = Math.round(sum_total / evaluaciones.length);
+                    a.PromedioProceso(prom_proceso || null);
+
+                    var prom_sprint = Math.round((parseInt(a.PromedioVirtual() || 0) + parseInt(a.TestPresencial() || 0)) / 2);
+                    a.PromedioSprint(prom_sprint || null);
+
+                    var prom_actitud = Math.round((parseInt(a.Plataforma() || 0) + parseInt(a.Clase() || 0)) / 2);
+                    a.PromedioActitud(prom_actitud || null);
+
+                    var bimestral = parseInt(a.Bimestral() || 0);
+
+                    var nota_final = Math.round((prom_proceso * 5 + prom_sprint * 2 + bimestral + prom_actitud * 2) / 10);
+                    a.NotaFinal(nota_final || null);
+                })
+            });
+
+            self.Filtrar_Grados = function () {
+                self.alumnos.removeAll();
+                //var datos = self.DatosDocente();
+                var distinct = [];
+
+                if (self.Filtro.IdNivelEscolar() == 1) {
+                    distinct = [3, 4, 5, 6];
+                }
+                else if (self.Filtro.IdNivelEscolar() == 2) {
+                    distinct = [1, 2, 3];
+                }
+
+                //ko.utils.arrayForEach(datos, function (x) {
+                //    if (distinct.indexOf(x.Grado) == -1) distinct.push(x.Grado);
+                //});
+
+                self.Filtro.Grados(distinct);
+            }
+
+            self.Filtrar_Secciones = function () {
+                self.alumnos.removeAll();
+                //var datos = self.DatosDocente();
+                var distinct = ['A', 'B', 'C', 'D', 'E', 'F'];
+
+                //ko.utils.arrayForEach(datos, function (x) {
+                //    if (x.Grado == self.Filtro.Grado()) {
+                //        if (distinct.indexOf(x.Seccion) == -1) distinct.push(x.Seccion);
+                //    }
+                //});
+
+                self.Filtro.Secciones(distinct);
+            }
+
+            self.CargarRegistro = function () {
+                self.AlumnoSeleccionado({});
+
+                var params = {
+                    IdNivelEscolar: self.Filtro.IdNivelEscolar(),
+                    Grado: self.Filtro.Grado(),
+                    Seccion: self.Filtro.Seccion(),
+                    Bimestre: self.Filtro.Bimestre()
+                };
+
+                $.getJSON('@Url.Action("ListarRegistro")', params)
+                .done(function (result) {
+                    //console.log(result);
+                    self.EstructurarTabla(result);
+                    if (result.length == 0) {
+                        appMaster.MessageBox('Sin alumnos', 'No hay alumnos matriculados en el grado y sección seleccionados');
+                    }
+                }).fail(function (xhr) { console.log(xhr); });
+            }
+
+            self.VerificarNota = function (nota) {
+                if (!isNaN(parseInt(nota))) {
+                    switch (parseInt(nota)) {
+                        case 3: return 'flag rojo'; break;
+                        case 4: return 'flag amarillo'; break;
+                        case 5: return 'flag verde'; break;
+                    }
+                }
+            }
+
+            self.Guardar = function () {
+                var alumno = ko.toJS(self.AlumnoSeleccionado() || {});
+                var obj = ko.toJS(self.Filtro);
+                obj.IdAlumno = alumno.IdAlumno;
+                obj.Observaciones = alumno.Observaciones;
+
+                //console.log(obj);
+
+                $.ajax({
+                    type: 'POST',
+                    url: '@Url.Content("~/notas/RegistrarObservacion")',
+                    data: JSON.stringify({ objEN: obj }),
+                    dataType: 'json',
+                    contentType: 'application/json',
+                    success: function (result) {
+                        toastr.info('Se ha guardado las observaciones', 'Listo');
+                    }
+                });
+            }
+
+            self.init = function () {
+                var IdPersona = '@SessionHelper.Usuario.IdPersona';
+
+                $.getJSON('@Url.Content("~/Notas/CargarDatosInicial")')
+                .done(function (result) {
+                    //self.docente(result.Docente.Docente);
+                    self.criterios(result.Criterios);
+                }).fail(function (xhr) { console.log(xhr); });
+            }
+
+            self.ResumenJuego = ko.observable({});
+
+            self.SeleccionarAlumno = function (data) {
+                ko.utils.arrayForEach(self.alumnos(), function (x) { x.Seleccionado(false) });
+
+                data.Seleccionado(true);
+                //console.log(data);
+                self.AlumnoSeleccionado(data);
+
+                //Pie
+                var chart1 = self.GraphPie(data),
+                    chart2;
+
+                $.getJSON('@Url.Action("HistorialJuego")', {
+                    IdAlumno: data.IdAlumno,
+                    Bimestre: self.Filtro.Bimestre()
+                }).done(function (result) {
+                    //console.log(result);
+                    var resumen = result.Resumen;
+                    if (resumen != null) {
+                        resumen.Puntaje = Math.round(resumen.Puntaje * 10) / 10;
+                        resumen.TiempoResolucion = Math.round(resumen.TiempoResolucion * 10) / 10;
+                        resumen.TiempoReaccion = Math.round(resumen.TiempoReaccion * 10) / 10;
+                    }
+
+                    self.ResumenJuego(resumen || {});
+
+                    var ranking = result.Ranking.map(function (x) {
+                        return {
+                            Alumno: x.Nombres + ' ' + x.ApePaterno,
+                            Puntaje: x.PromedioVirtual || 0
+                        }
+                    });
+
+                    chart2 = self.GraphBar(ranking);
+
+                    $('#modal-detalle').modal('show');
+                });
+
+                $('#modal-detalle').on('shown.bs.modal', function () {
+                    if (chart1) chart1.validateSize();
+                    if (chart2) chart2.validateSize();
+                });
+
+            }
+
+            var getColor = function (puntaje) {
+                //var colores = ["#62D994", "#FFD349", "#5E9FCA", "#B482C8", "#DE8A77", "#ED786C"];
+                var colores = ["#FF0000", "#FFD800", "#1FBA18"];
+
+                var index = Math.round(puntaje) - 3;
+                if (index < 0) index = 0;
+                return colores[index];
+            }
+
+            self.GraphPie = function (data) {
+                //console.log(data);
+
+                var cant_evaluaciones = data.Notas.length;
+                var Actitud = 0, TrabajoEquipo = 0, Avance = 0, Inteligenio = 0;
+
+                if (cant_evaluaciones > 0) {
+                    data.Notas.forEach(function (n) {
+                        n.Notas.forEach(function (x) {
+                            if (x.Nota()) {
+                                if (x.Criterio == 'Actitud') Actitud += x.Nota();
+                                else if (x.Criterio == 'Trabajo en equipo') TrabajoEquipo += x.Nota();
+                                else if (x.Criterio == 'Avance') Avance += x.Nota();
+                                else if (x.Criterio == 'Inteligenio') Inteligenio += x.Nota();
+                            }
+                        });
+
+                    });
+
+                    Actitud = Actitud / cant_evaluaciones;
+                    TrabajoEquipo = TrabajoEquipo / cant_evaluaciones;
+                    Avance = Avance / cant_evaluaciones;
+                    Inteligenio = Inteligenio / cant_evaluaciones;
+                }
+
+                var chartData = [
+                    { title: "Actitud", value: Actitud, color: getColor(Actitud) },
+                    { title: "Trabajo en equipo", value: TrabajoEquipo, color: getColor(TrabajoEquipo) },
+                    { title: "Avance", value: Avance, color: getColor(Avance) },
+                    { title: "Inteligenio", value: Inteligenio, color: getColor(Inteligenio) }
+                ];
+
+                var chart = new AmCharts.AmPieChart();
+                chart.valueField = "value";
+                chart.titleField = "title";
+                chart.outlineColor = "#FFFFFF";
+                //chart.colors = colores;
+                chart.dataProvider = chartData;
+                chart.labelRadius = 5;
+                chart.radius = "42%";
+                chart.innerRadius = "60%";
+
+                chart.write("chart_pie");
+
+                return chart;
+            }
+
+            self.GraphBar = function (data) {
+                var chart = new AmCharts.AmSerialChart();
+                chart.theme = "light";
+                //chart.pathToImages = appMaster.baseUrl + "content/images/";
+                chart.dataProvider = data;
+                chart.categoryField = 'Alumno';
+                chart.startDuration = 1;
+                //chart.rotate = true;
+
+                // AXES
+                // category (Eje x)
+                var categoryAxis = chart.categoryAxis;
+                categoryAxis.axisColor = "#DADADA";
+                categoryAxis.dashLength = 1;
+                categoryAxis.minorGridEnabled = true;
+                categoryAxis.autoWrap = true;
+                //categoryAxis.parseDates = true;
+
+                // value (Eje y)
+                var valueAxis = new AmCharts.ValueAxis();
+                valueAxis.dashLength = 3;
+                valueAxis.axisAlpha = 0.2;
+                valueAxis.position = "left";
+                valueAxis.title = 'Puntaje';
+                valueAxis.integersOnly = true;
+                chart.addValueAxis(valueAxis);
+
+                var graph = new AmCharts.AmGraph();
+                graph.type = 'column';
+                graph.title = 'Puntaje';
+                graph.valueField = 'Puntaje';
+                graph.balloonText = "[[title]]: [[value]]";
+                graph.fillColors = ["#9597FE"];
+                graph.lineColor = '#333';
+                //graph.lineThickness = 0;
+                graph.bulletBorderAlpha = 1;
+                graph.fillAlphas = 0.8;
+                chart.addGraph(graph);
+
+                chart.write('chart_bar');
+                return chart;
+            }
+
+            self.Imprimir = function () {
+                $("#modal-detalle .modal-body").printThis();
+            }
+
+        }
+        
+        $(function () {
+            var modelo = new ViewModel();
+            ko.applyBindings(modelo);
+            modelo.init();
+
+            modelo.Filtro.IdNivelEscolar(1);
+            modelo.Filtrar_Grados();
+            modelo.Filtro.Grado(3);
+            modelo.Filtrar_Secciones();
+            modelo.Filtro.Seccion('A');
+            modelo.Filtro.Bimestre(1);
+        });
+    </script>
+}
+
+<h3>Informe Académico </h3>
+<div class="well well-sm">
+    <div class="row">
+        <div class="col-sm-9">
+            <div class="row">
+                <div class="col-sm-3">
+                    <label class="control-label">Nivel:</label>
+                    <select class="form-control" data-bind="options: Filtro.Niveles, optionsText: 'Nivel', optionsValue: 'IdNivel', optionsCaption: '- Nivel -', value: Filtro.IdNivelEscolar, event: {change: Filtrar_Grados}"></select>
+                </div>
+                <div class="col-sm-3">
+                    <label class="control-label">Grado:</label>
+                    <select class="form-control" data-bind="options: Filtro.Grados, optionsText: function(g){ return g + '°'}, optionsValue: $data, optionsCaption: '- Grado -', value: Filtro.Grado, event: {change: Filtrar_Secciones}"></select>
+                </div>
+                <div class="col-sm-3">
+                    <label class="control-label">Sección:</label>
+                    <select class="form-control" data-bind="options: Filtro.Secciones, optionsCaption: '- Sección -', value: Filtro.Seccion"></select>
+                </div>
+                <div class="col-sm-3">
+                    <label class="control-label">Bimestre:</label>
+                    <select class="form-control" data-bind="options: Filtro.Bimestres, optionsText: function(b){ return ConvertOrdinal(b) + ' BIMESTRE' }, optionsValue: $data, optionsCaption: '- Bimestre -', value: Filtro.Bimestre"></select>
+                </div>
+            </div>
+        </div>
+        <div class="col-sm-3">
+            <label class="control-label">&nbsp;</label>
+            <button type="button" class="btn btn-default btn-block" data-bind="click: $root.CargarRegistro, enable: Filtro.Bimestre() && Filtro.Grado() && Filtro.Seccion()">Mostrar informe</button>
+        </div>
+    </div>
+</div>
+
+<div class="panel panel-default" data-bind="if: alumnos().length > 0">
+    <div class="panel-body">
+        <table class="alumnos table table-bordered table-hover">
+            <thead>
+                <tr>
+                    <th class="text-center" style="width:40px;">N°</th>
+                    <th class="text-center">Aprendices</th>
+                </tr>
+            </thead>
+            <tbody data-bind="foreach: alumnos">
+                <tr data-bind="css: {'seleccionado': $data.Seleccionado}, click: $root.SeleccionarAlumno">
+                    <td class="text-center" data-bind="text: $index() + 1"></td>
+                    <td data-bind="text: $data.Nombre"></td>
+                </tr>
+            </tbody>
+        </table>        
+    </div>
+</div>
+
+<div id="modal-detalle" class="modal fade" role="dialog" data-backdrop="static">
+    <div class="modal-dialog modal-lg" style="width:95%;">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal">&times;</button>
+                <h4 class="modal-title">Informe Académico</h4>
+            </div>
+            <div class="modal-body" data-bind="if: AlumnoSeleccionado().Nombre">
+                <div class="visible-print">
+                    <h2 class="text-uppercase text-center">Informe Académico</h2>
+                    <h4 class="text-center"><span data-bind="text: ConvertOrdinal(Filtro.Bimestre())"></span> BIMESTRE</h4>
+                    <h5>DATOS</h5>
+                    <div class="row">
+                        <label class="col-xs-2">Nombres:</label>
+                        <div class="col-xs-10" data-bind="text: AlumnoSeleccionado().Nombre"></div>
+                    </div>
+                    <div class="row">
+                        <div class="col-xs-6">
+                            <div class="row">
+                                <label class="col-xs-4">Grado:</label>
+                                <div class="col-xs-8"><span data-bind="text: $root.ConvertOrdinal(Filtro.Grado())"></span> GRADO</div>
+                            </div>
+                        </div>
+                        <div class="col-xs-6">
+                            <div class="row">
+                                <label class="col-xs-4">Sección:</label>
+                                <div class="col-xs-8" data-bind="text: Filtro.Seccion"></div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <hr />
+                </div>
+                <div class="row">
+                    <div class="col-sm-8">
+                        <h3 class="hidden-print" style="margin:0 0 15px 0;">Aprendiz:</h3>
+                        <h4 class="aprendiz hidden-print" data-bind="text: AlumnoSeleccionado().Nombre"></h4>
+                        <div class="historial">
+                            <img class="foto hidden-print" src="~/Content/img/avatar_reto.png" />
+                            <div class="hidden-print"><br /><br /></div>
+                            <table class="registro">
+                                <tbody>
+                                    <tr>
+                                        <td colspan="2">EVALUACIÓN DE PROCESO</td>
+                                        <td rowspan="2">SPRINT</td>
+                                        <td rowspan="2">ACTITUD</td>
+                                        <td rowspan="2">BIMESTRAL</td>
+                                        <td rowspan="2">NOTA FINAL</td>
+                                    </tr>
+                                    <tr>
+                                        <!--ko foreach: new Array(evaluaciones())-->
+                                        <td>EVALUACION <span data-bind="text: $index() + 1"></span></td>
+                                        <!--/ko-->
+                                    </tr>
+                                    <tr>
+                                        <!--ko foreach: AlumnoSeleccionado().Notas-->
+                                        <td class="nota" data-bind="text: $data.Promedio"></td>
+                                        <!--/ko-->
+                                        <td class="nota" data-bind="text: AlumnoSeleccionado().PromedioSprint"></td>
+                                        <td class="nota" data-bind="text: AlumnoSeleccionado().PromedioActitud"></td>
+                                        <td class="nota" data-bind="text: AlumnoSeleccionado().Bimestral"></td>
+                                        <td class="nota" data-bind="text: AlumnoSeleccionado().NotaFinal"></td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                            <br />
+                            <div class="row">
+                                <div class="col-xs-8">
+                                    <div id="chart_pie"></div>
+                                </div>
+                                <div class="col-xs-4">
+                                    <table class="registro">
+                                        <tbody>
+                                            <tr style="height:20px">
+                                                <!--ko foreach: new Array(evaluaciones())-->
+                                                <td data-bind="attr: {'colspan': $root.criterios().length + 1}"><h5 data-bind="text: 'EVALUACIÓN ' + ($index() + 1)"></h5></td>
+                                                <!--/ko-->
+                                            </tr>
+                                            <tr>
+                                                <!--ko foreach: new Array(evaluaciones())-->
+                                                <!--ko foreach: $root.criterios-->
+                                                <td class="rotar"><div data-bind="text: $data.Nombre"></div></td>
+                                                <!--/ko-->
+                                                <td class="rotar promedio"><div data-bind="text: 'Nota ' + ($index() + 1)"></div></td>
+                                                <!--/ko-->
+                                            </tr>
+                                            <tr>
+                                                <!--ko foreach: AlumnoSeleccionado().Notas-->
+                                                <!--ko foreach: $data.Notas-->
+                                                <td class="nota" data-bind="text: $data.Nota, css: $root.VerificarNota($data.Nota())"></td>
+                                                <!--/ko-->
+                                                <td class="promedio" data-bind="text: $data.Promedio, css: $root.VerificarNota($data.Promedio())"></td>
+                                                <!--/ko-->
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                            <br />
+                            <h4>Top 5 mejores puntajes</h4>
+                            <div id="chart_bar"></div>
+                        </div>
+                    </div>
+                    <div class="col-sm-4">
+                        <div class="form-group hidden-print">
+                            <div class="btn-group btn-group-justified">
+                                <a class="btn btn-primary" data-bind="click: Guardar" title="Guardar registro"><i class="fa fa-save fa-lg"></i></a>
+                                <a class="btn btn-default" data-bind="click: Imprimir" title="Imprimir"><i class="fa fa-print fa-lg"></i></a>
+                                @*<a class="btn btn-default" data-bind="" title="Descargar"><i class="fa fa-cloud-download fa-lg"></i></a>*@
+                                <a data-dismiss="modal" class="btn btn-default" title="Salir"><i class="fa fa-sign-out fa-lg"></i></a>
+                            </div>
+                        </div>
+                        <br />
+                        <table class="registro">
+                            <tbody>
+                                <tr>
+                                    <td>INDICADOR</td>
+                                    <td style="width:20%;">META</td>
+                                    <td style="width:20%;">RESULTADO OBTENIDO</td>
+                                    <td style="width:20%;">EVALUACIÓN</td>
+                                </tr>
+                                <tr>
+                                    <td class="panel-left">Puntaje</td>
+                                    <td>500</td>
+                                    <td data-bind="text: ResumenJuego().Puntaje"></td>
+                                    <td>
+                                        <!--ko if: ResumenJuego().Puntaje-->
+                                        <i class="fa fa-thumbs-o-up fa-lg" data-bind="visible: (ResumenJuego().Puntaje || 0) >= 500"></i>
+                                        <i class="fa fa-times fa-lg text-danger" data-bind="visible: (ResumenJuego().Puntaje || 0) < 500"></i>
+                                        <!--/ko-->
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td class="panel-left">Tiempo de Resolución</td>
+                                    <td>15 seg</td>
+                                    <td data-bind="text: ResumenJuego().TiempoResolucion"></td>
+                                    <td>
+                                        <!--ko if: ResumenJuego().TiempoResolucion-->
+                                        <i class="fa fa-thumbs-o-up fa-lg" data-bind="visible: (ResumenJuego().TiempoResolucion || 0) <= 15"></i>
+                                        <i class="fa fa-times fa-lg text-danger" data-bind="visible: (ResumenJuego().TiempoResolucion || 0) > 15"></i>
+                                        <!--/ko-->
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td class="panel-left">Tiempo de Reacción</td>
+                                    <td>05 seg</td>
+                                    <td data-bind="text: ResumenJuego().TiempoReaccion"></td>
+                                    <td>
+                                        <!--ko if: ResumenJuego().TiempoReaccion-->
+                                        <i class="fa fa-thumbs-o-up fa-lg" data-bind="visible: (ResumenJuego().TiempoReaccion || 0) <= 5"></i>
+                                        <i class="fa fa-times fa-lg text-danger" data-bind="visible: (ResumenJuego().TiempoReaccion || 0) > 5"></i>
+                                        <!--/ko-->
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td class="panel-left">Juego Jugado</td>
+                                    <td>50</td>
+                                    <td data-bind="text: ResumenJuego().Jugadas"></td>
+                                    <td>
+                                        <!--ko if: ResumenJuego().Jugadas-->
+                                        <i class="fa fa-thumbs-o-up fa-lg" data-bind="visible: (ResumenJuego().Jugadas || 0) >= 50"></i>
+                                        <i class="fa fa-times fa-lg text-danger" data-bind="visible: (ResumenJuego().Jugadas || 0) < 50"></i>
+                                        <!--/ko-->
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                        <h4>COMENTARIOS Y SUGERENCIAS</h4>
+                        <div class="visible-print" data-bind="html: appMaster.EnterToNewLine(AlumnoSeleccionado().Observaciones() || 'No se ingresó comentarios')"></div>
+                        <textarea class="form-control hidden-print" rows="24" placeholder="Ingrese sus comentarios..." data-bind="value: AlumnoSeleccionado().Observaciones"></textarea>
+                    </div>
+                </div>
+            </div>
+            @*<div class="modal-footer">
+                    <button type="button" class="btn btn-default" data-dismiss="modal">Salir</button>
+                </div>*@
+        </div>
+    </div>
+</div>

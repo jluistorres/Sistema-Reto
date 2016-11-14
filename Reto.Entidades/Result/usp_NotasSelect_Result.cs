@@ -30,6 +30,6 @@ namespace Reto.Entidades
         public Nullable<double> Clase { get; set; }
         public Nullable<double> PromedioActitud { get; set; }
         public Nullable<double> NotaFinal { get; set; }
-        
+        public string Observaciones { get; set; }
     }
 }
