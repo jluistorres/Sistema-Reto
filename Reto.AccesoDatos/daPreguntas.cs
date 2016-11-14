@@ -34,5 +34,52 @@ namespace Reto.AccesoDatos
 
             return objEN.IdPregunta;
         }
+
+        public Preguntas ObtenerPorId(int id)
+        {
+            return cnx.Preguntas.FirstOrDefault(x => x.IdPregunta == id);
+        }
+
+        public List<Preguntas> Listar()
+        {
+            return cnx.Preguntas.ToList();
+        }
+
+        public bool Eliminar(int id)
+        {
+            var objEN = cnx.Preguntas.FirstOrDefault(x => x.IdPregunta == id);
+            if (objEN != null)
+            {
+                cnx.Preguntas.Remove(objEN);
+                return cnx.SaveChanges() != 0;
+            }
+
+            return false;
+        }
+
+        public int RegistrarScore(List<PreguntasScore> score, int IdPersona)
+        {
+            var alumno = cnx.Alumno.FirstOrDefault(x => x.IdPersona == IdPersona);
+
+            if (alumno != null)
+            {
+                var fecha = DateTime.Now;
+
+                foreach (var item in score)
+                {
+                    item.IdAlumno = alumno.IdAlumno;
+                    item.FechaRegistro = fecha;
+                }
+                
+                var lista = cnx.PreguntasScore.Where(x => x.IdAlumno == alumno.IdAlumno).ToList();
+                cnx.PreguntasScore.RemoveRange(lista);
+                cnx.SaveChanges();
+
+                cnx.PreguntasScore.AddRange(score);
+                return cnx.SaveChanges();
+            }
+
+            return 0;
+        }
     }
 }

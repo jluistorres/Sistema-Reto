@@ -91,7 +91,7 @@
                             </ul>
                         </li>
                     }
-                    
+
                 }
                 <li class="left-menu-list-separator"><!-- --></li>
                 <li class="left-menu-list-submenu">
@@ -101,10 +101,13 @@
                     <ul class="left-menu-list list-unstyled">
                         <li>
                             <a class="left-menu-link" href="~/preguntas">Preguntas</a>
-                        </li>    
-                        <li>
-                            <a class="left-menu-link" href="~/preguntas/gestionar">Gestionar Preguntas</a>
-                        </li>                        
+                        </li>
+                        @if (SessionHelper.IsInRole("Docente"))
+                        {
+                            <li>
+                                <a class="left-menu-link" href="~/preguntas/gestionar">Gestionar Preguntas</a>
+                            </li>
+                        }
                     </ul>
                 </li>
                 <li class="left-menu-list-separator"><!-- --></li>
@@ -120,7 +123,7 @@
                             <a class="left-menu-link" href="#">Descargas</a>
                         </li>
                     </ul>
-                </li>                
+                </li>
             </ul>
         </div>
     </nav>

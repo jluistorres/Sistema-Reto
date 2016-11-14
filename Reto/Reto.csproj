@@ -109,10 +109,12 @@
     <Content Include="Content\fonts\glyphicons-halflings-regular.svg" />
     <Content Include="Content\img\avatar_reto.png" />
     <Content Include="Content\img\avatar.png" />
+    <Content Include="Content\img\bad.png" />
     <Content Include="Content\img\bcklogin.png" />
     <Content Include="Content\img\logo.png" />
     <Content Include="Content\img\logrado.jpg" />
     <Content Include="Content\img\mente_brillante.jpg" />
+    <Content Include="Content\img\ok.png" />
     <Content Include="fonts\glyphicons-halflings-regular.svg" />
     <Content Include="Global.asax" />
     <Content Include="fonts\glyphicons-halflings-regular.woff2" />

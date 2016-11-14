@@ -1,7 +1,72 @@
-﻿
+﻿@model List<Reto.Entidades.Preguntas>
+
 @{
     ViewBag.Title = "Gestionar";
 }
 
-<h2>Gestionar</h2>
+@section styles
+{
+    <link href="~/Scripts/datatables/plugins/bootstrap/dataTables.bootstrap.min.css" rel="stylesheet" />
+}
+
+@section scripts
+{
+    <script src="~/Scripts/knockout-3.4.0.js"></script>
+    <script src="~/Scripts/datatables/media/js/jquery.dataTables.min.js"></script>
+    <script src="~/Scripts/datatables/plugins/bootstrap/dataTables.bootstrap.min.js"></script>
+    <script src="~/Scripts/datatables/knockout-datatables.js"></script>
+    <script type="text/javascript">
+        function Eliminar(id){
+            appMaster.Confirm({
+                Title: 'Eliminar',
+                Message: '¿Seguro que desea eliminar la pregunta seleccionada?',
+                Yes: function(){
+                    window.location.href = '@Url.Action("Eliminar")?id=' + id;
+                }
+            });
+        }
+
+        $(function () {
+            $('#preguntas').dataTable({ aaSorting: [] });
+        });
+    </script>
+
+    @if (ViewBag.Eliminado != null)
+    {
+        <script type="text/javascript">
+            toastr.success('@ViewBag.Eliminado', 'Listo');
+        </script>
+    }
+}
+
+<h2>
+    Preguntas
+    <a href="~/preguntas/registro" class="btn btn-primary pull-right">Agregar</a>
+</h2>
+<hr /><br />
+<div class="panel panel-default">
+    <div class="panel-body">
+        <table id="preguntas" class="table table-bordered">
+            <thead>
+                <tr>
+                    <th>Pregunta</th>
+                    <th class="text-center">Opciones</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var item in Model)
+                {
+                    <tr>
+                        <td>@item.Enunciado</td>
+                        <td class="text-center">
+                            @Html.ActionLink("Modificar", "registro", new { id = item.IdPregunta }) <span style="margin:0 5px;">|</span>                            
+                            <a onclick="Eliminar(@item.IdPregunta)">Eliminar</a>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+</div>
+
 

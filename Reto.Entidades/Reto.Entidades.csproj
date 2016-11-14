@@ -59,6 +59,7 @@
     <Compile Include="Preguntas.cs">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="PreguntasScore.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Result\usp_DocenteSelect_Result.cs" />
     <Compile Include="Result\usp_NotasAlumnoRanking_Result.cs" />

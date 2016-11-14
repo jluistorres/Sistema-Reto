@@ -1,7 +1,165 @@
-﻿
-@{
-    ViewBag.Title = "Index";
+﻿@{
+    ViewBag.Title = "Preguntas";
 }
 
-<h2>Index</h2>
+@section styles
+{
+    <link href="~/Content/css/animate.min.css" rel="stylesheet" />
+    <style type="text/css">
+        .formulario { max-width: 600px; margin: 0 auto; }
+        .pregunta { text-align: center; max-width: 700px; margin: 0 auto; }
+        .pregunta .enunciado { font-size: 2em; color: #2D579A; margin-bottom: 20px; }
+        .pregunta .respuesta { text-align: center; margin-bottom: 20px; }
+        .pregunta .respuesta input { width: 300px; padding: 8px; font-size: 1.5em; border: 1px solid #ccc; }
+    </style>
+}
 
+@section scripts
+{
+    <script src="~/Scripts/knockout-3.4.0.js"></script>
+    <script type="text/javascript">
+        function ViewModel() {
+            var self = this;
+            self.cuestionario = ko.observableArray();
+            self.pregunta = ko.observable();
+
+            self.Etapa = ko.observable(1);
+
+            self.Resumen = {
+                Correctas: ko.observable(),
+                Incorrectas: ko.observable()
+            }
+
+            self.Comenzar = function () {
+                $.getJSON('@Url.Action("ListarAzar")').done(function (preguntas) {                    
+                    preguntas.forEach(function (x) {
+                        x.RptaUsuario = ko.observable();
+                        x.flagCorrecto = ko.observable();
+                    });
+
+                    self.cuestionario(preguntas);
+                    self.pregunta(0);
+                    self.Etapa(2);
+                });
+                
+            }
+
+            self.Siguiente = function (data) {
+                var next = self.pregunta() + 1;
+                if (next < self.cuestionario().length) {
+                    self.pregunta(next);
+                } else {
+                    self.Etapa(3);
+
+                    var correctas = ko.utils.arrayFilter(self.cuestionario(), function (x) { return x.flagCorrecto() }).length;
+                    var incorrectas = self.cuestionario().length - correctas;
+                    self.Resumen.Correctas(correctas);
+                    self.Resumen.Incorrectas(incorrectas);
+                }
+            }
+
+            self.Evaluar = function (data) {
+                data.flagCorrecto((data.RptaUsuario() || '').toString().toLowerCase() == (data.Solucion || '').toString().toLowerCase());
+            }
+
+            
+
+            self.Finalizar = function () {
+                var score = ko.toJS(self.cuestionario).map(function (x) {
+                    return {                        
+                        IdPregunta: x.IdPregunta,
+                        Puntaje: x.flagCorrecto ? 2 : 0
+                    };
+                });
+
+                //console.log(score);
+
+                $.ajax({
+                    type: 'POST',
+                    url: '@Url.Action("RegistrarScore")',
+                    data: ko.toJSON({ score: score }),
+                    dataType: 'json',
+                    contentType: 'application/json',
+                    success: function (result) {
+                        window.location.href = '@Url.Content("~/")';
+                    }
+                });
+
+            }
+        }
+
+        $(function () {
+            var modelo = new ViewModel();
+            ko.applyBindings(modelo);
+        });
+    </script>
+}
+
+<!--ko if: Etapa()== 1-->
+<div class="formulario">
+    <h2 class="text-center">Instrucciones</h2>
+    <div class="panel panel-default">
+        <div class="panel-body">
+            <p>Esta sección de entrenamiento permite entrenar tu mente y prepararte para la evaluaciones en los cursos y torneos del <b>Sistema Reto</b></p>
+            <p>Para comenzar sigue los siguientes</p>
+            <ol>
+                <li>Seleccionar comenzar preguntas</li>
+                <li>Responder las preguntas en las casillas</li>
+                <li>Seleccionar evaluar</li>
+            </ol>
+        </div>
+    </div>
+    <div class="form-group text-center">
+        <button type="button" class="btn btn-primary" data-bind="click: Comenzar">COMENZAR PREGUNTAS</button>
+    </div>
+</div>
+<!--/ko-->
+<!--ko if: Etapa()== 2-->
+<h1 class="text-center"><i class="fa fa-edit"></i> Cuestionario</h1>
+<!--ko foreach: cuestionario-->
+<div class="pregunta animated bounceInLeft" data-bind="visible: $index() == $root.pregunta()">
+    <h4><span data-bind="text: $root.pregunta() + 1"></span> / <span data-bind="text: $root.cuestionario().length"></span></h4>
+    <!--ko if: $data.flagCorrecto() == undefined-->    
+    <div class="panel panel-default">
+        <div class="panel-body">
+            <div class="enunciado" data-bind="html: $data.Enunciado"></div>
+            <div class="respuesta">
+                <input class="textfield" placeholder="Escribe tu respuesta..." data-bind="attr: {type: $data.TipoResultado == 1? 'text': 'number'}, value: $data.RptaUsuario" />
+            </div>
+        </div>
+    </div>
+    <div>
+        <button type="button" class="btn btn-success" data-bind="click: $root.Evaluar">Evaluar</button>
+    </div>
+    <!--/ko-->
+    <!--ko if: $data.flagCorrecto() != undefined-->
+    <div class="animated bounce">
+        <!--ko if: $data.flagCorrecto-->
+        <img src="~/Content/img/ok.png" />
+        <!--/ko-->
+        <!--ko ifnot: $data.flagCorrecto-->
+        <img src="~/Content/img/bad.png" />
+        <!--/ko-->
+    </div>    
+    <div style="margin-top:15px;">
+        <button type="button" class="btn btn-success-outline" data-bind="click: $root.Siguiente">Aceptar</button>
+    </div>
+    <!--/ko-->
+</div>
+<!--/ko-->
+<!--/ko-->
+<!--ko if: Etapa()== 3-->
+<h1 class="text-center">Resumen</h1>
+<div class="formulario text-center animated bounceInRight">
+    <div class="panel panel-warning">
+        <div class="panel-body">
+            <h2 class="text-success"><i class="fa fa-thumbs-o-up"></i><br /> <span data-bind="text: Resumen.Correctas"></span> Correctas</h2>          
+            <hr />
+            <h2 class="text-danger"><i class="fa fa-thumbs-o-down"></i><br /><span data-bind="text: Resumen.Incorrectas"></span> Incorrectas</h2>
+        </div>
+    </div>
+    <div>
+        <button type="button" class="btn btn-primary" data-bind="click: Finalizar">Salir</button>
+    </div>
+</div>
+<!--/ko-->

@@ -266,9 +266,9 @@ nav.left-menu .left-menu-list-color-yellow:hover:before, nav.left-menu .left-men
 
 .panel .panel-body { padding: 25px; }
 
-.panel .panel-body + .panel-footer { padding-top: 0px; }
+/*.panel .panel-body + .panel-footer { padding-top: 0px; }
 
-.panel .panel-footer { padding: 25px; }
+.panel .panel-footer { padding: 25px; }*/
 
 .panel.panel-with-borders > .panel-heading { border-bottom: 1px solid #dfe4ed; }
 
