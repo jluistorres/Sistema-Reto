@@ -13,6 +13,7 @@ namespace Reto.Entidades.Result
         public int IdJuego { get; set; }
         public string TipoJuego { get; set; }
         public string Respuesta { get; set; }
+        public Nullable<int> Nivel { get; set; }
         public Nullable<double> TiempoResolucion { get; set; }
         public Nullable<double> TiempoReaccion { get; set; }
         public Nullable<double> Puntaje { get; set; }

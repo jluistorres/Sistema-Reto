@@ -327,7 +327,7 @@
                         <div class="ranking-header">ESTADÍSTICAS DE JUEGO</div>
                         <div class="ranking-body">
                             <div>JUEGOS</div>
-                            <div style="color:#808080; font-size:0.85em;">Tiempo promedio de resolución</div>
+                            <div style="color:#808080; font-size:0.85em;">Tiempo promedio de resolución (minutos)</div>
                             <br />
                             <!--ko foreach: Resumen.Juegos-->
                             <div class="progress progress-orange">
@@ -347,12 +347,11 @@
         </div>
 
         <ul class="nav nav-tabs">
-            <li class="active"><a data-toggle="tab" href="#home">Resumen</a></li>
-            <li><a data-toggle="tab" href="#menu1">Gráfico</a></li>
+            <li class="active"><a data-toggle="tab" href="#resumen">Resumen</a></li>
+            <li><a data-toggle="tab" href="#grafico">Gráfico</a></li>
         </ul>
-
         <div class="tab-content">
-            <div id="home" class="tab-pane fade in active">
+            <div id="resumen" class="tab-pane fade in active">
                 <div class="panel panel-default">
                     <div class="panel-body">
                         <div class="table-responsive">
@@ -361,8 +360,7 @@
                                     <tr>
                                         <th>Fecha</th>
                                         <th style="width:150px;">Juego</th>
-                                        <th>Nivel</th>
-                                        <th>Situación</th>
+                                        <th>Nivel</th>                                        
                                         <th>T. Juego (Min)</th>
                                         <th>T. Reacción (Min)</th>
                                         <th>Puntaje</th>
@@ -372,8 +370,7 @@
                                     <tr>
                                         <td data-bind="text: $data.FechaRegistro"></td>
                                         <td data-bind="text: $data.TipoJuego"></td>
-                                        <td data-bind="text: $data.Nivel"></td>
-                                        <td></td>
+                                        <td data-bind="text: $data.Nivel"></td>                                        
                                         <td data-bind="text: $data.TiempoResolucion"></td>
                                         <td data-bind="text: $data.TiempoReaccion"></td>
                                         <td data-bind="text: $data.Puntaje"></td>
@@ -384,7 +381,7 @@
                     </div>
                 </div>
             </div>
-            <div id="menu1" class="tab-pane fade">
+            <div id="grafico" class="tab-pane fade">
                 <div class="panel panel-default">
                     <div class="panel-body">
                         <div id="chart"></div>

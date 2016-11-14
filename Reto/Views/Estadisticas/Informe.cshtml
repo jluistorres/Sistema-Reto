@@ -339,12 +339,14 @@
                 var chart = new AmCharts.AmPieChart();
                 chart.valueField = "value";
                 chart.titleField = "title";
+                chart.colorField = "color";
+                chart.labelColorField = "color";
                 chart.outlineColor = "#FFFFFF";
                 //chart.colors = colores;
                 chart.dataProvider = chartData;
                 chart.labelRadius = 5;
                 chart.radius = "42%";
-                chart.innerRadius = "60%";
+                chart.innerRadius = "60%";                
 
                 chart.write("chart_pie");
 

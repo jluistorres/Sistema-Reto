@@ -17,7 +17,7 @@
 .registro .promedio { font-weight: bold; background-color: #f6f6f6; }
 .registro .nota-final { background-color: #f4f4f4; font-weight: bold; }
 
-.registro .panel-left { background-color:#eeeaea; text-align:left; text-transform:uppercase; }
+.registro .panel-left { background-color: #eeeaea; text-align: left; text-transform: uppercase; }
 
 table.alumnos tr td { cursor: pointer; user-select: none; }
 table.alumnos tr.seleccionado td { background: #D83135; color: #fff; }
@@ -29,5 +29,6 @@ table.alumnos tr.seleccionado td { background: #D83135; color: #fff; }
 .modal .registro td { padding: 5px; }
 
 @media print {
-    .historial { border: 0; padding: 0; }
+    .historial { border: 0; padding: 0; margin-bottom:20px; min-height: initial; }
+    textarea { height: auto; }
 }
