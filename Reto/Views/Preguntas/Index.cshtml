@@ -40,8 +40,7 @@
                     self.cuestionario(preguntas);
                     self.pregunta(0);
                     self.Etapa(2);
-                });
-                
+                });                
             }
 
             self.Siguiente = function (data) {
@@ -61,14 +60,12 @@
             self.Evaluar = function (data) {
                 data.flagCorrecto((data.RptaUsuario() || '').toString().toLowerCase() == (data.Solucion || '').toString().toLowerCase());
             }
-
             
-
             self.Finalizar = function () {
                 var score = ko.toJS(self.cuestionario).map(function (x) {
                     return {                        
                         IdPregunta: x.IdPregunta,
-                        Puntaje: x.flagCorrecto ? 2 : 0
+                        Puntaje: x.flagCorrecto ? x.Puntuacion : 0
                     };
                 });
 
