@@ -49,6 +49,7 @@
   <ItemGroup>
     <Compile Include="daJuego.cs" />
     <Compile Include="daNotas.cs" />
+    <Compile Include="daPreguntas.cs" />
     <Compile Include="daUsuario.cs" />
     <Compile Include="dbretoEntities.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

@@ -34,6 +34,7 @@ namespace Reto.AccesoDatos
         public virtual DbSet<NivelEscolar> NivelEscolar { get; set; }
         public virtual DbSet<Notas> Notas { get; set; }
         public virtual DbSet<NotasCriterio> NotasCriterio { get; set; }
+        public virtual DbSet<Preguntas> Preguntas { get; set; }
         public virtual DbSet<Persona> Persona { get; set; }
         public virtual DbSet<Usuario> Usuario { get; set; }
     }

@@ -1,0 +1,102 @@
+﻿@{
+    ViewBag.Title = "Registro";
+}
+
+@section styles
+{
+    <style type="text/css">
+        .formulario { max-width: 600px; margin: 0 auto; }
+    </style>
+}
+
+@section scripts
+{
+    <script src="~/Scripts/knockout-3.4.0.js"></script>
+    <script type="text/javascript">
+        function ViewModel() {
+            var self = this;
+            self.Pregunta = {
+                IdPregunta: ko.observable(),
+                Enunciado: ko.observable(),
+                Solucion: ko.observable(),
+                TipoResultado: ko.observable(),
+                Puntuacion: ko.observable()
+            }
+
+            self.Guardar = function (form) {
+                $.ajax({
+                    type: 'POST',
+                    url: $(form).attr('action'),
+                    data: ko.toJSON({ objEN: self.Pregunta }),
+                    dataType: 'json',
+                    contentType: 'application/json',
+                    success: function (result) {
+                        self.Pregunta.IdPregunta(result);
+                        toastr.info('Se ha registrado la pregunta');
+                    }
+                });
+            }
+        }
+
+        $(function () {
+            var modelo = new ViewModel();
+            ko.applyBindings(modelo);
+        });
+    </script>
+}
+
+<h2 class="text-center">Ingrese los datos de la pregunta</h2>
+
+<form method="post" action="@Url.Action("Registro")" data-bind="submit: Guardar">
+    <div class="formulario form-horizontal">
+        <div class="row">
+            <div class="col-xs-12">
+                <div class="form-group">
+                    <label class="col-sm-3 control-label">Enunciado:</label>
+                    <div class="col-sm-9">
+                        <textarea rows="4" class="form-control" name="Enunciado" data-bind="value: Pregunta.Enunciado" required></textarea>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-xs-12">
+                <div class="form-group">
+                    <label class="col-sm-3 control-label">Resultado:</label>
+                    <div class="col-sm-9">
+                        <textarea rows="4" class="form-control" name="Resultado" data-bind="value: Pregunta.Solucion" required></textarea>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-xs-12">
+                <div class="form-group">
+                    <label class="col-sm-3 control-label">Tipo de resultado:</label>
+                    <div class="col-sm-4">
+                        <select class="form-control" name="TipoResultado" data-bind="value: Pregunta.TipoResultado" required>
+                            <option value="1">Texto</option>
+                            <option value="2">Numérico</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-xs-12">
+                <div class="form-group">
+                    <label class="col-sm-3 control-label">Puntuación:</label>
+                    <div class="col-sm-9">
+                        <input type="text" class="form-control" name="Puntuacion" data-bind="value: Pregunta.Puntuacion" required />
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="form-group">
+            <div class="col-xs-12 text-right">
+                <button type="submit" class="btn btn-primary">Guardar</button>
+                <a class="btn btn-default" href="@Url.Action("Registro")">Nuevo</a>
+            </div>
+        </div>
+    </div>
+</form>
