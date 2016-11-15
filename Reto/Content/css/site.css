@@ -36,7 +36,7 @@ fieldset.fs-border legend { width: auto; font-size: 10pt; padding: 0 5px; color:
 
 /*End reseet*/
 
-body { font-family: 'Ubuntu', sans-serif, 'Open Sans', Arial; font-size: 13px; }
+body { font-family: 'Ubuntu', sans-serif, 'Open Sans', Arial; font-size: 13px; /*background:url(../img/home-bg.jpg) no-repeat top center fixed; background-size:cover;*/ }
 .text-info { font-family: "Fredoka One",cursive; font-size: 30px; }
 .navbar h3 { margin: 0; }
 hr { margin:8px 0; border-color:#ddd; }
