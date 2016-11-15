@@ -1,5 +1,5 @@
 ﻿.tabla { border-collapse: collapse; margin: 0 auto; }
-.tabla .q, .tabla .casilla { width: 50px; height: 50px; }
+.tabla .q, .tabla .casilla { width: 50px; height: 50px; /*border-radius:50%;*/ }
 .tabla .q { margin: 6px; text-align: center; vertical-align: middle; }
 .tabla .q.h { width: 25px; }
 .tabla .q.v { height: 25px; }
@@ -12,7 +12,7 @@
 .tabla .casilla.error { background-color: #ffcca7; border-color: #dc6109; }
 .reto-info { position: absolute; top: 0; left: 0; padding: 5px; background-color: #3E65A0; color: #fff; cursor:pointer; user-select:none; -ms-user-select:none; -webkit-user-select:none; }
 .respuestas { text-align:center; margin-bottom:10px; }
-.respuestas .rpta { width: 50px; height: 50px; line-height:50px; background-color:#fff; margin:0 5px; font-size: 30px; font-weight:bold; display:inline-block; }
+.respuestas .rpta { width: 50px; height: 50px; line-height:50px; /*border-radius:50%;*/ background-color:#fff; margin:0 5px; font-size: 30px; font-weight:bold; display:inline-block; }
 .yellow { background-color: #f7f83f !important; }
 .green { background-color: #82d760 !important; }
 .blue { background-color: #66a7ee !important; }
