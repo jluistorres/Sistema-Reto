@@ -1,0 +1,81 @@
+﻿@{
+    ViewBag.Title = "Gestionar Juegos";
+}
+
+@section styles
+{
+    <style type="text/css">
+        .juegos-container { text-align: center; }
+        .juegos-container .juego { display: inline-block; margin: 5px; animation:bounceInLeft .5s ease; }
+        .juegos-container .juego .panel-heading { font-size: 2em; }
+        .juegos-container .juego .panel-body { padding: 25px; }
+        @@media screen and (max-width:768px) {
+            .juegos-container .juego { display: block; }
+        }
+    </style>
+}
+
+<h2 class="text-center">Gestionar Juegos</h2>
+<hr /><br /><br />
+<div class="juegos-container">
+    <div class="juego panel panel-success">
+        <div class="panel-heading">Mayor menor</div>
+        <div class="panel-body">
+            <i class="fa fa-hand-o-right fa-lg"></i> <a href="~/reto/lista?id=1&tipo=Mayor-Menor">Listar retos</a>
+        </div>
+    </div>
+    <div class="juego panel panel-danger">
+        <div class="panel-heading">Minisudoku</div>
+        <div class="panel-body">
+            <i class="fa fa-hand-o-right fa-lg"></i> <a href="#">Listar retos</a>
+        </div>
+    </div>
+    <div class="juego panel panel-default">
+        <div class="panel-heading">A primera vista</div>
+        <div class="panel-body">
+            <i class="fa fa-hand-o-right fa-lg"></i> <a href="#">Listar retos</a>
+        </div>
+    </div>
+    <div class="juego panel panel-warning">
+        <div class="panel-heading">Conect-arte</div>
+        <div class="panel-body">
+            <i class="fa fa-hand-o-right fa-lg"></i> <a href="#">Listar retos</a>
+        </div>
+    </div>
+    <div class="juego panel panel-default">
+        <div class="panel-heading">Cuadrado inteligente</div>
+        <div class="panel-body">
+            <i class="fa fa-hand-o-right fa-lg"></i> <a href="#">Listar retos</a>
+        </div>
+    </div>
+    <div class="juego panel panel-warning">
+        <div class="panel-heading">Campamentos</div>
+        <div class="panel-body">
+            <i class="fa fa-hand-o-right fa-lg"></i> <a href="#">Listar retos</a>
+        </div>
+    </div>
+    <div class="juego panel panel-success">
+        <div class="panel-heading">Cripto Zero</div>
+        <div class="panel-body">
+            <i class="fa fa-hand-o-right fa-lg"></i> <a href="#">Listar retos</a>
+        </div>
+    </div>
+    <div class="juego panel panel-info">
+        <div class="panel-heading">Islas y puentes</div>
+        <div class="panel-body">
+            <i class="fa fa-hand-o-right fa-lg"></i> <a href="#">Listar retos</a>
+        </div>
+    </div>
+    <div class="juego panel panel-primary">
+        <div class="panel-heading">Virtual-mente</div>
+        <div class="panel-body">
+            <i class="fa fa-hand-o-right fa-lg"></i> <a href="#">Listar retos</a>
+        </div>
+    </div>
+    <div class="juego panel panel-danger">
+        <div class="panel-heading">Mathematically</div>
+        <div class="panel-body">
+            <i class="fa fa-hand-o-right fa-lg"></i> <a href="#">Listar retos</a>
+        </div>
+    </div>
+</div>
