@@ -227,6 +227,7 @@
     <Content Include="Views\Preguntas\Index.cshtml" />
     <Content Include="Views\Preguntas\Gestionar.cshtml" />
     <Content Include="Views\Preguntas\Registro.cshtml" />
+    <Content Include="Views\Reto\gestionar-juegos.cshtml" />
     <None Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>

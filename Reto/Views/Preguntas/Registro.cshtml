@@ -41,6 +41,7 @@
                 var id = '@ViewBag.id';
                 if (id) {
                     $.getJSON('@Url.Action("ObtenerPreguntaById")', { id: id }).done(function (result) {
+                        //console.log(result.Solucion.split('\n'));
                         self.Pregunta.IdPregunta(id);
                         self.Pregunta.Enunciado(result.Enunciado);
                         self.Pregunta.Solucion(result.Solucion);
@@ -79,6 +80,7 @@
                     <label class="col-sm-3 control-label">Resultado:</label>
                     <div class="col-sm-9">
                         <textarea rows="4" class="form-control" name="Resultado" data-bind="value: Pregunta.Solucion" required></textarea>
+                        <div class="help-block">Para ingresar múltiples resultados separe con enter (Una respuesta por línea)</div>
                     </div>
                 </div>
             </div>
@@ -110,7 +112,7 @@
             <div class="col-sm-9 col-sm-offset-3 text-right">                
                 <a href="@Url.Action("gestionar")" class="pull-left btn btn-primary-outline">Listar</a>
                 <button type="submit" class="btn btn-primary"><i class="fa fa-save"></i> Guardar</button>
-                <a class="btn btn-default" href="@Url.Action("Registro")">Nuevo</a>
+                <a class="btn btn-default" href="~/preguntas/registro">Nuevo</a>
             </div>
         </div>
     </div>

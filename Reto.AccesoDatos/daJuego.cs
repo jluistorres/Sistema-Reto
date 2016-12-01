@@ -91,7 +91,7 @@ namespace Reto.AccesoDatos
 
         public List<usp_ScoreHistorial_Result> ScoreHistorial(int? Modulo, int? IdJuego, DateTime FechaInicio, DateTime FechaFin)
         {
-            var result = cnx.Database.SqlQuery<usp_ScoreHistorial_Result>("usp_ScoreHistorial @Modulo={0}, @IdJuego={1}, @FechaInicio={2}, @FechaFin={3}", Modulo, IdJuego, FechaInicio, FechaFin);
+            var result = cnx.Database.SqlQuery<usp_ScoreHistorial_Result>("usp_ScoreHistorial @Modulo={0}, @IdJuego={1}, @FechaInicio={2}, @FechaFin={3}", Modulo, IdJuego, FechaInicio.ToShortDateString(), FechaFin.ToShortDateString());
             return result.ToList();
         }
 

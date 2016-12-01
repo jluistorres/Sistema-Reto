@@ -7,6 +7,9 @@
 @section styles
 {
     <link href="~/Scripts/datatables/plugins/bootstrap/dataTables.bootstrap.min.css" rel="stylesheet" />
+    <style type="text/css">
+        .rpta { display: inline-block; padding: 3px 10px; margin: 0 5px 5px 0; background: #FCB062; color: #fff; font-size: 0.8em; text-transform: uppercase; }
+    </style>
 }
 
 @section scripts
@@ -16,11 +19,11 @@
     <script src="~/Scripts/datatables/plugins/bootstrap/dataTables.bootstrap.min.js"></script>
     <script src="~/Scripts/datatables/knockout-datatables.js"></script>
     <script type="text/javascript">
-        function Eliminar(id){
+        function Eliminar(id) {
             appMaster.Confirm({
                 Title: 'Eliminar',
                 Message: '¿Seguro que desea eliminar la pregunta seleccionada?',
-                Yes: function(){
+                Yes: function () {
                     window.location.href = '@Url.Action("Eliminar")?id=' + id;
                 }
             });
@@ -57,9 +60,21 @@
                 @foreach (var item in Model)
                 {
                     <tr>
-                        <td>@item.Enunciado</td>
+                        <td>
+                            <p>@item.Enunciado</p>
+                            @{
+                                var rptas = item.Solucion.Split('\n');
+                            }
+                            <div>
+                                <b>Respuestas válidas: </b> &nbsp;
+                                @foreach (var r in rptas)
+                                {
+                                    <span class="rpta">@r</span>
+                                }
+                            </div>
+                        </td>
                         <td class="text-center">
-                            @Html.ActionLink("Modificar", "registro", new { id = item.IdPregunta }) <span style="margin:0 5px;">|</span>                            
+                            @Html.ActionLink("Modificar", "registro", new { id = item.IdPregunta }) <span style="margin:0 5px;">|</span>
                             <a onclick="Eliminar(@item.IdPregunta)">Eliminar</a>
                         </td>
                     </tr>

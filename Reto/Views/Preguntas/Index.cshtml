@@ -4,13 +4,13 @@
 
 @section styles
 {
-    <link href="~/Content/css/animate.min.css" rel="stylesheet" />
     <style type="text/css">
         .formulario { max-width: 600px; margin: 0 auto; }
         .pregunta { text-align: center; max-width: 700px; margin: 0 auto; }
         .pregunta .enunciado { font-size: 2em; color: #2D579A; margin-bottom: 20px; }
         .pregunta .respuesta { text-align: center; margin-bottom: 20px; }
         .pregunta .respuesta input { width: 300px; padding: 8px; font-size: 1.5em; border: 1px solid #ccc; }
+        .alert.alert-warning { padding: 5px; margin: 0; }
     </style>
 }
 
@@ -31,7 +31,7 @@
             }
 
             self.Comenzar = function () {
-                $.getJSON('@Url.Action("ListarAzar")').done(function (preguntas) {                    
+                $.getJSON('@Url.Action("ListarAzar")').done(function (preguntas) {
                     preguntas.forEach(function (x) {
                         x.RptaUsuario = ko.observable();
                         x.flagCorrecto = ko.observable();
@@ -40,7 +40,7 @@
                     self.cuestionario(preguntas);
                     self.pregunta(0);
                     self.Etapa(2);
-                });                
+                });
             }
 
             self.Siguiente = function (data) {
@@ -58,12 +58,21 @@
             }
 
             self.Evaluar = function (data) {
-                data.flagCorrecto((data.RptaUsuario() || '').toString().toLowerCase() == (data.Solucion || '').toString().toLowerCase());
+                var rptas = (data.Solucion || '').toLowerCase().split('\n'), 
+                    rptauser = (data.RptaUsuario() || '').toString().toLowerCase(), 
+                    ok = false;
+
+                for (var i = 0; i < rptas.length; i++) {                    
+                    ok = rptauser == rptas[i];
+                    if (ok) break;
+                }
+
+                data.flagCorrecto(ok);
             }
-            
+
             self.Finalizar = function () {
                 var score = ko.toJS(self.cuestionario).map(function (x) {
-                    return {                        
+                    return {
                         IdPregunta: x.IdPregunta,
                         Puntaje: x.flagCorrecto ? x.Puntuacion : 0
                     };
@@ -116,13 +125,14 @@
 <!--ko foreach: cuestionario-->
 <div class="pregunta animated bounceInLeft" data-bind="visible: $index() == $root.pregunta()">
     <h4><span data-bind="text: $root.pregunta() + 1"></span> / <span data-bind="text: $root.cuestionario().length"></span></h4>
-    <!--ko if: $data.flagCorrecto() == undefined-->    
+    <!--ko if: $data.flagCorrecto() == undefined-->
     <div class="panel panel-default">
         <div class="panel-body">
             <div class="enunciado" data-bind="html: $data.Enunciado"></div>
             <div class="respuesta">
                 <input class="textfield" placeholder="Escribe tu respuesta..." data-bind="attr: {type: $data.TipoResultado == 1? 'text': 'number'}, value: $data.RptaUsuario" />
             </div>
+            <div class="alert alert-warning">¡Cuidado! La respuesta en <span data-bind="text: $data.TipoResultado == 1 ? 'letras': 'números'"></span></div>
         </div>
     </div>
     <div>
@@ -137,7 +147,7 @@
         <!--ko ifnot: $data.flagCorrecto-->
         <img src="~/Content/img/bad.png" />
         <!--/ko-->
-    </div>    
+    </div>
     <div style="margin-top:15px;">
         <button type="button" class="btn btn-success-outline" data-bind="click: $root.Siguiente">Aceptar</button>
     </div>
@@ -150,7 +160,7 @@
 <div class="formulario text-center animated bounceInRight">
     <div class="panel panel-warning">
         <div class="panel-body">
-            <h2 class="text-success"><i class="fa fa-thumbs-o-up"></i><br /> <span data-bind="text: Resumen.Correctas"></span> Correctas</h2>          
+            <h2 class="text-success"><i class="fa fa-thumbs-o-up"></i><br /> <span data-bind="text: Resumen.Correctas"></span> Correctas</h2>
             <hr />
             <h2 class="text-danger"><i class="fa fa-thumbs-o-down"></i><br /><span data-bind="text: Resumen.Incorrectas"></span> Incorrectas</h2>
         </div>

@@ -17,6 +17,12 @@ namespace Reto.Controllers
             return View();
         }
 
+        [ActionName("gestionar-juegos")]
+        public ActionResult GestionarJuegos()
+        {
+            return View();
+        }
+
         public ActionResult Lista()
         {
             return View();

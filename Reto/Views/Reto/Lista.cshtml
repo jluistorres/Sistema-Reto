@@ -5,9 +5,9 @@
 @section styles
 {
     <style type="text/css">
-        .reto { width: 150px; display: inline-block; margin: 0 5px 5px 0; padding:10px 10px; text-align:center; cursor: pointer; border:1px solid #ccc; }
+        .reto { width: 150px; display: inline-block; margin: 0 5px 5px 0; padding: 10px 10px; text-align: center; cursor: pointer; border: 1px solid #ccc; background: #fff; }
         .reto .numero, .reto .nivel { display: block; }
-        .reto .numero { font-size:1.5em; font-weight:bold; }
+        .reto .numero { font-size: 1.5em; font-weight: bold; }
     </style>
 }
 
@@ -36,7 +36,7 @@
                         }
 
                         niveles.forEach(function (x) {
-                            x.Items = datos.filter(function (item) { return item.Nivel == x.Nivel });                            
+                            x.Items = datos.filter(function (item) { return item.Nivel == x.Nivel });
                         });
 
                         console.log(niveles);
@@ -56,7 +56,7 @@
         });
     </script>
 }
-<h1>Lista de retos</h1>
+<h1>Retos @Request.QueryString["tipo"]</h1>
 <hr />
 <div>
     <i class="fa fa-cube fa-fw"></i> <a href="~/reto/mayor-menor">Nuevo reto</a>
@@ -66,7 +66,7 @@
     <h3>Nivel <span data-bind="text: $data.Nivel"></span></h3>
     <!--ko foreach: Items-->
     <a class="reto" data-bind="attr: {href: '@Url.Action("mayor-menor")?id=' + $data.IdJuego}">
-        <span class="numero" data-bind="text: 'Reto N° ' + $data.Reto"></span>        
+        <span class="numero" data-bind="text: 'Reto N° ' + $data.Reto"></span>
         <span data-bind="text: (Nivel + 2) + ' x ' + (Nivel + 2)"></span>
     </a>
     <!--/ko-->
